@@ -109,14 +109,19 @@ export default function PublicReviewsPage() {
           
           {/* Left Column: Interactive QR Code Image */}
           <div className="shrink-0 bg-white p-4 rounded-2xl border border-white/10 shadow-lg text-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
-                `${origin}/review?request_id=${latestRequestId}`
-              )}`}
-              alt="Artisan Review QR Code"
-              className="w-36 h-36 mx-auto"
-            />
+            {origin ? (
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
+                  `${origin}/review?request_id=${latestRequestId}`
+                )}`}
+                alt="Artisan Review QR Code"
+                className="w-36 h-36 mx-auto"
+              />
+            ) : (
+              <div className="w-36 h-36 bg-slate-100 animate-pulse mx-auto rounded-xl flex items-center justify-center text-slate-400 text-[10px] font-bold uppercase">
+                Generating QR...
+              </div>
+            )}
             <span className="text-[9px] font-black uppercase tracking-wider text-slate-500 block mt-2">
               Scan with Mobile Phone
             </span>
