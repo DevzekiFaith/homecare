@@ -11,8 +11,12 @@ export default function PublicReviewsPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [ratingFilter, setRatingFilter] = useState("all");
+  const [origin, setOrigin] = useState("");
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      setOrigin(window.location.origin);
+    }
     async function loadReviews() {
       setLoading(true);
       const { data } = await fetchAllReviews();
@@ -89,7 +93,7 @@ export default function PublicReviewsPage() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
-                `${typeof window !== "undefined" ? window.location.origin : ""}/review?request_id=demo-job-id`
+                `${origin}/review?request_id=demo-job-id`
               )}`}
               alt="Artisan Review QR Code"
               className="w-36 h-36 mx-auto"
