@@ -49,7 +49,8 @@ export default function WorkerRegisterPage() {
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
-  const [message, setMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [ninError, setNinError] = useState<string | null>(null);
   const [certFile, setCertFile] = useState<File | null>(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
@@ -71,7 +72,8 @@ export default function WorkerRegisterPage() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setMessage(null);
+    setErrorMessage(null);
+    setSuccessMessage(null);
     setNinError(null);
     setSubmitting(true);
 
@@ -112,7 +114,7 @@ export default function WorkerRegisterPage() {
 
       if (authError && !authError.message.includes("already registered")) {
         const parsed = handleAuthError(authError, "artisan registration");
-        setMessage(`${parsed.title}: ${parsed.description}`);
+        setErrorMessage(`${parsed.title}: ${parsed.description}`);
         return;
       }
 
@@ -120,8 +122,30 @@ export default function WorkerRegisterPage() {
 
       if (!userId) {
         const parsed = handleAuthError(new Error("Could not generate technician account ID. Please try another email."), "artisan registration");
-        setMessage(`${parsed.title}: ${parsed.description}`);
+        setErrorMessage(`${parsed.title}: ${parsed.description}`);
         return;
+      }
+
+      // Upload selfie photo if present
+      let avatarUrl: string | null = null;
+      if (photoFile) {
+        try {
+          const fileExt = photoFile.name.split(".").pop() || "jpg";
+          const fileName = `avatars/${userId}.${fileExt}`;
+          
+          const { error: uploadErr } = await supabase.storage
+            .from("job-photos")
+            .upload(fileName, photoFile, { upsert: true });
+
+          if (!uploadErr) {
+            const { data: publicUrlData } = supabase.storage
+              .from("job-photos")
+              .getPublicUrl(fileName);
+            avatarUrl = publicUrlData?.publicUrl || null;
+          }
+        } catch (uploadErr) {
+          console.warn("Selfie upload failed during registration:", uploadErr);
+        }
       }
 
       // 2. Insert or upsert into professionals table
@@ -137,16 +161,25 @@ export default function WorkerRegisterPage() {
         is_verified: false,
         ai_verified: aiVerified,
         ai_verification_reason: aiVerifyReason,
+        avatar_url: avatarUrl,
       });
 
       if (dbError) {
         const parsed = handleAuthError(dbError, "profile creation");
-        setMessage(`${parsed.title}: ${parsed.description}`);
+        setErrorMessage(`${parsed.title}: ${parsed.description}`);
         return;
       }
 
+      // Also update avatar_url in profiles table if created
+      if (avatarUrl) {
+        await supabase
+          .from("profiles")
+          .update({ avatar_url: avatarUrl })
+          .eq("id", userId);
+      }
+
       toast.success("Profile submitted successfully! Admin review in progress.");
-      setMessage(
+      setSuccessMessage(
         "Profile successfully submitted! Your registration is now live and our admin team will review and approve your technician profile."
       );
       form.reset();
@@ -156,7 +189,7 @@ export default function WorkerRegisterPage() {
       setPhotoFile(null);
     } catch (err: any) {
       const parsed = handleAuthError(err, "artisan registration");
-      setMessage(`${parsed.title}: ${parsed.description}`);
+      setErrorMessage(`${parsed.title}: ${parsed.description}`);
     } finally {
       setSubmitting(false);
     }
@@ -454,22 +487,28 @@ export default function WorkerRegisterPage() {
                         try {
                           const reader = new FileReader();
                           reader.onload = async (ev) => {
-                            const imageBase64 = ev.target?.result as string;
-                            const res = await fetch("/api/verify-id", {
-                              method: "POST",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({ imageBase64, workerName: "" }),
-                            });
-                            const data = await res.json() as {
-                              status: VerificationStatus;
-                              confidence?: "high" | "medium" | "low" | null;
-                              reason?: string;
-                            };
-                            setVerifyStatus(data.status);
-                            setVerifyReason(data.reason);
-                            setVerifyConfidence(data.confidence ?? null);
-                            setAiVerified(data.status === "verified");
-                            setAiVerifyReason(data.reason ?? "");
+                            try {
+                              const imageBase64 = ev.target?.result as string;
+                              const res = await fetch("/api/verify-id", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ imageBase64, workerName: "" }),
+                              });
+                              const data = await res.json() as {
+                                status: VerificationStatus;
+                                confidence?: "high" | "medium" | "low" | null;
+                                reason?: string;
+                              };
+                              setVerifyStatus(data.status);
+                              setVerifyReason(data.reason);
+                              setVerifyConfidence(data.confidence ?? null);
+                              setAiVerified(data.status === "verified");
+                              setAiVerifyReason(data.reason ?? "");
+                            } catch (err) {
+                              console.error("AI verification request failed:", err);
+                              setVerifyStatus("pending_manual");
+                              setVerifyReason("Verification will be completed manually by our team.");
+                            }
                           };
                           reader.readAsDataURL(file);
                         } catch {
@@ -642,14 +681,14 @@ export default function WorkerRegisterPage() {
             </div>
 
             <ErrorAlert 
-              error={message && message.includes("failed") ? message : null} 
-              onClear={() => setMessage(null)}
+              error={errorMessage} 
+              onClear={() => setErrorMessage(null)}
               className="mt-4"
             />
 
-            {message && !message.includes("failed") && (
+            {successMessage && (
               <div className="p-5 rounded-2xl border border-emerald-300 bg-emerald-50 text-emerald-900 text-sm font-bold leading-relaxed shadow-xs">
-                {message}
+                {successMessage}
               </div>
             )}
           </form>
