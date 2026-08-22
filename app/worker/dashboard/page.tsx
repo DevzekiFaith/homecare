@@ -573,19 +573,14 @@ export default function WorkerDashboardPage() {
 
               {/* QR Code Image Container */}
               <div className="bg-white p-4 rounded-2xl inline-block shadow-lg mb-6 border border-white/10">
-                {origin ? (
-                  <img
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
-                      `${origin}/review?request_id=${qrCodeJob.id}`
-                    )}`}
-                    alt="Review QR Code"
-                    className="w-48 h-48 mx-auto"
-                  />
-                ) : (
-                  <div className="w-48 h-48 bg-zinc-800 animate-pulse mx-auto rounded-xl flex items-center justify-center text-zinc-500 text-[10px] font-bold uppercase">
-                    Generating QR...
-                  </div>
-                )}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
+                    `https://www.homecare.com.ng/review?request_id=${qrCodeJob.id}`
+                  )}`}
+                  alt="Review QR Code"
+                  className="w-48 h-48 mx-auto"
+                />
               </div>
 
               <div className="space-y-1.5 text-left bg-white/5 p-4 rounded-2xl border border-white/5 text-xs text-zinc-400">
