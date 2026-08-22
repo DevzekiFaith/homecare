@@ -227,9 +227,12 @@ function ReviewForm() {
       >
         {/* Worker Profile Header inside Review Card */}
         <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
-          <div className="w-12 h-12 rounded-2xl bg-sky-600 text-white flex items-center justify-center font-bold text-lg shadow-md shrink-0 border border-sky-400">
-            {workerDetails?.full_name ? workerDetails.full_name[0].toUpperCase() : <User size={20} />}
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(workerDetails?.full_name || "worker")}`}
+            alt={workerDetails?.full_name || "Worker"}
+            className="w-12 h-12 rounded-2xl bg-sky-50 shadow-md shrink-0 border border-sky-200 object-cover"
+          />
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
               <h3 className="font-black text-sm text-slate-900 truncate">

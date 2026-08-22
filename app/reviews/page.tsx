@@ -227,9 +227,12 @@ export default function PublicReviewsPage() {
                 </div>
 
                 <div className="flex items-center gap-3 pt-4 border-t border-slate-100 mt-auto">
-                  <div className="w-10 h-10 rounded-xl bg-sky-600 text-white flex items-center justify-center font-bold text-sm shadow-sm uppercase shrink-0 border border-sky-400">
-                    {review.worker_name ? review.worker_name[0] : <User size={16} />}
-                  </div>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(review.worker_name || "worker")}`}
+                    alt={review.worker_name || "Worker"}
+                    className="w-10 h-10 rounded-xl bg-sky-50 shadow-sm shrink-0 border border-sky-200 object-cover"
+                  />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
                       <h4 className="font-extrabold text-xs text-slate-900 truncate">{review.worker_name}</h4>

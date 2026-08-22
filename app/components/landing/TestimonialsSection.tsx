@@ -166,9 +166,12 @@ export default function TestimonialsSection() {
                 </div>
                 
                 <div className="flex items-center gap-3 pt-4 border-t border-slate-200/60">
-                  <div className="w-10 h-10 rounded-full bg-sky-600 text-white flex items-center justify-center font-bold text-sm shadow-sm uppercase">
-                    {t.name[0]}
-                  </div>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(t.name)}`}
+                    alt={t.name}
+                    className="w-10 h-10 rounded-full bg-sky-50 shadow-sm shrink-0 border border-sky-200 object-cover"
+                  />
                   <div>
                     <h4 className="font-bold text-sm text-slate-900">{t.name}</h4>
                     <span className="text-[11px] text-slate-500 font-semibold">{t.role}</span>

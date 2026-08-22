@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FormEvent, useState, useEffect } from "react";
+import { FormEvent, useState, useEffect, useRef } from "react";
 import { PAYMENT_ACCOUNT } from "@/lib/payment-details";
 import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
@@ -42,6 +42,128 @@ function RequestContent() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [paymentDetails, setPaymentDetails] = useState({ amount: 0, email: "", phone: "", name: "", txRef: "" });
+  const [address, setAddress] = useState("");
+  const mapRef = useRef<any>(null);
+  const markerRef = useRef<any>(null);
+
+  useEffect(() => {
+    let active = true;
+
+    // Dynamically inject Leaflet JS and CSS scripts to run only on the browser
+    const loadLeaflet = () => {
+      return new Promise<void>((resolve) => {
+        if ((window as any).L) {
+          resolve();
+          return;
+        }
+
+        // Add Leaflet CSS
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+        document.head.appendChild(link);
+
+        // Add Leaflet JS
+        const script = document.createElement("script");
+        script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+        script.onload = () => resolve();
+        document.head.appendChild(script);
+      });
+    };
+
+    loadLeaflet().then(() => {
+      if (!active) return;
+      const L = (window as any).L;
+      if (!L) return;
+
+      const mapContainer = document.getElementById("booking-map");
+      if (mapContainer && !mapRef.current) {
+        // Initial coordinates (Lagos)
+        const initLat = 6.5244;
+        const initLng = 3.3792;
+
+        const map = L.map("booking-map").setView([initLat, initLng], 13);
+        mapRef.current = map;
+
+        // Add CARTO Voyager Tiles
+        L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+          subdomains: "abcd",
+          maxZoom: 20
+        }).addTo(map);
+
+        // Create draggable marker
+        const marker = L.marker([initLat, initLng], { draggable: true }).addTo(map);
+        markerRef.current = marker;
+
+        const triggerReverseGeocode = async (lat: number, lng: number) => {
+          try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18`);
+            const data = await res.json();
+            if (data && data.display_name) {
+              setAddress(data.display_name);
+            }
+          } catch (err) {
+            console.error("Reverse geocoding failed:", err);
+          }
+        };
+
+        // Listen for dragging the marker
+        marker.on("dragend", () => {
+          const position = marker.getLatLng();
+          triggerReverseGeocode(position.lat, position.lng);
+        });
+
+        // Listen for clicking on the map
+        map.on("click", (e: any) => {
+          const { lat, lng } = e.latlng;
+          marker.setLatLng([lat, lng]);
+          triggerReverseGeocode(lat, lng);
+        });
+
+        // Initial reverse geocode to populate address field
+        triggerReverseGeocode(initLat, initLng);
+      }
+    });
+
+    return () => {
+      active = false;
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+        markerRef.current = null;
+      }
+    };
+  }, []);
+
+  const handleSearchAddress = async () => {
+    if (!address.trim()) return;
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`);
+      const data = await res.json();
+      if (data && data.length > 0) {
+        const { lat, lon } = data[0];
+        const latitude = parseFloat(lat);
+        const longitude = parseFloat(lon);
+        
+        const L = (window as any).L;
+        if (mapRef.current && L) {
+          mapRef.current.setView([latitude, longitude], 15);
+          if (markerRef.current) {
+            markerRef.current.setLatLng([latitude, longitude]);
+          } else {
+            markerRef.current = L.marker([latitude, longitude], { draggable: true }).addTo(mapRef.current);
+          }
+        }
+        toast.success("Location pinned on map!");
+      } else {
+        toast.error("Address not found", { description: "We couldn't pinpoint this location. Try dragging the map marker." });
+      }
+    } catch (err) {
+      console.error("Geocoding failed:", err);
+      toast.error("Search failed", { description: "Failed to resolve address coordinates." });
+    }
+  };
   const [paymentCompleted] = useState(false);
   
   const [appointmentDate, setAppointmentDate] = useState<Date | null>(new Date());
@@ -494,16 +616,42 @@ function RequestContent() {
                 )}
 
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="space-y-2">
+                  <div className="space-y-2 col-span-full">
                     <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-700">
                       Service Address
                     </label>
-                    <input
-                      required
-                      name="address"
-                      placeholder="House number, street, area"
-                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all placeholder:text-slate-400 shadow-xs"
-                    />
+                    <div className="flex gap-2">
+                      <input
+                        required
+                        name="address"
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        placeholder="Type address or select on map below"
+                        className="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all placeholder:text-slate-400 shadow-xs"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleSearchAddress}
+                        className="h-12 px-5 bg-sky-50 hover:bg-sky-100 border border-sky-200 rounded-xl text-[10px] font-bold uppercase tracking-widest text-sky-700 transition-colors shadow-2xs cursor-pointer shrink-0"
+                      >
+                        Pin Address
+                      </button>
+                    </div>
+
+                    {/* Live Leaflet Map Container */}
+                    <div className="mt-4 space-y-2">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                        <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                        Live Map Location Selector
+                      </p>
+                      <div 
+                        id="booking-map" 
+                        className="h-64 w-full rounded-2xl border border-slate-200 shadow-inner overflow-hidden relative z-10"
+                      />
+                      <p className="text-[9px] font-medium text-slate-500 italic">
+                        Click on the map or drag the marker to pinpoint your exact repair location.
+                      </p>
+                    </div>
                   </div>
                   {!user && (
                      <div className="space-y-2">
