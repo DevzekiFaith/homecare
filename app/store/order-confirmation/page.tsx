@@ -113,7 +113,7 @@ function OrderConfirmationContent() {
         body: JSON.stringify({
           orderRef,
           amount: displayTotal,
-          email: orderData?.customer_email || "customer@homecare.ng",
+          email: orderData?.customer_email || "customer@homecare.com.ng",
           name: orderData?.customer_name || "HomeCare Customer",
           title: "HomeCare Smart Appliances Store",
           description: `Payment for Order ${orderRef}`,
@@ -407,7 +407,7 @@ function OrderConfirmationContent() {
 
         <p className="text-center text-[10px] text-zinc-600 mt-8 leading-relaxed">
           Having issues? Contact us via WhatsApp or email at{" "}
-          <span className="text-zinc-400">support@homecare.ng</span>
+          <a href="mailto:support@homecare.com.ng" className="text-sky-600 font-bold hover:underline">support@homecare.com.ng</a>
         </p>
       </div>
     </div>

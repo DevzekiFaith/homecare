@@ -78,11 +78,11 @@ export default function Footer() {
               </li>
               <li>
                 <a 
-                  href="mailto:support@homecare.ng" 
+                  href="mailto:support@homecare.com.ng" 
                   className="hover:text-white transition-colors flex items-center gap-2"
                 >
                   <Mail size={14} className="text-cyan-400" />
-                  <span>support@homecare.ng</span>
+                  <span>support@homecare.com.ng</span>
                 </a>
               </li>
               <li>

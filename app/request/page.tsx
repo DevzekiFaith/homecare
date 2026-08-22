@@ -674,7 +674,7 @@ function RequestContent() {
                                     body: JSON.stringify({
                                       orderRef: paymentDetails.txRef || `REQ-${Date.now().toString(36).toUpperCase()}`,
                                       amount: paymentDetails.amount,
-                                      email: paymentDetails.email || "customer@homecare.ng",
+                                      email: paymentDetails.email || "customer@homecare.com.ng",
                                       name: paymentDetails.name || "HomeCare Customer",
                                       phone: paymentDetails.phone || "08000000000",
                                       title: "HomeCare Artisan Escrow Deposit",

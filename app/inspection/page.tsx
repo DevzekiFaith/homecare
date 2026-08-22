@@ -52,7 +52,7 @@ export default function PropertyInspectionPage() {
       const { error: dbError } = await supabase.from("store_orders").insert({
         order_ref: orderRef,
         customer_name: contactName || user?.user_metadata?.full_name || "Property Inspection Customer",
-        customer_email: contactEmail || user?.email || "customer@homecare.ng",
+        customer_email: contactEmail || user?.email || "customer@homecare.com.ng",
         customer_phone: contactPhone || user?.user_metadata?.phone || "08000000000",
         delivery_address: address,
         notes: `Preferred Date: ${appointmentDate ? appointmentDate.toLocaleDateString() : 'N/A'}, Time: ${appointmentTime}`,
@@ -86,7 +86,7 @@ export default function PropertyInspectionPage() {
           body: JSON.stringify({
             orderRef,
             amount: totalFee,
-            email: contactEmail || user?.email || "customer@homecare.ng",
+            email: contactEmail || user?.email || "customer@homecare.com.ng",
             name: contactName || user?.user_metadata?.full_name || "Property Inspection Customer",
             phone: contactPhone || user?.user_metadata?.phone || "08000000000",
             title: "HomeCare Engineering Property Inspection",

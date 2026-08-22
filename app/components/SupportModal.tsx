@@ -108,7 +108,7 @@ export default function SupportModal() {
                   <h3 className="text-base sm:text-lg font-extrabold text-slate-900 flex items-center gap-1.5">
                     Contact HomeCare Support
                   </h3>
-                  <p className="text-xs text-sky-600 font-bold">support@homecare.ng</p>
+                  <p className="text-xs text-sky-600 font-bold">support@homecare.com.ng</p>
                 </div>
               </div>
               <button

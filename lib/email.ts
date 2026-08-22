@@ -283,7 +283,7 @@ export async function sendSupportTicketEmail(params: {
 
     const res = await resend.emails.send({
       from: fromEmail,
-      to: ["support@homecare.ng"],
+      to: ["support@homecare.com.ng"],
       replyTo: params.email,
       subject: `[Support Ticket] ${params.subject} — from ${params.name}`,
       html,
