@@ -5,13 +5,16 @@ import { fetchAllReviews, Review } from "@/lib/reviews";
 import { Star, ShieldCheck, User, MessageSquare, ArrowRight, Activity, Search, Filter } from "lucide-react";
 import Link from "next/link";
 import Logo from "@/app/components/Logo";
+import { createClient } from "@/lib/supabase/client";
 
 export default function PublicReviewsPage() {
+  const supabase = useMemo(() => createClient(), []);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [ratingFilter, setRatingFilter] = useState("all");
   const [origin, setOrigin] = useState("");
+  const [latestRequestId, setLatestRequestId] = useState("594ee002-7b66-4e81-8feb-dd4045365ed2");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -21,10 +24,26 @@ export default function PublicReviewsPage() {
       setLoading(true);
       const { data } = await fetchAllReviews();
       setReviews(data);
+
+      try {
+        const { data: latestReq } = await supabase
+          .from("service_requests")
+          .select("id")
+          .eq("status", "completed")
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (latestReq && latestReq.id) {
+          setLatestRequestId(latestReq.id);
+        }
+      } catch (err) {
+        console.error("Failed to query latest completed job:", err);
+      }
+
       setLoading(false);
     }
     loadReviews();
-  }, []);
+  }, [supabase]);
 
   const stats = useMemo(() => {
     const total = reviews.length;
@@ -93,7 +112,7 @@ export default function PublicReviewsPage() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
-                `${origin}/review?request_id=demo-job-id`
+                `${origin}/review?request_id=${latestRequestId}`
               )}`}
               alt="Artisan Review QR Code"
               className="w-36 h-36 mx-auto"
@@ -116,7 +135,7 @@ export default function PublicReviewsPage() {
             </p>
             <div className="flex flex-wrap justify-center md:justify-start gap-3 pt-2">
               <Link
-                href="/review?request_id=demo-job-id"
+                href={`/review?request_id=${latestRequestId}`}
                 className="h-10 px-6 rounded-full bg-sky-500 hover:bg-sky-600 text-white font-extrabold uppercase tracking-widest text-[10px] flex items-center gap-2 shadow-md shadow-sky-500/20 transition-all hover:scale-102 cursor-pointer"
               >
                 <span>Launch Review Simulator</span>

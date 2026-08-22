@@ -8,6 +8,9 @@ const supabase = createClient(url, key);
 async function main() {
   const { data: profiles, error } = await supabase.from('profiles').select('id, full_name, role');
   console.log("Profiles in DB:", { profiles, error });
+
+  const { data: pros, error: proErr } = await supabase.from('professionals').select('*');
+  console.log("Professionals in DB:", { pros, proErr });
 }
 
 main();
