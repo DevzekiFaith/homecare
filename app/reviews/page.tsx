@@ -205,15 +205,20 @@ export default function PublicReviewsPage() {
                 
                 <div>
                   {/* Testimonial Stars */}
-                  <div className="flex gap-0.5 mb-4 text-amber-400">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        size={14}
-                        fill={i < review.rating ? "currentColor" : "none"}
-                        className={i < review.rating ? "" : "text-slate-200"}
-                      />
-                    ))}
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="flex gap-0.5 text-amber-400">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          size={14}
+                          fill={i < review.rating ? "currentColor" : "none"}
+                          className={i < review.rating ? "" : "text-slate-200"}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-[10px] font-black text-amber-800 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-md">
+                      {review.rating.toFixed(1)} / 5.0
+                    </span>
                   </div>
 
                   <p className="text-slate-700 text-sm leading-relaxed mb-6 font-medium italic">

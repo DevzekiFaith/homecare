@@ -171,15 +171,20 @@ export default function AdminReviewsPage() {
               <div key={review.id} className="p-6 hover:bg-slate-50/50 transition-colors flex flex-col md:flex-row md:items-start gap-4">
                 {/* Score badge & details */}
                 <div className="flex md:flex-col items-baseline md:items-start justify-between md:justify-start gap-2 shrink-0 md:w-44">
-                  <div className="flex gap-0.5 text-amber-400">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        size={14}
-                        fill={i < review.rating ? "currentColor" : "none"}
-                        className={i < review.rating ? "" : "text-slate-200"}
-                      />
-                    ))}
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-0.5 text-amber-400">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          size={14}
+                          fill={i < review.rating ? "currentColor" : "none"}
+                          className={i < review.rating ? "" : "text-slate-200"}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-[10px] font-black text-amber-800 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-md">
+                      {review.rating.toFixed(1)}
+                    </span>
                   </div>
                   <span className="text-[10px] font-black uppercase tracking-widest text-sky-600 bg-sky-50 border border-sky-100 px-2 py-0.5 rounded mt-1">
                     {review.service_type}

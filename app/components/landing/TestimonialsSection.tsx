@@ -144,15 +144,20 @@ export default function TestimonialsSection() {
                 className="p-6 sm:p-8 rounded-3xl bg-slate-50 border border-sky-100/80 shadow-xs relative flex flex-col justify-between"
               >
                 <div>
-                  <div className="flex gap-1 mb-4 text-amber-400">
-                    {[1, 2, 3, 4, 5].map((s) => (
-                      <Star 
-                        key={s} 
-                        size={16} 
-                        fill={s <= (t.rating ?? 5) ? "currentColor" : "none"} 
-                        className={s <= (t.rating ?? 5) ? "text-amber-400" : "text-slate-200"}
-                      />
-                    ))}
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="flex gap-1 text-amber-400">
+                      {[1, 2, 3, 4, 5].map((s) => (
+                        <Star 
+                          key={s} 
+                          size={16} 
+                          fill={s <= (t.rating ?? 5) ? "currentColor" : "none"} 
+                          className={s <= (t.rating ?? 5) ? "text-amber-400" : "text-slate-200"}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-[10px] font-black text-amber-800 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-md">
+                      {(t.rating ?? 5).toFixed(1)} / 5.0
+                    </span>
                   </div>
                   
                   <p className="text-slate-700 text-base leading-relaxed mb-6 font-medium">
