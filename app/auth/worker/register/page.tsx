@@ -28,6 +28,7 @@ import Logo from "@/app/components/Logo";
 import ErrorAlert from "@/app/components/ErrorAlert";
 import NinVerificationCard, { type NinDetails } from "@/app/components/NinVerificationCard";
 import { toast } from "sonner";
+import { handleAuthError } from "@/lib/auth-errors";
 
 const NIN_LENGTH = 11;
 
@@ -110,16 +111,16 @@ export default function WorkerRegisterPage() {
       });
 
       if (authError && !authError.message.includes("already registered")) {
-        setMessage(`Registration failed: ${authError.message}`);
-        toast.error(authError.message);
+        const parsed = handleAuthError(authError, "artisan registration");
+        setMessage(`${parsed.title}: ${parsed.description}`);
         return;
       }
 
       const userId = authData?.user?.id;
 
       if (!userId) {
-        setMessage("Could not generate technician account ID. Please try another email or log in.");
-        toast.error("Registration error. Please check your details.");
+        const parsed = handleAuthError(new Error("Could not generate technician account ID. Please try another email."), "artisan registration");
+        setMessage(`${parsed.title}: ${parsed.description}`);
         return;
       }
 
@@ -139,8 +140,8 @@ export default function WorkerRegisterPage() {
       });
 
       if (dbError) {
-        setMessage(`Profile creation failed: ${dbError.message}`);
-        toast.error(dbError.message);
+        const parsed = handleAuthError(dbError, "profile creation");
+        setMessage(`${parsed.title}: ${parsed.description}`);
         return;
       }
 
@@ -154,8 +155,8 @@ export default function WorkerRegisterPage() {
       setCertFile(null);
       setPhotoFile(null);
     } catch (err: any) {
-      setMessage(`Unexpected error: ${err.message}`);
-      toast.error(err.message);
+      const parsed = handleAuthError(err, "artisan registration");
+      setMessage(`${parsed.title}: ${parsed.description}`);
     } finally {
       setSubmitting(false);
     }

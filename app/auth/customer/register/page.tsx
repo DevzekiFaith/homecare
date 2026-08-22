@@ -8,6 +8,7 @@ import { Loader2, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import Logo from "@/app/components/Logo";
 import ErrorAlert from "@/app/components/ErrorAlert";
+import { handleAuthError } from "@/lib/auth-errors";
 
 export default function CustomerRegisterPage() {
   const [submitting, setSubmitting] = useState(false);
@@ -18,10 +19,7 @@ export default function CustomerRegisterPage() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    // Prevent multiple simultaneous submissions
-    if (submitting) {
-      return;
-    }
+    if (submitting) return;
     
     setError(null);
     setSubmitting(true);
@@ -48,17 +46,13 @@ export default function CustomerRegisterPage() {
       if (signUpError) throw signUpError;
 
       if (data.user) {
-        // If identities is empty array, it means this email already exists in Supabase
         if (data.user.identities && data.user.identities.length === 0) {
           setSubmitting(false);
-          toast.error("Account already exists", {
-            description: "An account with this email already exists. Please log in."
-          });
-          setError("An account with this email already exists. Please sign in instead.");
+          const parsed = handleAuthError(new Error("User already registered"), "registration");
+          setError(`${parsed.title}: ${parsed.description}`);
           return;
         }
 
-        // Auto-provision profile and wallet records in database
         try {
           await supabase.from('profiles').upsert({
             id: data.user.id,
@@ -75,7 +69,6 @@ export default function CustomerRegisterPage() {
           console.warn("Profile auto-provision note:", dbErr);
         }
 
-        // If active session returned (auto-confirm or email confirmation disabled)
         if (data.session) {
           setSubmitting(false);
           toast.success("Account created successfully!", {
@@ -84,22 +77,17 @@ export default function CustomerRegisterPage() {
           window.location.href = "/customer/dashboard";
           return;
         } else {
-          // Email confirmation is required by Supabase project settings
           setSubmitting(false);
           toast.success("Registration successful!", {
-            description: "Please check your email to confirm your account, then log in."
+            description: "Please check your email inbox to confirm your account, then log in."
           });
-          setError("Account created! A confirmation link was sent to your email. Please click the link to activate your account, or log in.");
+          setError("Account created! A confirmation link was sent to your email. Please click the link to activate your account.");
         }
       }
     } catch (err: unknown) {
-      const errorObj = err as { name?: string; message?: string };
       console.error("Registration error:", err);
-      
-      toast.error("Registration failed", {
-        description: errorObj?.message || "Failed to create account"
-      });
-      setError(errorObj?.message || "Failed to create account. Please check your credentials and try again.");
+      const parsed = handleAuthError(err, "registration");
+      setError(`${parsed.title}: ${parsed.description}`);
     } finally {
       setSubmitting(false);
     }

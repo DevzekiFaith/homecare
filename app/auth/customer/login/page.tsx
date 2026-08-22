@@ -8,6 +8,7 @@ import { Loader2, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import Logo from "@/app/components/Logo";
 import ErrorAlert from "@/app/components/ErrorAlert";
+import { handleAuthError } from "@/lib/auth-errors";
 
 export default function CustomerLoginPage() {
   const [submitting, setSubmitting] = useState(false);
@@ -30,8 +31,7 @@ export default function CustomerLoginPage() {
         description: `We've sent a new confirmation link to ${unconfirmedEmail}. Please check your inbox or spam.`
       });
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to resend confirmation email.";
-      toast.error("Failed to resend email", { description: msg });
+      handleAuthError(err, "resend confirmation");
     } finally {
       setResending(false);
     }
@@ -40,10 +40,7 @@ export default function CustomerLoginPage() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    // Prevent multiple simultaneous submissions
-    if (submitting) {
-      return;
-    }
+    if (submitting) return;
     
     setError(null);
     setUnconfirmedEmail(null);
@@ -59,47 +56,25 @@ export default function CustomerLoginPage() {
         password,
       });
 
-      if (signInError) {
-        console.error("Supabase login error:", signInError);
-        throw signInError;
-      }
+      if (signInError) throw signInError;
 
       if (data.user) {
         setSubmitting(false);
         toast.success("Login successful!", {
-          description: "Welcome back! Redirecting to dashboard..."
+          description: "Welcome back! Redirecting to customer dashboard..."
         });
         window.location.href = "/customer/dashboard";
         return;
       } else {
-        throw new Error("No user data returned from login");
+        throw new Error("No user profile session returned");
       }
     } catch (err: unknown) {
       console.error("Login error details:", err);
-      const errorObj = err as { name?: string; message?: string };
-      
-      // Handle AbortError specifically (concurrent auth requests)
-      if (errorObj?.name === 'AbortError' || errorObj?.message?.includes('Lock broken')) {
-        toast.error("Please wait", {
-          description: "Another login request is in progress. Please wait a moment and try again."
-        });
-        setError("Please wait a moment before trying again.");
-        setSubmitting(false);
-        return;
-      }
-      
-      const isEmailNotConfirmed = errorObj?.message?.toLowerCase().includes("email not confirmed");
-      if (isEmailNotConfirmed) {
+      const parsed = handleAuthError(err, "login");
+      if (parsed.isUnconfirmedEmail) {
         setUnconfirmedEmail(email);
       }
-
-      const errorMessage = errorObj?.message?.includes("Invalid login credentials")
-        ? "Invalid email or PIN. Please check your credentials and try again."
-        : isEmailNotConfirmed
-        ? "Your email has not been confirmed yet. Please check your inbox or click below to resend the confirmation link."
-        : errorObj?.message || "Failed to log in. Please check your credentials.";
-
-      setError(errorMessage);
+      setError(`${parsed.title}: ${parsed.description}`);
     } finally {
       setSubmitting(false);
     }

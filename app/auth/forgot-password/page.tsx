@@ -8,6 +8,7 @@ import { Loader2, Mail } from "lucide-react";
 import { toast } from "sonner";
 import Logo from "@/app/components/Logo";
 import ErrorAlert from "@/app/components/ErrorAlert";
+import { handleAuthError } from "@/lib/auth-errors";
 
 export default function ForgotPasswordPage() {
   const [submitting, setSubmitting] = useState(false);
@@ -35,11 +36,8 @@ export default function ForgotPasswordPage() {
         description: "Please check your email for the password reset link."
       });
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to send reset link.";
-      toast.error("Request failed", {
-        description: msg
-      });
-      setError(msg);
+      const parsed = handleAuthError(err, "password reset");
+      setError(`${parsed.title}: ${parsed.description}`);
     } finally {
       setSubmitting(false);
     }

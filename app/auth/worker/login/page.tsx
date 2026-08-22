@@ -5,8 +5,10 @@ import { FormEvent, useState } from "react";
 import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 import { Eye, EyeOff } from "lucide-react";
+import { toast } from "sonner";
 import Logo from "@/app/components/Logo";
 import ErrorAlert from "@/app/components/ErrorAlert";
+import { handleAuthError } from "@/lib/auth-errors";
 
 export default function WorkerLoginPage() {
   const [submitting, setSubmitting] = useState(false);
@@ -25,10 +27,11 @@ export default function WorkerLoginPage() {
         email: unconfirmedEmail,
       });
       if (resendError) throw resendError;
-      setMessage("Confirmation email resent! Please check your inbox.");
+      toast.success("Confirmation email sent!", {
+        description: `We've sent a new confirmation link to ${unconfirmedEmail}.`
+      });
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to resend confirmation email.";
-      setMessage(`Failed to resend: ${msg}`);
+      handleAuthError(err, "resend confirmation");
     } finally {
       setResending(false);
     }
@@ -36,17 +39,13 @@ export default function WorkerLoginPage() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-    // Prevent multiple simultaneous submissions
-    if (submitting) {
-      return;
-    }
-    
+    if (submitting) return;
+
     setMessage(null);
     setUnconfirmedEmail(null);
     setSubmitting(true);
 
-    const form = e.target as HTMLFormElement;
+    const form = e.currentTarget;
     const formData = new FormData(form);
     const email = (formData.get("email") as string)?.trim().toLowerCase() ?? "";
     const pin = (formData.get("pin") as string)?.trim() ?? "";
@@ -54,48 +53,28 @@ export default function WorkerLoginPage() {
     const supabase = createClient();
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error: signInErr } = await supabase.auth.signInWithPassword({
         email,
         password: pin,
       });
 
-      if (error) {
-        // Handle AbortError specifically
-        if (error.name === 'AbortError' || error.message?.includes('Lock broken')) {
-          setMessage("Please wait a moment before trying again.");
-          setSubmitting(false);
-          return;
-        }
-
-        if (error.message?.toLowerCase().includes("email not confirmed")) {
-          setUnconfirmedEmail(email);
-          setMessage("Email not confirmed. Please check your inbox or click below to resend confirmation.");
-          return;
-        }
-
-        setMessage(`Login failed: Invalid email or PIN.`);
-        return;
-      }
+      if (signInErr) throw signInErr;
 
       setSubmitting(false);
+      toast.success("Pro Login Successful!", {
+        description: "Welcome back! Redirecting to Artisan Dashboard..."
+      });
       setMessage("Logged in securely. Redirecting to Pro Center...");
       setTimeout(() => {
         window.location.href = "/worker/dashboard";
-      }, 1000);
+      }, 600);
     } catch (err: unknown) {
-      const errorObj = err as { name?: string; message?: string };
-      // Handle AbortError specifically
-      if (errorObj?.name === 'AbortError' || errorObj?.message?.includes('Lock broken')) {
-        setMessage("Please wait a moment before trying again.");
-        setSubmitting(false);
-        return;
-      }
-      if (errorObj?.message?.toLowerCase().includes("email not confirmed")) {
+      console.error("Worker login error:", err);
+      const parsed = handleAuthError(err, "artisan login");
+      if (parsed.isUnconfirmedEmail) {
         setUnconfirmedEmail(email);
-        setMessage("Email not confirmed. Please check your inbox or click below to resend confirmation.");
-        return;
       }
-      setMessage(`Login failed: ${errorObj?.message || "Invalid credentials"}`);
+      setMessage(`${parsed.title}: ${parsed.description}`);
     } finally {
       setSubmitting(false);
     }
