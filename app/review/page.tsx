@@ -36,6 +36,24 @@ function ReviewForm() {
     }
 
     async function loadDetails() {
+      if (requestId === "demo-job-id") {
+        setRequestDetails({
+          id: "demo-job-id",
+          customer_id: null,
+          service_type: "Electrical",
+          assigned_worker_id: "demo-worker-id",
+        });
+        setWorkerDetails({
+          id: "demo-worker-id",
+          full_name: "Ezekiel Oghojafor",
+          primary_skill: "Electrical",
+          experience_years: 8,
+          is_verified: true,
+        });
+        setLoading(false);
+        return;
+      }
+
       try {
         // 1. Check if already reviewed
         const reviewed = await hasRequestBeenReviewed(requestId!);

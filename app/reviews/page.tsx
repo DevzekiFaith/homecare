@@ -80,6 +80,48 @@ export default function PublicReviewsPage() {
       {/* Main content grid */}
       <div className="mx-auto max-w-5xl px-4 sm:px-6 py-10 relative z-10">
         
+        {/* Artisan Live Review QR Code Simulator card */}
+        <div className="bg-gradient-to-br from-slate-900 to-sky-950 border border-slate-800 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center gap-8 mb-10 text-white shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-sky-500/10 rounded-full blur-2xl pointer-events-none" />
+          
+          {/* Left Column: Interactive QR Code Image */}
+          <div className="shrink-0 bg-white p-4 rounded-2xl border border-white/10 shadow-lg text-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
+                `${typeof window !== "undefined" ? window.location.origin : ""}/review?request_id=demo-job-id`
+              )}`}
+              alt="Artisan Review QR Code"
+              className="w-36 h-36 mx-auto"
+            />
+            <span className="text-[9px] font-black uppercase tracking-wider text-slate-500 block mt-2">
+              Scan with Mobile Phone
+            </span>
+          </div>
+
+          {/* Right Column: Description & Simulation Button */}
+          <div className="flex-1 space-y-4 text-center md:text-left">
+            <span className="text-[9px] font-black uppercase tracking-widest text-sky-400 bg-sky-500/10 px-3 py-1 rounded-full border border-sky-500/20 inline-block">
+              Interactive UI Simulator
+            </span>
+            <h2 className="text-xl sm:text-2xl font-black uppercase tracking-wide">
+              Artisan Live Review QR Code
+            </h2>
+            <p className="text-xs text-slate-300 font-medium leading-relaxed max-w-xl">
+              This is the QR code presented by professionals (like Electricians or Plumbers) upon completing a job. Scan it with your phone to open the rating page instantly, or click below to open the mobile simulator directly in your browser.
+            </p>
+            <div className="flex flex-wrap justify-center md:justify-start gap-3 pt-2">
+              <Link
+                href="/review?request_id=demo-job-id"
+                className="h-10 px-6 rounded-full bg-sky-500 hover:bg-sky-600 text-white font-extrabold uppercase tracking-widest text-[10px] flex items-center gap-2 shadow-md shadow-sky-500/20 transition-all hover:scale-102 cursor-pointer"
+              >
+                <span>Launch Review Simulator</span>
+                <ArrowRight size={12} />
+              </Link>
+            </div>
+          </div>
+        </div>
+
         {/* Search & filters panel */}
         <div className="p-4 bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-col sm:flex-row items-center gap-3 mb-8">
           <div className="relative flex-1 w-full">
