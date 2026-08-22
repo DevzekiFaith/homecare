@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Image as ImageIcon, Loader2, CheckCircle2, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
-import { X, MessageCircle, Navigation } from "lucide-react";
+import { X, MessageCircle, Navigation, Star } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
 
 const LiveMap = dynamic(() => import("@/app/components/LiveMap"), { ssr: false });
@@ -390,16 +390,27 @@ export default function CustomerDashboardPage() {
                              <div className="flex gap-2">
                                <button 
                                  onClick={() => setChatJob(request)}
-                                 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-foreground flex items-center gap-1 bg-white/5 px-3 py-1.5 rounded-full border border-white/10 hover:bg-white/10 transition-all"
+                                 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-foreground flex items-center gap-1 bg-white/5 px-3 py-1.5 rounded-full border border-white/10 hover:bg-white/10 transition-all cursor-pointer"
                                >
                                  <MessageCircle size={10} /> Chat
                                </button>
                                <button 
                                  onClick={() => setTrackingJob(request)}
-                                 className="text-[10px] font-bold uppercase tracking-widest text-brand-primary hover:text-brand-glow flex items-center gap-1 bg-brand-primary/10 px-3 py-1.5 rounded-full border border-brand-primary/20 hover:bg-brand-primary/20 transition-all"
+                                 className="text-[10px] font-bold uppercase tracking-widest text-brand-primary hover:text-brand-glow flex items-center gap-1 bg-brand-primary/10 px-3 py-1.5 rounded-full border border-brand-primary/20 hover:bg-brand-primary/20 transition-all cursor-pointer"
                                >
                                  <Navigation size={10} /> Track Pro
                                </button>
+                             </div>
+                          )}
+                          
+                          {request.status?.toLowerCase() === 'completed' && (
+                             <div className="flex gap-2">
+                               <Link 
+                                 href={`/review?request_id=${request.id}`}
+                                 className="text-[10px] font-bold uppercase tracking-widest text-emerald-500 hover:text-emerald-400 flex items-center gap-1 bg-emerald-500/10 px-3 py-1.5 rounded-full border border-emerald-500/20 hover:bg-emerald-500/20 transition-all cursor-pointer"
+                               >
+                                 <Star size={10} fill="currentColor" /> Review Pro
+                               </Link>
                              </div>
                           )}
                         </div>

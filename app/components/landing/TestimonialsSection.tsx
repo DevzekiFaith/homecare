@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { Star, ArrowRight, ShieldCheck } from "lucide-react";
+import { useEffect, useState } from "react";
+import { fetchAllReviews } from "@/lib/reviews";
 
 const stats = [
   { value: "41%", label: "Faster Dispatch", desc: "Instant matching algorithm connects you to nearby pros in under 15 mins." },
@@ -36,6 +38,26 @@ const testimonials = [
 ];
 
 export default function TestimonialsSection() {
+  const [liveReviews, setLiveReviews] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function loadReviews() {
+      const { data } = await fetchAllReviews();
+      if (data && data.length > 0) {
+        const formatted = data.map((r) => ({
+          name: r.customer_name || "Guest Customer",
+          role: `${r.service_type} Pro Review`,
+          text: r.comment || `Rated ${r.rating} stars for outstanding service.`,
+          rating: r.rating
+        }));
+        setLiveReviews(formatted);
+      }
+    }
+    loadReviews();
+  }, []);
+
+  const allTestimonials = [...liveReviews, ...testimonials];
+
   return (
     <section className="py-20 px-6 bg-white relative z-10 overflow-hidden">
       <div className="max-w-7xl mx-auto">
@@ -112,7 +134,7 @@ export default function TestimonialsSection() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {testimonials.map((t, index) => (
+            {allTestimonials.map((t, index) => (
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -124,7 +146,12 @@ export default function TestimonialsSection() {
                 <div>
                   <div className="flex gap-1 mb-4 text-amber-400">
                     {[1, 2, 3, 4, 5].map((s) => (
-                      <Star key={s} size={16} fill="currentColor" />
+                      <Star 
+                        key={s} 
+                        size={16} 
+                        fill={s <= (t.rating ?? 5) ? "currentColor" : "none"} 
+                        className={s <= (t.rating ?? 5) ? "text-amber-400" : "text-slate-200"}
+                      />
                     ))}
                   </div>
                   
@@ -134,7 +161,7 @@ export default function TestimonialsSection() {
                 </div>
                 
                 <div className="flex items-center gap-3 pt-4 border-t border-slate-200/60">
-                  <div className="w-10 h-10 rounded-full bg-sky-600 text-white flex items-center justify-center font-bold text-sm shadow-sm">
+                  <div className="w-10 h-10 rounded-full bg-sky-600 text-white flex items-center justify-center font-bold text-sm shadow-sm uppercase">
                     {t.name[0]}
                   </div>
                   <div>

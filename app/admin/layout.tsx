@@ -13,7 +13,8 @@ import {
   ShoppingBag,
   Lock,
   ShieldCheck,
-  Home
+  Home,
+  Star
 } from "lucide-react";
 import { motion } from "framer-motion";
 import AdminLockScreen from "@/app/components/admin/AdminLockScreen";
@@ -26,6 +27,7 @@ const NAV = [
   { href: "/admin/workers", label: "Workers", icon: Users },
   { href: "/admin/store-orders", label: "Store Orders", icon: ShoppingBag },
   { href: "/admin/payments", label: "Payments", icon: ShieldCheck },
+  { href: "/admin/reviews", label: "Reviews", icon: Star },
   { href: "/admin/cities", label: "Cities", icon: MapPin },
   { href: "/admin/surge", label: "Surge Pricing", icon: TrendingUp },
 ];

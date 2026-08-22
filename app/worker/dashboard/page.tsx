@@ -43,11 +43,12 @@ export default function WorkerDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'radar' | 'my-jobs'>('radar');
+  const [activeTab, setActiveTab] = useState<'radar' | 'my-jobs' | 'completed'>('radar');
   const [user, setUser] = useState<User | null>(null);
   const [balance, setBalance] = useState<number>(0);
   const [trackingJobId, setTrackingJobId] = useState<string | null>(null);
   const [chatJob, setChatJob] = useState<ServiceRequest | null>(null);
+  const [qrCodeJob, setQrCodeJob] = useState<ServiceRequest | null>(null);
   const watchIdRef = useRef<number | null>(null);
   const supabase = useMemo(() => createClient(), []);
 
@@ -145,10 +146,10 @@ export default function WorkerDashboardPage() {
           if (data.user && updatedWallet.user_id === data.user.id) {
              setBalance(Number(updatedWallet.balance));
              if (payload.old && Number(updatedWallet.balance) > Number(payload.old.balance)) {
-                 toast.success("Earnings Updated!", {
-                   description: `Your balance is now ₦${Number(updatedWallet.balance).toLocaleString()}`,
-                   icon: <CheckCircle2 className="text-emerald-500" />
-                 });
+                  toast.success("Earnings Updated!", {
+                    description: `Your balance is now ₦${Number(updatedWallet.balance).toLocaleString()}`,
+                    icon: <CheckCircle2 className="text-emerald-500" />
+                  });
              }
           }
         }
@@ -189,12 +190,19 @@ export default function WorkerDashboardPage() {
          .from("service_requests")
          .update({ status: 'completed' })
          .eq('id', jobId);
- 
+  
        if (updateError) throw updateError;
        
        toast.success("Job Completed!", {
          description: "Well done, Pro! Earnings updated."
        });
+       
+       // Get the job details to display in the QR modal
+       const completedJob = requests.find(r => r.id === jobId);
+       if (completedJob) {
+         setQrCodeJob({ ...completedJob, status: 'completed' });
+       }
+       
        fetchRequests();
      } catch (err: unknown) {
        toast.error("Update failed", { description: err instanceof Error ? err.message : "Error" });
@@ -247,11 +255,10 @@ export default function WorkerDashboardPage() {
         navigator.geolocation.clearWatch(watchIdRef.current);
       }
     };
-  }, []);
-
-  const radarJobs = requests.filter(r => r.status === 'pending' || r.status === 'new' || !r.assigned_worker_id);
+  }, []);  const radarJobs = requests.filter(r => r.status === 'pending' || r.status === 'new' || !r.assigned_worker_id);
   const myActiveJobs = requests.filter(r => r.assigned_worker_id === user?.id && r.status === 'in_progress');
-  const displayJobs = activeTab === 'radar' ? radarJobs : myActiveJobs;
+  const myCompletedJobs = requests.filter(r => r.assigned_worker_id === user?.id && r.status === 'completed');
+  const displayJobs = activeTab === 'radar' ? radarJobs : activeTab === 'my-jobs' ? myActiveJobs : myCompletedJobs;
 
   return (
     <div className="relative min-h-screen bg-background px-4 py-8 text-foreground antialiased overflow-hidden">
@@ -306,41 +313,48 @@ export default function WorkerDashboardPage() {
           </div>
 
           {/* Navigation Tabs */}
-          <div className="flex bg-white/5 p-1 rounded-2xl border border-white/10 w-full sm:w-fit">
+          <div className="flex bg-white/5 p-1 rounded-2xl border border-white/10 w-full sm:w-fit flex-wrap gap-1 sm:gap-0">
             <button 
               onClick={() => setActiveTab('radar')}
-              className={`flex-1 sm:flex-none flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold transition-all ${activeTab === 'radar' ? 'bg-brand-primary text-background' : 'text-zinc-500 hover:text-foreground'}`}
+              className={`flex-grow sm:flex-none flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all ${activeTab === 'radar' ? 'bg-brand-primary text-background font-black' : 'text-zinc-500 hover:text-foreground'}`}
             >
               <Navigation size={14} /> Area Radar
             </button>
             <button 
               onClick={() => setActiveTab('my-jobs')}
-              className={`flex-1 sm:flex-none flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold transition-all ${activeTab === 'my-jobs' ? 'bg-brand-primary text-background' : 'text-zinc-500 hover:text-foreground'}`}
+              className={`flex-grow sm:flex-none flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all ${activeTab === 'my-jobs' ? 'bg-brand-primary text-background font-black' : 'text-zinc-500 hover:text-foreground'}`}
             >
               <ClipboardList size={14} /> My Active Jobs 
-              {myActiveJobs.length > 0 && <span className="flex h-4 w-4 items-center justify-center rounded-full bg-white/20 text-[9px]">{myActiveJobs.length}</span>}
+              {myActiveJobs.length > 0 && <span className="flex h-4 w-4 items-center justify-center rounded-full bg-white/20 text-[9px] font-black">{myActiveJobs.length}</span>}
+            </button>
+            <button 
+              onClick={() => setActiveTab('completed')}
+              className={`flex-grow sm:flex-none flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all ${activeTab === 'completed' ? 'bg-brand-primary text-background font-black' : 'text-zinc-500 hover:text-foreground'}`}
+            >
+              <CheckCircle2 size={14} /> Completed Jobs
+              {myCompletedJobs.length > 0 && <span className="flex h-4 w-4 items-center justify-center rounded-full bg-white/20 text-[9px] font-black">{myCompletedJobs.length}</span>}
             </button>
           </div>
 
           {/* Jobs Feed */}
           <motion.section variants={itemVariants} className="glass-panel p-6 shadow-premium">
              <div className="mb-6 flex items-center justify-between border-b border-white/10 pb-4">
-               <div className="flex items-center gap-3">
-                 {activeTab === 'radar' ? (
-                    <span className="relative flex h-3 w-3">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-primary opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-3 w-3 bg-brand-primary"></span>
-                    </span>
-                 ) : (
-                    <ClipboardList size={16} className="text-brand-primary" />
-                 )}
-                 <h2 className="text-[10px] uppercase tracking-widest font-bold text-zinc-400">
-                    {activeTab === 'radar' ? 'Incoming Request Radar' : 'Your Ongoing Projects'}
-                 </h2>
-               </div>
-               <span className="rounded-full bg-brand-primary/10 border border-brand-primary/20 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-brand-primary">
-                 {displayJobs.length} Total
-               </span>
+                <div className="flex items-center gap-3">
+                  {activeTab === 'radar' ? (
+                     <span className="relative flex h-3 w-3">
+                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-primary opacity-75"></span>
+                       <span className="relative inline-flex rounded-full h-3 w-3 bg-brand-primary"></span>
+                     </span>
+                  ) : (
+                     <ClipboardList size={16} className="text-brand-primary" />
+                  )}
+                  <h2 className="text-[10px] uppercase tracking-widest font-bold text-zinc-400">
+                     {activeTab === 'radar' ? 'Incoming Request Radar' : activeTab === 'my-jobs' ? 'Your Ongoing Projects' : 'Completed Projects'}
+                  </h2>
+                </div>
+                <span className="rounded-full bg-brand-primary/10 border border-brand-primary/20 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-brand-primary">
+                  {displayJobs.length} Total
+                </span>
              </div>
 
              <div className="divide-y divide-white/5">
@@ -359,10 +373,10 @@ export default function WorkerDashboardPage() {
                  <div className="py-12 flex flex-col items-center justify-center text-zinc-500">
                    <CheckCircle2 size={32} className="mb-3 opacity-20" />
                    <p className="text-sm font-bold text-foreground">
-                      {activeTab === 'radar' ? 'Radar is empty' : 'You have no active jobs'}
+                      {activeTab === 'radar' ? 'Radar is empty' : activeTab === 'my-jobs' ? 'You have no active jobs' : 'No completed jobs yet'}
                    </p>
                    <p className="text-xs mt-1">
-                      {activeTab === 'radar' ? 'Leave your radar on to get notified instantly.' : 'Claim a job from the radar to get started.'}
+                      {activeTab === 'radar' ? 'Leave your radar on to get notified instantly.' : activeTab === 'my-jobs' ? 'Claim a job from the radar to get started.' : 'Completed jobs will appear here.'}
                    </p>
                  </div>
                ) : (
@@ -431,27 +445,27 @@ export default function WorkerDashboardPage() {
                             {activeTab === 'radar' ? (
                                 <button 
                                   onClick={() => handleAcceptJob(job.id)}
-                                  className="btn-minimal h-9 px-6 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] shadow-premium hover:shadow-[0_0_15px_rgba(249,115,22,0.3)] transition-all"
+                                  className="btn-minimal h-9 px-6 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] shadow-premium hover:shadow-[0_0_15px_rgba(249,115,22,0.3)] transition-all cursor-pointer"
                                 >
                                   Accept Job
                                 </button>
-                            ) : (
+                            ) : activeTab === 'my-jobs' ? (
                               <div className="flex flex-wrap items-center justify-end gap-2">
                                 <button 
                                   onClick={() => handleCompleteJob(job.id)}
-                                  className="flex items-center gap-2 h-9 px-6 bg-emerald-500 text-white rounded-full text-[10px] font-bold uppercase tracking-[0.15em] shadow-premium hover:bg-emerald-600 transition-all"
+                                  className="flex items-center gap-2 h-9 px-6 bg-emerald-500 text-white rounded-full text-[10px] font-bold uppercase tracking-[0.15em] shadow-premium hover:bg-emerald-600 transition-all cursor-pointer"
                                 >
                                   <Check size={14} /> Complete
                                 </button>
                                 <button 
                                   onClick={() => setChatJob(job)}
-                                  className="flex items-center gap-2 h-9 px-6 bg-white/5 text-zinc-400 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] border border-white/10 hover:bg-white/10 transition-all"
+                                  className="flex items-center gap-2 h-9 px-6 bg-white/5 text-zinc-400 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] border border-white/10 hover:bg-white/10 transition-all cursor-pointer"
                                 >
                                   <MessageCircle size={14} /> Chat
                                 </button>
                                 <button
                                   onClick={() => toggleTracking(job.id)}
-                                  className={`flex items-center gap-2 h-9 px-6 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] shadow-premium transition-all ${
+                                  className={`flex items-center gap-2 h-9 px-6 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] shadow-premium transition-all cursor-pointer ${
                                     trackingJobId === job.id 
                                       ? 'bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500/20' 
                                       : 'bg-blue-500/10 border border-blue-500/30 text-blue-500 hover:bg-blue-500/20'
@@ -459,6 +473,15 @@ export default function WorkerDashboardPage() {
                                 >
                                   <Navigation size={14} className={trackingJobId === job.id ? 'animate-pulse' : ''} /> 
                                   {trackingJobId === job.id ? 'Stop GPS' : 'Share GPS'}
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="flex flex-wrap items-center justify-end gap-2">
+                                <button 
+                                  onClick={() => setQrCodeJob(job)}
+                                  className="flex items-center gap-2 h-9 px-6 bg-sky-600 hover:bg-sky-500 text-white rounded-full text-[10px] font-bold uppercase tracking-[0.15em] shadow-premium transition-all cursor-pointer"
+                                >
+                                  <ExternalLink size={14} /> Review QR Code
                                 </button>
                               </div>
                             )}
@@ -503,6 +526,70 @@ export default function WorkerDashboardPage() {
                 alt="Enlarged issue detail" 
                 className="w-full h-full object-contain max-h-[90vh]" 
               />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* QR Code Modal for Customer Reviews */}
+      <AnimatePresence>
+        {qrCodeJob && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4"
+            onClick={() => setQrCodeJob(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="bg-zinc-900 border border-white/10 rounded-3xl p-6 max-w-sm w-full text-center relative shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className="absolute top-4 right-4 text-zinc-500 hover:text-white transition-colors cursor-pointer"
+                onClick={() => setQrCodeJob(null)}
+              >
+                <X size={18} />
+              </button>
+
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-500/10 text-sky-400 mx-auto mb-4 border border-sky-500/20">
+                <CheckCircle2 size={24} />
+              </div>
+
+              <h3 className="text-lg font-bold text-white uppercase tracking-wide">Job Completed!</h3>
+              <p className="text-xs text-zinc-400 mt-1 mb-6 leading-relaxed">
+                Ask the customer to scan this live review QR code on their device.
+              </p>
+
+              {/* QR Code Image Container */}
+              <div className="bg-white p-4 rounded-2xl inline-block shadow-lg mb-6 border border-white/10">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
+                    `${typeof window !== "undefined" ? window.location.origin : ""}/review?request_id=${qrCodeJob.id}`
+                  )}`}
+                  alt="Review QR Code"
+                  className="w-48 h-48 mx-auto"
+                />
+              </div>
+
+              <div className="space-y-1.5 text-left bg-white/5 p-4 rounded-2xl border border-white/5 text-xs text-zinc-400">
+                <div className="flex justify-between">
+                  <span>Service Type:</span>
+                  <span className="font-bold text-white uppercase">{qrCodeJob.service_type}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Artisan Pro:</span>
+                  <span className="font-bold text-white">{user?.user_metadata?.full_name || "Verified Pro"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Location:</span>
+                  <span className="font-bold text-white truncate max-w-[150px]">{qrCodeJob.address.split(',')[0]}</span>
+                </div>
+              </div>
             </motion.div>
           </motion.div>
         )}
