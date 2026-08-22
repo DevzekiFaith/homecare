@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ShieldCheck, Wallet, Zap, ShoppingCart, Shield, User as UserIcon } from "lucide-react";
+import { ShieldCheck, Wallet, Zap, ShoppingCart, Shield, User as UserIcon, Star } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useEffect, useState, useMemo } from "react";
 import { usePathname } from "next/navigation";
@@ -140,6 +140,14 @@ export default function Nav() {
               <span>Login</span>
             </Link>
           )}
+
+          <Link
+            href="/reviews"
+            className="hidden md:flex items-center gap-1.5 rounded-full px-3 py-2 text-[11px] uppercase tracking-widest font-bold text-slate-600 hover:text-sky-600 hover:bg-sky-50 transition-colors mr-1"
+          >
+            <Star size={14} className="text-sky-600" />
+            <span>Reviews</span>
+          </Link>
 
           <Link
             href="/store"

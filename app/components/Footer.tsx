@@ -49,6 +49,11 @@ export default function Footer() {
                   Parts Store
                 </Link>
               </li>
+              <li>
+                <Link href="/reviews" className="hover:text-white transition-colors">
+                  Client Reviews
+                </Link>
+              </li>
             </ul>
           </div>
 
