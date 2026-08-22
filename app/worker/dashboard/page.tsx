@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { X, ExternalLink, AlertCircle, CheckCircle2, Navigation, ClipboardList, Check, MessageCircle } from "lucide-react";
+import { X, ExternalLink, AlertCircle, CheckCircle2, Navigation, ClipboardList, Check, MessageCircle, Camera } from "lucide-react";
 import { toast } from "sonner";
 import Logo from "@/app/components/Logo";
 import dynamic from "next/dynamic";
@@ -52,6 +52,7 @@ export default function WorkerDashboardPage() {
   const watchIdRef = useRef<number | null>(null);
   const supabase = useMemo(() => createClient(), []);
   const [origin, setOrigin] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -67,6 +68,16 @@ export default function WorkerDashboardPage() {
       if (!userData.user) {
         setLoading(false);
         return;
+      }
+
+      // Fetch avatar URL and profile details
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("avatar_url")
+        .eq("id", userData.user.id)
+        .maybeSingle();
+      if (profile && profile.avatar_url) {
+        setAvatarUrl(profile.avatar_url);
       }
 
       // Execute wallet and requests fetches concurrently in parallel
@@ -255,6 +266,56 @@ export default function WorkerDashboardPage() {
     }
   };
 
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    const toastId = toast.loading("Uploading profile image...");
+    try {
+      const fileExt = file.name.split(".").pop();
+      const fileName = `avatars/${user.id}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      // 1. Upload to Supabase Storage (job-photos bucket)
+      const { error: uploadErr } = await supabase.storage
+        .from("job-photos")
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadErr) throw uploadErr;
+
+      // 2. Retrieve public URL
+      const { data: publicUrlData } = supabase.storage
+        .from("job-photos")
+        .getPublicUrl(filePath);
+
+      const publicUrl = publicUrlData?.publicUrl;
+      if (!publicUrl) throw new Error("Could not retrieve image URL.");
+
+      // 3. Update profiles table
+      const { error: profileErr } = await supabase
+        .from("profiles")
+        .update({ avatar_url: publicUrl })
+        .eq("id", user.id);
+
+      if (profileErr) throw profileErr;
+
+      // 4. Update professionals table
+      const { error: proErr } = await supabase
+        .from("professionals")
+        .update({ avatar_url: publicUrl })
+        .eq("id", user.id);
+
+      if (proErr) console.warn("Professional avatar update warning:", proErr.message);
+
+      // 5. Update state
+      setAvatarUrl(publicUrl);
+      toast.success("Profile photo updated successfully!", { id: toastId });
+    } catch (err: any) {
+      console.error("Avatar upload error:", err);
+      toast.error("Upload failed", { description: err.message, id: toastId });
+    }
+  };
+
   // Cleanup GPS on unmount
   useEffect(() => {
     return () => {
@@ -285,12 +346,32 @@ export default function WorkerDashboardPage() {
               </p>
             </div>
           </div>
-          <div className="text-left sm:text-right text-xs text-zinc-500">
-            <p className="font-bold text-foreground">Worker Profile</p>
-            <p className="uppercase tracking-widest mt-1 text-[10px]">Verified Professional</p>
-            <span className="mt-2 inline-flex h-6 items-center rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 text-[9px] font-bold uppercase tracking-widest text-emerald-500 shadow-[0_0_10px_-2px_rgba(16,185,129,0.3)]">
-              Radar Active
-            </span>
+          <div className="flex items-center gap-4 text-left sm:text-right">
+            <div className="relative group cursor-pointer" onClick={() => document.getElementById("avatar-file-input")?.click()}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user?.user_metadata?.full_name || "worker")}`}
+                alt="Profile Avatar"
+                className="w-14 h-14 rounded-2xl border border-white/10 group-hover:border-sky-500 transition-colors bg-white/5 object-cover"
+              />
+              <div className="absolute inset-0 bg-black/60 rounded-2xl opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                <Camera size={16} className="text-white" />
+              </div>
+              <input
+                type="file"
+                id="avatar-file-input"
+                className="hidden"
+                accept="image/*"
+                onChange={handleAvatarUpload}
+              />
+            </div>
+            <div className="text-left text-xs text-zinc-500">
+              <p className="font-bold text-foreground">{user?.user_metadata?.full_name || "Worker Profile"}</p>
+              <p className="uppercase tracking-widest mt-1 text-[10px]">Verified Professional</p>
+              <span className="mt-2 inline-flex h-6 items-center rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 text-[9px] font-bold uppercase tracking-widest text-emerald-500 shadow-[0_0_10px_-2px_rgba(16,185,129,0.3)]">
+                Radar Active
+              </span>
+            </div>
           </div>
         </header>
 

@@ -201,7 +201,7 @@ export default function AdminReviewsPage() {
                     <div className="flex items-center gap-1.5 text-slate-600">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(review.worker_name || "worker")}`}
+                        src={review.worker_avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(review.worker_name || "worker")}`}
                         alt={review.worker_name || "Worker"}
                         className="w-5 h-5 rounded-full bg-sky-50 border border-sky-200 shrink-0 object-cover"
                       />

@@ -229,7 +229,7 @@ function ReviewForm() {
         <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(workerDetails?.full_name || "worker")}`}
+            src={workerDetails?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(workerDetails?.full_name || "worker")}`}
             alt={workerDetails?.full_name || "Worker"}
             className="w-12 h-12 rounded-2xl bg-sky-50 shadow-md shrink-0 border border-sky-200 object-cover"
           />

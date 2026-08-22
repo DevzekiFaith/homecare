@@ -229,7 +229,7 @@ export default function PublicReviewsPage() {
                 <div className="flex items-center gap-3 pt-4 border-t border-slate-100 mt-auto">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(review.worker_name || "worker")}`}
+                    src={review.worker_avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(review.worker_name || "worker")}`}
                     alt={review.worker_name || "Worker"}
                     className="w-10 h-10 rounded-xl bg-sky-50 shadow-sm shrink-0 border border-sky-200 object-cover"
                   />

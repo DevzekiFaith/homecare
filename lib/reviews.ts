@@ -11,6 +11,7 @@ export interface Review {
   // Dynamic display fields
   customer_name?: string;
   worker_name?: string;
+  worker_avatar?: string | null;
   service_type?: string;
 }
 
@@ -54,7 +55,7 @@ export async function fetchAllReviews(): Promise<{ data: Review[]; isFallback: b
       .from("reviews")
       .select(`
         *,
-        worker:profiles!worker_id(full_name),
+        worker:profiles!worker_id(full_name, avatar_url),
         customer:profiles!customer_id(full_name),
         service_requests(service_type)
       `)
@@ -78,6 +79,7 @@ export async function fetchAllReviews(): Promise<{ data: Review[]; isFallback: b
       comment: item.comment,
       created_at: item.created_at,
       worker_name: item.worker?.full_name || "Unknown Worker",
+      worker_avatar: item.worker?.avatar_url || null,
       customer_name: item.customer?.full_name || "Anonymous Customer",
       service_type: item.service_requests?.service_type || "General Service",
     }));
