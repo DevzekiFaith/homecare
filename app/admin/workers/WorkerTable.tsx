@@ -28,6 +28,7 @@ export type Worker = {
   nin: string | null;
   is_verified: boolean;
   ai_verified: boolean | null;
+  avatar_url?: string | null;
   created_at: string;
 };
 
@@ -271,9 +272,12 @@ export default function WorkerTable({ initialWorkers }: { initialWorkers: Worker
                     >
                       {/* Name & Skill with Avatar */}
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="h-10 w-10 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center text-sky-700 font-black text-sm shrink-0 shadow-2xs">
-                          {worker.full_name?.charAt(0)?.toUpperCase() || "W"}
-                        </div>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={worker.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(worker.full_name || "worker")}`}
+                          alt={worker.full_name}
+                          className="h-10 w-10 rounded-xl bg-sky-50 border border-sky-200 object-cover shrink-0 shadow-2xs"
+                        />
                         <div className="min-w-0">
                           <p className="text-sm font-black text-slate-900 truncate">{worker.full_name}</p>
                           <p className="text-xs text-sky-700 font-bold mt-0.5">{worker.primary_skill || "General"}</p>
