@@ -1,5 +1,5 @@
 /**
- * CarePay — Single source of truth for cities and service areas.
+ * HomeCare — Single source of truth for cities and service areas.
  * Set `active: true` for cities currently accepting bookings.
  * Admin panel can toggle these in the future via Supabase table.
  */

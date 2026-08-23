@@ -13,7 +13,7 @@ export function getSiteUrl() {
   try {
     return new URL(SITE_URL);
   } catch {
-    return new URL("https://carepay.example");
+    return new URL("https://homecare.example");
   }
 }
 

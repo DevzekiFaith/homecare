@@ -2,9 +2,9 @@
 
 // Default Master Passcode for initial setup
 export const DEFAULT_ADMIN_PIN = "202688";
-const PIN_STORAGE_KEY = "carepay_admin_master_pin";
-const AUTH_SESSION_KEY = "carepay_admin_authenticated";
-const LOCK_TIMEOUT_KEY = "carepay_admin_lock_timeout";
+const PIN_STORAGE_KEY = "homecare_admin_master_pin";
+const AUTH_SESSION_KEY = "homecare_admin_authenticated";
+const LOCK_TIMEOUT_KEY = "homecare_admin_lock_timeout";
 
 export interface AdminSecuritySettings {
   pin: string;

@@ -1,5 +1,5 @@
 /**
- * CarePay payment / bank details (pay before the job).
+ * HomeCare payment / bank details (pay before the job).
  */
 export const PAYMENT_ACCOUNT = {
   bankName: "Globus Bank",

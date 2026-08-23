@@ -91,7 +91,7 @@ export default function AdminLayout({
             </Link>
             <span className="text-slate-300 font-bold hidden sm:inline">|</span>
             <span className="text-xs font-black uppercase tracking-wider text-sky-600 hidden sm:inline">
-              CarePay Admin Console
+              HomeCare Admin Console
             </span>
           </div>
           <div className="flex items-center gap-3">

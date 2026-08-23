@@ -1,5 +1,5 @@
 /**
- * CarePay Surge Pricing Engine
+ * HomeCare Surge Pricing Engine
  * Computes a price multiplier based on time of day, day of week, and service type.
  * Admin can override via real-time global settings.
  */
@@ -27,23 +27,23 @@ export const BASE_PRICES: Record<string, number> = {
 // Global in-memory overrides store
 declare global {
   // eslint-disable-next-line no-var
-  var __carepay_surge_overrides: Record<string, number> | undefined;
+  var __homecare_surge_overrides: Record<string, number> | undefined;
 }
 
-if (!globalThis.__carepay_surge_overrides) {
-  globalThis.__carepay_surge_overrides = {};
+if (!globalThis.__homecare_surge_overrides) {
+  globalThis.__homecare_surge_overrides = {};
 }
 
 export function getGlobalOverrides(): Record<string, number> {
-  return globalThis.__carepay_surge_overrides || {};
+  return globalThis.__homecare_surge_overrides || {};
 }
 
 export function setGlobalOverrides(overrides: Record<string, number>): void {
-  globalThis.__carepay_surge_overrides = { ...overrides };
+  globalThis.__homecare_surge_overrides = { ...overrides };
 }
 
 export function clearGlobalOverrides(): void {
-  globalThis.__carepay_surge_overrides = {};
+  globalThis.__homecare_surge_overrides = {};
 }
 
 /**

@@ -2,7 +2,7 @@ import { Resend } from "resend";
 
 const resendApiKey = process.env.RESEND_API_KEY || "";
 const fromEmail = process.env.RESEND_FROM_EMAIL || "HomeCare Support <support@homecare.com.ng>";
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://carepay.com.ng";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://homecare.com.ng";
 const logoUrl = `${siteUrl}/hclogo.png`;
 
 export const resend = resendApiKey ? new Resend(resendApiKey) : null;

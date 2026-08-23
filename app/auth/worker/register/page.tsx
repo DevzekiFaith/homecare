@@ -744,11 +744,11 @@ export default function WorkerRegisterPage() {
             </div>
             
             <p className="text-xs text-slate-600 font-medium leading-relaxed">
-              CarePay customers pay upfront for verified, secure home services. We ensure every pro is certified and vetted against national databases.
+              HomeCare customers pay upfront for verified, secure home services. We ensure every pro is certified and vetted against national databases.
             </p>
 
             <div className="space-y-3 pt-2 border-t border-slate-100">
-              <p className="text-xs font-black uppercase tracking-wider text-slate-900">Why Join CarePay?</p>
+              <p className="text-xs font-black uppercase tracking-wider text-slate-900">Why Join HomeCare?</p>
               <ul className="space-y-2.5 text-xs font-semibold text-slate-700">
                 <li className="flex items-center gap-2">
                   <CheckCircle2 size={14} className="text-emerald-600 shrink-0" /> Fast matching with high-paying customers
