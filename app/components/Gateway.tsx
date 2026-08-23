@@ -18,6 +18,7 @@ const SmartStorePreviewSection = dynamic(() => import("./landing/SmartStorePrevi
 const EducationalResourcesSection = dynamic(() => import("./landing/EducationalResourcesSection"));
 const TestimonialsSection = dynamic(() => import("./landing/TestimonialsSection"));
 const DualAudienceSection = dynamic(() => import("./landing/DualAudienceSection"));
+const CustomerQrCodeSection = dynamic(() => import("./landing/CustomerQrCodeSection"));
 const FAQSection = dynamic(() => import("./landing/FAQSection"));
 const FooterSection = dynamic(() => import("./landing/FooterSection"));
 
@@ -63,7 +64,10 @@ export default function Gateway() {
       {/* 13. PROFESSIONAL MARKETPLACE (# GOOD PROFESSIONALS DESERVE BETTER ACCESS TO CUSTOMERS) */}
       <DualAudienceSection />
 
-      {/* 14. FAQ & FOOTER */}
+      {/* 14. OUTDOOR CUSTOMER QR CODE (www.homecare.com.ng) */}
+      <CustomerQrCodeSection />
+
+      {/* 15. FAQ & FOOTER */}
       <FAQSection />
       <FooterSection />
     </div>
