@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import { motion } from "framer-motion";
@@ -46,6 +47,7 @@ const SKILLS = [
 
 
 export default function WorkerRegisterPage() {
+  const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
@@ -91,8 +93,38 @@ export default function WorkerRegisterPage() {
     const bio = (formData.get("bio") as string)?.trim() ?? "";
     const areas = formData.getAll("areas") as string[];
 
+    if (!name) {
+      setErrorMessage("Please enter your full legal name.");
+      setSubmitting(false);
+      return;
+    }
+
+    if (!email) {
+      setErrorMessage("Please enter your email address.");
+      setSubmitting(false);
+      return;
+    }
+
+    if (!phone) {
+      setErrorMessage("Please enter your phone number.");
+      setSubmitting(false);
+      return;
+    }
+
+    if (!pin || pin.length !== 6) {
+      setErrorMessage("Please enter a 6-digit security PIN.");
+      setSubmitting(false);
+      return;
+    }
+
     if (nin.length !== NIN_LENGTH || !/^\d+$/.test(nin)) {
       setNinError(`NIN must be exactly ${NIN_LENGTH} digits.`);
+      setSubmitting(false);
+      return;
+    }
+
+    if (!photoFile) {
+      setErrorMessage("Please select or capture a live selfie photo before submitting.");
       setSubmitting(false);
       return;
     }
@@ -178,15 +210,19 @@ export default function WorkerRegisterPage() {
           .eq("id", userId);
       }
 
-      toast.success("Profile submitted successfully! Admin review in progress.");
+      toast.success("Profile submitted successfully! Redirecting to Pro Center...");
       setSuccessMessage(
-        "Profile successfully submitted! Your registration is now live and our admin team will review and approve your technician profile."
+        "Profile successfully submitted! Redirecting you to your Pro Center dashboard..."
       );
       form.reset();
       setFullName("");
       setLockedName("");
       setCertFile(null);
       setPhotoFile(null);
+
+      setTimeout(() => {
+        router.push("/worker/dashboard");
+      }, 1500);
     } catch (err: any) {
       const parsed = handleAuthError(err, "artisan registration");
       setErrorMessage(`${parsed.title}: ${parsed.description}`);
@@ -257,7 +293,7 @@ export default function WorkerRegisterPage() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-10">
+          <form onSubmit={handleSubmit} noValidate className="space-y-10">
 
             {/* Sec 1: Personal Info */}
             <div className="space-y-5">
