@@ -112,10 +112,10 @@ export default function PropertyFacilitySection() {
             B2B &amp; Property Maintenance
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 uppercase font-heading tracking-tight">
-            Keep Your Property <span className="text-sky-600">Running.</span>
+            KEEP YOUR PROPERTY <span className="text-sky-600">RUNNING.</span>
           </h2>
           <p className="mt-2 text-slate-600 text-sm sm:text-base font-medium">
-            HomeCare goes beyond emergency repairs. We provide recurring maintenance contracts and preventive inspection sweeps.
+            Expand beyond emergency call-outs. HomeCare provides scheduled preventive maintenance, property sweeps, and facility SLAs for single units, shortlets, and estates.
           </p>
         </motion.div>
 
@@ -305,10 +305,10 @@ export default function PropertyFacilitySection() {
         {/* Action Button */}
         <div className="text-center mt-12">
           <Link
-            href="/inspection"
+            href="/property-management"
             className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-black uppercase tracking-widest shadow-lg shadow-slate-900/20 transition-all hover:scale-102 cursor-pointer"
           >
-            <span>Schedule Property Inspection Sweep</span>
+            <span>MANAGE MY PROPERTY</span>
             <ArrowRight size={16} />
           </Link>
         </div>

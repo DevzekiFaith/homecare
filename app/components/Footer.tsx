@@ -31,22 +31,22 @@ export default function Footer() {
             <ul className="space-y-4 text-sm font-semibold text-slate-300">
               <li>
                 <Link href="/request" className="hover:text-white transition-colors">
-                  Book a Pro
+                  Request a Service
                 </Link>
               </li>
               <li>
-                <Link href="/inspection" className="hover:text-white transition-colors">
-                  Property Inspection
+                <Link href="/verification" className="hover:text-white transition-colors">
+                  How We Verify Pros
                 </Link>
               </li>
               <li>
-                <Link href="/auth/customer/login" className="hover:text-white transition-colors">
-                  Login
+                <Link href="/property-management" className="hover:text-white transition-colors">
+                  Property Management
                 </Link>
               </li>
               <li>
                 <Link href="/store" className="hover:text-white transition-colors">
-                  Parts Store
+                  Parts &amp; Store
                 </Link>
               </li>
               <li>

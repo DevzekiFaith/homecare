@@ -23,19 +23,23 @@ export default function FooterSection() {
               <Mail size={15} className="text-cyan-400" />
               <span>support@homecare.com.ng</span>
             </a>
-            <p className="flex items-center gap-2"><MapPin size={15} className="text-cyan-400" /> Lagos · Enugu · Abeokuta, Nigeria</p>
+            <p className="flex items-center gap-2 text-xs font-semibold text-cyan-300">
+              <MapPin size={15} className="text-cyan-400 shrink-0" /> 
+              <span>Serving Magboro · Mowe · Ikeja · Lagos · Lekki · Enugu · Abeokuta</span>
+            </p>
           </div>
         </div>
 
         <div>
-          <h4 className="text-white font-bold mb-6 tracking-widest uppercase text-xs">Services</h4>
+          <h4 className="text-white font-bold mb-6 tracking-widest uppercase text-xs">Services &amp; Solutions</h4>
           <ul className="space-y-3 text-sm text-sky-200/80">
-            <li><Link href="/request?category=plumbing" className="hover:text-white transition-colors">Plumbing & Leak Repairs</Link></li>
-            <li><Link href="/request?category=electrical" className="hover:text-white transition-colors">Electrical & Wiring</Link></li>
-            <li><Link href="/request?category=ac" className="hover:text-white transition-colors">AC & Refrigeration</Link></li>
-            <li><Link href="/request?category=carpentry" className="hover:text-white transition-colors">Carpentry & Furniture</Link></li>
-            <li><Link href="/inspection" className="hover:text-white transition-colors">Property Inspection</Link></li>
-            <li><Link href="/store" className="hover:text-white transition-colors">Parts & Fittings Store</Link></li>
+            <li><Link href="/request?category=plumbing" className="hover:text-white transition-colors">Plumbing &amp; Leak Repairs</Link></li>
+            <li><Link href="/request?category=electrical" className="hover:text-white transition-colors">Electrical &amp; Wiring</Link></li>
+            <li><Link href="/request?category=ac" className="hover:text-white transition-colors">AC &amp; Refrigeration</Link></li>
+            <li><Link href="/request?category=carpentry" className="hover:text-white transition-colors">Carpentry &amp; Furniture</Link></li>
+            <li><Link href="/verification" className="hover:text-white transition-colors">Verification Standard</Link></li>
+            <li><Link href="/property-management" className="hover:text-white transition-colors">Property Management</Link></li>
+            <li><Link href="/store" className="hover:text-white transition-colors">Parts &amp; Fittings Store</Link></li>
           </ul>
         </div>
 

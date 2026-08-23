@@ -150,10 +150,11 @@ export default function WalletEscrowSection() {
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 uppercase font-heading leading-tight">
-            Your Money <span className="text-emerald-600">Stays Protected.</span>
+            YOUR MONEY IS RELEASED <br className="hidden sm:inline" />
+            <span className="text-emerald-600">WHEN THE JOB IS DONE.</span>
           </h2>
           <p className="mt-4 text-slate-600 text-sm sm:text-base font-medium leading-relaxed max-w-2xl mx-auto">
-            Payment is held securely according to HomeCare&apos;s payment protection process until the job reaches the agreed completion stage and you explicitly approve.
+            Your payment is held securely while the work is completed and released according to the HomeCare confirmation process.
           </p>
         </div>
 

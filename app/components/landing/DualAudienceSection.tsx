@@ -93,15 +93,23 @@ export default function DualAudienceSection() {
               </div>
 
               <h3 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight mb-3">
-                Are You A Skilled Professional?
+                GOOD PROFESSIONALS DESERVE BETTER ACCESS TO CUSTOMERS.
               </h3>
               <p className="text-sm text-slate-600 font-medium leading-relaxed mb-6">
-                Get discovered by qualified customers who are ready to hire and pay for quality craftsmanship.
+                Build your reputation, showcase your verified craftsmanship, and receive steady job requests from clients ready to pay for quality work.
               </p>
 
               {/* Professional Journey Steps */}
               <div className="grid grid-cols-2 gap-2 mb-8">
-                {workerSteps.map((step, idx) => (
+                {[
+                  "Create Your Profile",
+                  "Submit NIN Verification",
+                  "List Trade Expertise",
+                  "Receive Relevant Requests",
+                  "Complete Work Safely",
+                  "Build Verifiable Reputation",
+                  "Receive Prompt Payment",
+                ].map((step, idx) => (
                   <div key={idx} className="p-2.5 rounded-xl bg-white border border-slate-200 text-[11px] font-bold text-slate-700 flex items-center gap-2 shadow-2xs">
                     <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-[10px] font-black shrink-0">
                       {idx + 1}

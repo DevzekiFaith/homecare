@@ -21,10 +21,10 @@ export default function SmartStorePreviewSection() {
               <span>Smart Home Store &amp; Installation</span>
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase font-heading tracking-tight text-slate-900">
-              Make Your Home <span className="text-sky-600">Smarter.</span>
+              SMART HARDWARE <span className="text-sky-600">+ PROFESSIONAL INSTALLATION.</span>
             </h2>
-            <p className="mt-2 text-sm sm:text-base text-slate-600 max-w-xl font-medium">
-              Power surge protectors, smart wall sockets, solar appliances, and emergency lighting — paired with verified electrician installation.
+            <p className="mt-2 text-sm sm:text-base text-slate-600 max-w-xl font-medium leading-relaxed">
+              Don&apos;t risk DIY electrical hazards. Buy genuine smart sockets, surge protectors, and solar devices — paired with verified electrician installation and long-term maintenance.
             </p>
           </div>
 

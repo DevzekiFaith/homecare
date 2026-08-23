@@ -45,15 +45,15 @@ export const CITIES: CityConfig[] = [
     state: 'Lagos State',
     active: true,
     launchSoon: false,
-    areas: ['Victoria Island', 'Lekki Phase 1', 'Ikoyi', 'Oniru', 'Ikeja', 'Surulere', 'Yaba', 'Ajah'],
+    areas: ['Magboro', 'Mowe', 'Ibafo', 'Arepo', 'Ikeja', 'Victoria Island', 'Lekki Phase 1', 'Ikoyi', 'Oniru', 'Surulere', 'Yaba', 'Ajah'],
   },
   {
     id: 'ogun',
-    name: 'Abeokuta',
+    name: 'Abeokuta & Ogun Corridor',
     state: 'Ogun State',
     active: true,
     launchSoon: false,
-    areas: ['Ibara', 'Oke-Mosan', 'Kuto', 'Adigbe', 'Obantoko', 'Abiola Way'],
+    areas: ['Magboro', 'Mowe', 'Ibafo', 'Arepo', 'Ibara', 'Oke-Mosan', 'Kuto', 'Adigbe', 'Obantoko', 'Abiola Way'],
   },
   {
     id: 'portharcourt',

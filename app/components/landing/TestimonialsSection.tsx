@@ -8,32 +8,44 @@ import { useEffect, useState } from "react";
 import { fetchAllReviews } from "@/lib/reviews";
 
 const stats = [
-  { value: "Verified", label: "NIN & Skill Checked", desc: "Every professional undergoes identity and technical background vetting before listing." },
-  { value: "Upfront", label: "Agreed Quotes", desc: "Pre-agreed transparent pricing with zero surprise charges or hidden fees." },
-  { value: "Protected", label: "Escrow Guarantee", desc: "Your payment is held safely until you inspect and approve the finished job." },
-  { value: "Accredited", label: "30-Day Support", desc: "Dedicated customer service and inspection assistance on every completed job." },
+  { value: "100%", label: "NIN & Background Checked", desc: "Every professional undergoes government identity verification before accepting jobs." },
+  { value: "Pre-Agreed", label: "Transparent Quotes", desc: "Clear upfront job scope and price lock before work commences." },
+  { value: "Protected", label: "HomeCare Escrow Vault", desc: "Payment is held safely until you inspect and approve the finished repair." },
+  { value: "30 Days", label: "Follow-Up Support", desc: "Dedicated customer support and post-job protection on completed work." },
 ];
 
 const testimonials = [
   {
-    name: "Temiloluwa",
-    role: "Homeowner · Lagos",
-    text: "Got a professional plumber within 15 minutes to fix an age-long pipe burst in our kitchen. Exceptional quality and very polite artisan!",
+    name: "Temiloluwa A.",
+    location: "Ikeja, Lagos",
+    service: "Plumbing Repair",
+    problem: "Age-long kitchen pipe burst causing flooding under the sink vanity.",
+    outcome: "Verified plumber arrived, replaced the corroded fittings, and stopped the leak cleanly.",
+    rating: 5,
   },
   {
     name: "Tony O.",
-    role: "Resident · Enugu",
-    text: "HomeCare has been a lifesaver. Handled our full borehole pump rewire seamlessly with escrow payment safety.",
+    location: "Independence Layout, Enugu",
+    service: "Electrical & Borehole Pump",
+    problem: "Borehole pump control box blew out during a power surge.",
+    outcome: "Electrician replaced the control panel and rewired the surge protection safely under escrow.",
+    rating: 5,
   },
   {
     name: "Temilade A.",
-    role: "New Homeowner · Abeokuta",
-    text: "Found a stellar carpenter and painter to prep our home before move-in. Clean, on time, and completely stress-free.",
+    location: "Ibara, Abeokuta",
+    service: "Carpentry & Locks",
+    problem: "Damaged front door mortise lock and unaligned wooden door frame.",
+    outcome: "Carpenter re-aligned the frame, installed a heavy-duty mortise lock, and restored security.",
+    rating: 5,
   },
   {
-    name: "Dr. Biola",
-    role: "Clinic Administrator",
-    text: "We use HomeCare for all our facility maintenance. Rapid response and verifiable IDs make it safe and dependable.",
+    name: "Dr. Biola M.",
+    location: "Victoria Island, Lagos",
+    service: "Clinic AC Maintenance",
+    problem: "Two clinic consultation room AC units stopped cooling due to gas leakage.",
+    outcome: "Technician pressure-tested gas lines, refilled R410a coolant, and restored ice-cold airflow.",
+    rating: 5,
   },
 ];
 
@@ -145,7 +157,7 @@ export default function TestimonialsSection() {
                 className="p-6 sm:p-8 rounded-3xl bg-slate-50 border border-sky-100/80 shadow-2xs hover:shadow-lg hover:border-sky-300 transition-all relative flex flex-col justify-between cursor-pointer"
               >
                 <div>
-                  <div className="flex items-center gap-2 mb-4">
+                  <div className="flex items-center justify-between gap-2 mb-4">
                     <div className="flex gap-1 text-amber-400">
                       {[1, 2, 3, 4, 5].map((s) => (
                         <Star 
@@ -156,14 +168,27 @@ export default function TestimonialsSection() {
                         />
                       ))}
                     </div>
-                    <span className="text-[10px] font-black text-amber-800 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-md">
-                      {(t.rating ?? 5).toFixed(1)} / 5.0
+                    <span className="text-[10px] font-black text-sky-800 bg-sky-50 border border-sky-200 px-2 py-0.5 rounded-md uppercase">
+                      {t.service || "Home Service"}
                     </span>
                   </div>
                   
-                  <p className="text-slate-700 text-base leading-relaxed mb-6 font-medium">
-                    &quot;{t.text}&quot;
-                  </p>
+                  {t.problem && t.outcome ? (
+                    <div className="space-y-3 mb-6 text-xs">
+                      <div className="p-3 rounded-xl bg-rose-50/70 border border-rose-100">
+                        <span className="font-extrabold text-rose-800 uppercase text-[10px] block mb-1">Problem:</span>
+                        <p className="text-slate-700 font-medium leading-relaxed">{t.problem}</p>
+                      </div>
+                      <div className="p-3 rounded-xl bg-emerald-50/70 border border-emerald-100">
+                        <span className="font-extrabold text-emerald-800 uppercase text-[10px] block mb-1">Outcome:</span>
+                        <p className="text-slate-700 font-medium leading-relaxed">{t.outcome}</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-slate-700 text-sm leading-relaxed mb-6 font-medium">
+                      &quot;{t.text}&quot;
+                    </p>
+                  )}
                 </div>
                 
                 <div className="flex items-center gap-3 pt-4 border-t border-slate-200/60">
@@ -175,7 +200,7 @@ export default function TestimonialsSection() {
                   />
                   <div>
                     <h4 className="font-bold text-sm text-slate-900">{t.name}</h4>
-                    <span className="text-[11px] text-slate-500 font-semibold">{t.role}</span>
+                    <span className="text-[11px] text-slate-500 font-semibold">{t.location || t.role}</span>
                   </div>
                 </div>
               </motion.div>

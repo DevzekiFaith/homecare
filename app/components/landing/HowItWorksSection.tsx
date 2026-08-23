@@ -21,11 +21,11 @@ const PROCESS_STEPS = [
   {
     id: "01",
     label: "Tell Us Need",
-    stepTitle: "Step 01: Booking & Problem Description",
-    heading: "TELL US WHAT YOU NEED",
-    desc: "Describe the problem or upload a photo/video on the booking request page. Takes under 60 seconds.",
+    stepTitle: "Step 01: Service Request",
+    heading: "1. TELL US WHAT YOU NEED",
+    desc: "Describe your repair or maintenance problem, select your trade, and provide your location or photos on the request page.",
     metricValue: "< 60s",
-    metricLabel: "Request Submission Time",
+    metricLabel: "Simple Submission Time",
     image: "/slide_matching_unique.jpg",
     badgeTitle: "Request Submitted",
     badgeRole: "Clear Problem Description & Media",
@@ -36,12 +36,12 @@ const PROCESS_STEPS = [
   },
   {
     id: "02",
-    label: "Get Matched",
-    stepTitle: "Step 02: Smart Artisan Pairing",
-    heading: "GET MATCHED WITH PROS",
-    desc: "HomeCare pairs you with accredited, location-verified local professionals matching your exact trade needs.",
-    metricValue: "< 15m",
-    metricLabel: "Average Artisan Match Speed",
+    label: "Find Pro",
+    stepTitle: "Step 02: Verification Pairing",
+    heading: "2. FIND A VERIFIED PROFESSIONAL",
+    desc: "HomeCare matches your job with nearby government NIN-verified professionals evaluated for trade expertise and reliability.",
+    metricValue: "100%",
+    metricLabel: "NIN Identity & Background Checked",
     image: "/slide_verified_pros_unique.jpg",
     badgeTitle: "Artisan Matched",
     badgeRole: "Accredited Local Technician",
@@ -52,50 +52,82 @@ const PROCESS_STEPS = [
   },
   {
     id: "03",
-    label: "Agree Scope",
-    stepTitle: "Step 03: Upfront Quote Confirmation",
-    heading: "AGREE BEFORE WORK STARTS",
-    desc: "Know the expected price quote and full scope of work upfront before any job commences. Zero hidden surprises.",
-    metricValue: "100%",
-    metricLabel: "Upfront Price Lock",
+    label: "Agree Job",
+    stepTitle: "Step 03: Upfront Quote Lock",
+    heading: "3. AGREE ON THE JOB",
+    desc: "Receive a transparent pricing quote and scope of work upfront before any job commences. Zero hidden extra charges.",
+    metricValue: "₦0",
+    metricLabel: "Surprise Surplus Charges",
     image: "/slide_agreed_pricing_unique.jpg",
     badgeTitle: "Scope & Price Lock",
-    badgeRole: "Zero Hidden Surplus Charges",
+    badgeRole: "Zero Hidden Extra Costs",
     badges: [
       { label: "Fixed Upfront Quote", icon: Tag, color: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
-      { label: "Price Lock Safeguard", icon: ShieldCheck, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
+      { label: "Scope Protection", icon: ShieldCheck, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
     ],
   },
   {
     id: "04",
-    label: "Job Execution",
-    stepTitle: "Step 04: On-Site Repair & Fixing",
-    heading: "GET THE JOB DONE SAFELY",
-    desc: "The assigned professional arrives on time, follows safety protocols, and completes the work to specification.",
-    metricValue: "4.9★",
-    metricLabel: "Job Quality Rating",
-    image: "/slide_plumbing_unique.jpg",
-    badgeTitle: "Professional Repair",
-    badgeRole: "On-Time Safe Execution",
+    label: "Pay Securely",
+    stepTitle: "Step 04: Escrow Protection",
+    heading: "4. PAY SECURELY",
+    desc: "Your payment is deposited safely into HomeCare Escrow and never sent directly to technicians before work starts.",
+    metricValue: "100%",
+    metricLabel: "Escrow Deposit Security",
+    image: "/slide_escrow_vault_unique.jpg",
+    badgeTitle: "HomeCare Escrow Active",
+    badgeRole: "Funds Held In Protected Vault",
     badges: [
-      { label: "On-Time Arrival", icon: Wrench, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
-      { label: "Safe Execution", icon: CheckCircle2, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
+      { label: "Escrow Vault Lock", icon: Lock, color: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
+      { label: "Payment Safeguard", icon: ShieldCheck, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
     ],
   },
   {
     id: "05",
-    label: "Release Payment",
-    stepTitle: "Step 05: Escrow Approval & Payout",
-    heading: "APPROVE & RELEASE PAYMENT",
-    desc: "Payment is held safely in HomeCare Protection and released only when you confirm satisfaction.",
-    metricValue: "100%",
-    metricLabel: "Safest Payment Process",
-    image: "/slide_escrow_vault_unique.jpg",
-    badgeTitle: "Safest Payment Process",
-    badgeRole: "Funds Released Only Upon Your OK",
+    label: "Track Service",
+    stepTitle: "Step 05: Dispatch & Transit Tracking",
+    heading: "5. TRACK THE SERVICE",
+    desc: "Track the assigned technician's transit, dispatch status, and estimated arrival time directly on your HomeCare screen.",
+    metricValue: "Live",
+    metricLabel: "Transit & Dispatch Tracking",
+    image: "/slide_plumbing_unique.jpg",
+    badgeTitle: "Professional Transit",
+    badgeRole: "On-Time Arrival Tracking",
     badges: [
-      { label: "Safest Payment Process", icon: ShieldCheck, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
-      { label: "Escrow Protection", icon: Lock, color: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
+      { label: "Dispatch ETA", icon: Wrench, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
+      { label: "Service Tracking", icon: CheckCircle2, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
+    ],
+  },
+  {
+    id: "06",
+    label: "Confirm Done",
+    stepTitle: "Step 06: Inspection & Release",
+    heading: "6. CONFIRM COMPLETION",
+    desc: "Inspect and test the completed work. Funds are released from escrow only when you explicitly confirm satisfaction.",
+    metricValue: "1-Click",
+    metricLabel: "Customer Release Sign-off",
+    image: "/slide_verified_pro.jpg",
+    badgeTitle: "Client Inspection Sign-Off",
+    badgeRole: "Funds Released Upon Approval",
+    badges: [
+      { label: "Customer Approval", icon: ShieldCheck, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
+      { label: "Quality Tested", icon: Sparkles, color: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
+    ],
+  },
+  {
+    id: "07",
+    label: "Review/Rebook",
+    stepTitle: "Step 07: Rating & Post-Service Support",
+    heading: "7. REVIEW / REBOOK",
+    desc: "Rate your professional, save them to your trusted favorites, and enjoy 30-day post-service follow-up protection.",
+    metricValue: "30 Days",
+    metricLabel: "Post-Service Follow-Up Support",
+    image: "/tech-working.jpg",
+    badgeTitle: "Follow-Up Protection Active",
+    badgeRole: "Rebook Favorite Technicians Anytime",
+    badges: [
+      { label: "30-Day Support", icon: ShieldCheck, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
+      { label: "Rebook Favorite Pro", icon: UserCheck, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
     ],
   },
 ];
@@ -273,15 +305,15 @@ export default function HowItWorksSection() {
 
           </div>
 
-          {/* Bottom Frosted Glass Step Tabs (01 - 05) */}
-          <div className="mt-10 grid grid-cols-2 sm:grid-cols-5 gap-3 pt-6 border-t border-slate-200">
+          {/* Bottom Frosted Glass Step Tabs (01 - 07) */}
+          <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5 pt-6 border-t border-slate-200">
             {PROCESS_STEPS.map((step, idx) => {
               const active = activeIndex === idx;
               return (
                 <button
                   key={step.id}
                   onClick={() => setActiveIndex(idx)}
-                  className={`p-3.5 rounded-2xl border transition-all text-left cursor-pointer flex flex-col justify-between h-full ${
+                  className={`p-3 rounded-2xl border transition-all text-left cursor-pointer flex flex-col justify-between h-full ${
                     active
                       ? "bg-slate-900 text-white border-sky-500 shadow-lg scale-102 ring-2 ring-sky-500/20"
                       : "bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-100 shadow-2xs"
@@ -291,21 +323,16 @@ export default function HowItWorksSection() {
                     <span className={`text-[9px] font-black uppercase tracking-widest ${active ? "text-sky-400" : "text-slate-400"}`}>
                       Step {step.id}
                     </span>
-                    <div className={`h-6 w-6 rounded-lg flex items-center justify-center font-black text-[10px] ${
+                    <div className={`h-5 w-5 rounded-lg flex items-center justify-center font-black text-[9px] ${
                       active ? "bg-sky-600 text-white" : "bg-slate-100 text-slate-500"
                     }`}>
                       {step.id}
                     </div>
                   </div>
                   <div>
-                    <span className="text-xs font-extrabold uppercase tracking-tight line-clamp-1 block">
+                    <span className="text-[11px] font-extrabold uppercase tracking-tight line-clamp-1 block">
                       {step.label}
                     </span>
-                    {step.id === "05" && (
-                      <span className="text-[9px] font-extrabold uppercase text-emerald-400 block mt-0.5">
-                        Safest Process
-                      </span>
-                    )}
                   </div>
                 </button>
               );

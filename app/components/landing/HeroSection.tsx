@@ -39,17 +39,16 @@ export default function HeroSection() {
             className="mb-4 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-[11px] font-black uppercase tracking-widest text-sky-100 backdrop-blur-md"
           >
             <ShieldCheck size={14} className="text-cyan-300" />
-            <span>The Trust Layer for Home Services</span>
+            <span>Trust + Service Infrastructure</span>
           </motion.div>
 
           <motion.h1 
             variants={itemVariants} 
             className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.1] mb-6 uppercase font-heading"
           >
-            A Professional <br />
-            For The Job. <br />
+            HOME REPAIRS, <br />
             <span className="text-cyan-200">
-              Without The Guesswork.
+              WITHOUT THE GUESSWORK.
             </span>
           </motion.h1>
 
@@ -57,7 +56,7 @@ export default function HeroSection() {
             variants={itemVariants} 
             className="text-base sm:text-lg text-sky-100/90 font-medium max-w-xl leading-relaxed mb-8"
           >
-            Verified plumbers, electricians, AC technicians, carpenters and other home-service professionals — matched to your needs, with your payment protected until you&apos;re satisfied.
+            Find a verified professional, agree on the job, pay securely and track the service from request to completion.
           </motion.p>
 
           {/* Action Buttons */}
@@ -66,46 +65,56 @@ export default function HeroSection() {
               href="/request"
               className="w-full sm:w-auto h-14 px-8 rounded-full bg-sky-500 hover:bg-sky-400 text-white flex items-center justify-center gap-3 text-xs sm:text-sm font-black uppercase tracking-widest shadow-xl shadow-sky-500/35 hover:scale-102 transition-all cursor-pointer border border-sky-400/40"
             >
-              <span>Book a Service</span> <ArrowRight size={18} />
+              <span>REQUEST A SERVICE</span> <ArrowRight size={18} />
             </Link>
             <Link
-              href="/auth/worker/register"
+              href="/request"
               className="w-full sm:w-auto h-14 px-8 rounded-full bg-blue-900/60 hover:bg-blue-900/90 border border-white/25 text-white flex items-center justify-center text-xs sm:text-sm font-extrabold uppercase tracking-widest transition-all backdrop-blur-md cursor-pointer"
             >
-              <span>Join as a Professional</span>
+              <span>EXPLORE SERVICES</span>
             </Link>
           </motion.div>
 
-          {/* 3 Core Trust Pillars */}
-          <motion.div variants={itemVariants} className="w-full pt-6 border-t border-white/15 grid grid-cols-3 gap-3 text-center sm:text-left">
-            <div className="flex flex-col sm:flex-row items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-white/10 text-cyan-300 flex items-center justify-center shrink-0 border border-white/20">
-                <UserCheck size={16} />
+          {/* The Five HomeCare Trust Pillars */}
+          <motion.div variants={itemVariants} className="w-full pt-6 border-t border-white/15 grid grid-cols-2 sm:grid-cols-5 gap-3 text-left">
+            <div className="flex flex-col gap-1 bg-white/5 p-2.5 rounded-xl border border-white/10">
+              <div className="flex items-center gap-1.5 text-cyan-300">
+                <UserCheck size={14} />
+                <span className="text-[10px] font-black uppercase tracking-wider text-white">1. Verified Pros</span>
               </div>
-              <div>
-                <span className="block text-xs font-black uppercase tracking-wider text-white">✓ Verified</span>
-                <span className="text-[10px] text-sky-100/80 font-medium hidden sm:block">Identity &amp; Skills</span>
-              </div>
+              <span className="text-[10px] text-sky-100/80 font-medium">NIN & Background</span>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-white/10 text-cyan-300 flex items-center justify-center shrink-0 border border-white/20">
-                <Award size={16} />
+            <div className="flex flex-col gap-1 bg-white/5 p-2.5 rounded-xl border border-white/10">
+              <div className="flex items-center gap-1.5 text-cyan-300">
+                <Award size={14} />
+                <span className="text-[10px] font-black uppercase tracking-wider text-white">2. Transparent Quotes</span>
               </div>
-              <div>
-                <span className="block text-xs font-black uppercase tracking-wider text-white">✓ Transparent</span>
-                <span className="text-[10px] text-sky-100/80 font-medium hidden sm:block">Agreed Quotes</span>
-              </div>
+              <span className="text-[10px] text-sky-100/80 font-medium">Pre-Agreed Pricing</span>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-white/10 text-cyan-300 flex items-center justify-center shrink-0 border border-white/20">
-                <Lock size={16} />
+            <div className="flex flex-col gap-1 bg-white/5 p-2.5 rounded-xl border border-white/10">
+              <div className="flex items-center gap-1.5 text-cyan-300">
+                <Lock size={14} />
+                <span className="text-[10px] font-black uppercase tracking-wider text-white">3. Escrow Payment</span>
               </div>
-              <div>
-                <span className="block text-xs font-black uppercase tracking-wider text-white">✓ Protected</span>
-                <span className="text-[10px] text-sky-100/80 font-medium hidden sm:block">Escrow Guarantee</span>
+              <span className="text-[10px] text-sky-100/80 font-medium">Held Until Done</span>
+            </div>
+
+            <div className="flex flex-col gap-1 bg-white/5 p-2.5 rounded-xl border border-white/10">
+              <div className="flex items-center gap-1.5 text-cyan-300">
+                <CheckCircle2 size={14} />
+                <span className="text-[10px] font-black uppercase tracking-wider text-white">4. Accountability</span>
               </div>
+              <span className="text-[10px] text-sky-100/80 font-medium">Job Tracking</span>
+            </div>
+
+            <div className="flex flex-col gap-1 bg-white/5 p-2.5 rounded-xl border border-white/10 col-span-2 sm:col-span-1">
+              <div className="flex items-center gap-1.5 text-cyan-300">
+                <ShieldCheck size={14} />
+                <span className="text-[10px] font-black uppercase tracking-wider text-white">5. Follow-Up</span>
+              </div>
+              <span className="text-[10px] text-sky-100/80 font-medium">Post-Job Protection</span>
             </div>
           </motion.div>
 

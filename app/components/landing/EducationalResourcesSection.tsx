@@ -160,11 +160,26 @@ export default function EducationalResourcesSection() {
               </span>
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase font-heading tracking-tight text-slate-900">
-              You Can Fix It <span className="text-sky-600">Yourself Too.</span>
+              NOT EVERY PROBLEM <span className="text-sky-600">NEEDS A PROFESSIONAL.</span>
             </h2>
             <p className="mt-3 text-slate-600 text-sm sm:text-base font-medium leading-relaxed">
-              Not every issue requires a technician visit. Read our expert step-by-step DIY guides and practical home maintenance walkthroughs.
+              We believe in honest, customer-first service. Choose the right path for your situation:
             </p>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+              <div className="p-3 rounded-2xl bg-sky-50 border border-sky-100 text-left">
+                <span className="text-[10px] font-black uppercase text-sky-700 tracking-wider block mb-0.5">1. FIX IT YOURSELF</span>
+                <span className="text-xs text-slate-600 font-medium">Follow step-by-step DIY guides for simple tasks.</span>
+              </div>
+              <div className="p-3 rounded-2xl bg-amber-50 border border-amber-100 text-left">
+                <span className="text-[10px] font-black uppercase text-amber-700 tracking-wider block mb-0.5">2. GET A DIAGNOSIS</span>
+                <span className="text-xs text-slate-600 font-medium">Identify root causes with symptom finder.</span>
+              </div>
+              <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-100 text-left">
+                <span className="text-[10px] font-black uppercase text-emerald-700 tracking-wider block mb-0.5">3. BOOK A PRO</span>
+                <span className="text-xs text-slate-600 font-medium">Dispatch NIN-verified pros for complex trades.</span>
+              </div>
+            </div>
           </div>
 
           {/* Filter Categories */}
