@@ -1,20 +1,88 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { Star, ArrowRight, ShieldCheck } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Star, ArrowRight, ShieldCheck, ChevronLeft, ChevronRight, ThumbsUp, CheckCircle2, UserCheck, Lock } from "lucide-react";
 import { fetchAllReviews } from "@/lib/reviews";
 
-const stats = [
-  { value: "100%", label: "NIN & Background Checked", desc: "Every professional undergoes government identity verification before accepting jobs." },
-  { value: "Pre-Agreed", label: "Transparent Quotes", desc: "Clear upfront job scope and price lock before work commences." },
-  { value: "Protected", label: "HomeCare Escrow Vault", desc: "Payment is held safely until you inspect and approve the finished repair." },
-  { value: "30 Days", label: "Follow-Up Support", desc: "Dedicated customer support and post-job protection on completed work." },
+const PROOF_ITEMS = [
+  {
+    id: "01",
+    tabLabel: "Temiloluwa (Ikeja)",
+    tag: "Verified Plumbing Review",
+    heading: "Kitchen Pipe Burst Fixed In Under 2 Hours",
+    desc: "Age-long kitchen pipe burst causing severe flooding under the sink vanity. Verified plumber arrived, replaced corroded copper fittings, and locked the repair with escrow protection.",
+    metricValue: "100%",
+    metricLabel: "Escrow Protected Repair Payout",
+    customerName: "Temiloluwa A.",
+    customerRole: "Homeowner · Ikeja, Lagos",
+    image: "/slide_plumbing_unique.jpg",
+    badges: [
+      { label: "Good Fit", icon: ThumbsUp, color: "bg-white/90 text-slate-900 border-white/40" },
+      { label: "Plumbing Pro", icon: CheckCircle2, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
+      { label: "Escrow Protected", icon: Lock, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
+      { label: "Rated ★ 5.0", icon: Star, color: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
+    ],
+  },
+  {
+    id: "02",
+    tabLabel: "Tony (Enugu)",
+    tag: "Verified Electrical Review",
+    heading: "Borehole Control Box Rewired After Surge",
+    desc: "Borehole pump control box blew out during a power surge in Independence Layout. Electrician replaced control panel and rewired surge protection safely.",
+    metricValue: "Same Day",
+    metricLabel: "Borehole Power Restoration SLA",
+    customerName: "Tony O.",
+    customerRole: "Resident · Independence Layout, Enugu",
+    image: "/slide_verified_pro.jpg",
+    badges: [
+      { label: "Good Fit", icon: ThumbsUp, color: "bg-white/90 text-slate-900 border-white/40" },
+      { label: "Electrical Pro", icon: ShieldCheck, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
+      { label: "Surge Protected", icon: CheckCircle2, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
+      { label: "Rated ★ 5.0", icon: Star, color: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
+    ],
+  },
+  {
+    id: "03",
+    tabLabel: "Temilade (Abeokuta)",
+    tag: "Verified Carpentry Review",
+    heading: "Front Door Security & Mortise Lock Aligned",
+    desc: "Damaged front door mortise lock and unaligned wooden frame. Carpenter re-aligned frame, installed heavy-duty mortise lock, and restored full entrance security.",
+    metricValue: "Pre-Agreed",
+    metricLabel: "Upfront Fixed Quote Lock",
+    customerName: "Temilade A.",
+    customerRole: "New Homeowner · Ibara, Abeokuta",
+    image: "/slide_carpentry_unique.jpg",
+    badges: [
+      { label: "Good Fit", icon: ThumbsUp, color: "bg-white/90 text-slate-900 border-white/40" },
+      { label: "Carpentry Pro", icon: UserCheck, color: "bg-purple-500/20 text-purple-300 border-purple-500/30" },
+      { label: "Frame Aligned", icon: CheckCircle2, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
+      { label: "Rated ★ 5.0", icon: Star, color: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
+    ],
+  },
+  {
+    id: "04",
+    tabLabel: "Dr. Biola (VI)",
+    tag: "Verified AC Maintenance Review",
+    heading: "Clinic Consultation Room Cooling Restored",
+    desc: "Two clinic consultation room AC units stopped cooling due to gas leaks. HVAC technician pressure-tested gas lines, refilled R410a coolant, and restored ice-cold airflow.",
+    metricValue: "30 Days",
+    metricLabel: "Post-Service Follow-Up Guarantee",
+    customerName: "Dr. Biola M.",
+    customerRole: "Clinic Administrator · Victoria Island",
+    image: "/slide_ac_cooling.jpg",
+    badges: [
+      { label: "Good Fit", icon: ThumbsUp, color: "bg-white/90 text-slate-900 border-white/40" },
+      { label: "HVAC Specialist", icon: ShieldCheck, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
+      { label: "R410a Refilled", icon: CheckCircle2, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
+      { label: "Rated ★ 5.0", icon: Star, color: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
+    ],
+  },
 ];
 
-const testimonials = [
+const fallbackTestimonials = [
   {
     name: "Temiloluwa A.",
     location: "Ikeja, Lagos",
@@ -50,6 +118,8 @@ const testimonials = [
 ];
 
 export default function TestimonialsSection() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
   const [liveReviews, setLiveReviews] = useState<any[]>([]);
 
   useEffect(() => {
@@ -58,7 +128,8 @@ export default function TestimonialsSection() {
       if (data && data.length > 0) {
         const formatted = data.map((r) => ({
           name: r.customer_name || "Guest Customer",
-          role: `${r.service_type} Pro Review`,
+          location: `${r.service_type} Client`,
+          service: r.service_type,
           text: r.comment || `Rated ${r.rating} stars for outstanding service.`,
           rating: r.rating
         }));
@@ -68,80 +139,215 @@ export default function TestimonialsSection() {
     loadReviews();
   }, []);
 
-  const allTestimonials = [...liveReviews, ...testimonials];
+  useEffect(() => {
+    if (isPaused) return;
+    const timer = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % PROOF_ITEMS.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [isPaused]);
+
+  const current = PROOF_ITEMS[activeIndex];
+  const allTestimonials = [...liveReviews, ...fallbackTestimonials];
 
   return (
-    <section className="py-20 px-6 bg-white relative z-10 overflow-hidden">
+    <section className="py-20 px-4 sm:px-6 bg-white text-slate-900 relative z-10 border-b border-slate-200">
       <div className="max-w-7xl mx-auto">
         
-        {/* Metric & Artisan Split directly from Pinterest Reference */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-20">
-          
-          {/* Left Column: 4 Metric Percentages & CTA */}
-          <div className="lg:col-span-7 flex flex-col items-start">
-            <span className="text-xs font-bold uppercase tracking-wider text-sky-600 bg-sky-50 px-3 py-1 rounded-full border border-sky-100 mb-3">
-              Proven Track Record
-            </span>
+        {/* Section Header */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-3xl mx-auto mb-12"
+        >
+          <span className="text-xs font-bold uppercase tracking-wider text-sky-600 bg-sky-50 px-3.5 py-1.5 rounded-full border border-sky-100 mb-3 inline-block shadow-2xs">
+            Proven Track Record &amp; Real Proof
+          </span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 uppercase font-heading tracking-tight">
+            LOVED BY HOMEOWNERS <br />
+            <span className="text-sky-600">ACROSS NIGERIA</span>
+          </h2>
+          <p className="mt-4 text-slate-600 text-sm sm:text-base font-medium max-w-2xl mx-auto leading-relaxed">
+            Real verified outcomes from residents across Lagos, Enugu, and Abeokuta who got their repairs fixed without guesswork.
+          </p>
+        </motion.div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 leading-tight uppercase mb-8">
-              Why Thousands of Homes <br />
-              <span className="text-sky-600">Choose HomeCare</span>
-            </h2>
+        {/* Split Interactive Container matching candidate card UI layout */}
+        <div 
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          className="bg-slate-50 border border-slate-200 rounded-[32px] sm:rounded-[40px] p-6 sm:p-10 shadow-xl relative"
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            
+            {/* LEFT COLUMN: Candidate / Client Showcase Image Card (Positioned on Left: order-1, lg:col-span-7) */}
+            <div className="lg:col-span-7 relative order-1">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={current.id}
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.96 }}
+                  transition={{ duration: 0.4 }}
+                  className="relative rounded-[28px] sm:rounded-[36px] overflow-hidden min-h-[380px] sm:min-h-[440px] flex flex-col justify-between p-6 sm:p-8 shadow-2xl border border-slate-900/10 group"
+                >
+                  {/* Background Image */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={current.image}
+                    alt={current.customerName}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  {/* Dark Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/40 to-slate-950/30" />
 
-            {/* 2x2 Metric Grid */}
-            <div className="grid grid-cols-2 gap-6 sm:gap-8 w-full mb-8">
-              {stats.map((item, idx) => (
-                <div key={idx} className="flex flex-col">
-                  <div className="text-3xl sm:text-4xl font-extrabold text-sky-600 mb-1">
-                    {item.value}
+                  {/* Top Floating Dark Glass Badge */}
+                  <div className="relative z-10 self-start p-4 rounded-2xl bg-slate-900/85 backdrop-blur-md border border-white/15 max-w-xs shadow-lg">
+                    <h5 className="text-lg font-black text-white tracking-tight">
+                      {current.customerName}
+                    </h5>
+                    <p className="text-[11px] font-bold text-sky-300 uppercase tracking-wider mt-0.5">
+                      → {current.customerRole}
+                    </p>
                   </div>
-                  <h4 className="text-sm font-bold text-slate-900 mb-1">{item.label}</h4>
-                  <p className="text-xs text-slate-500 leading-relaxed">{item.desc}</p>
-                </div>
-              ))}
+
+                  {/* Bottom Overlay Badges */}
+                  <div className="relative z-10 space-y-3">
+                    <div className="flex flex-wrap gap-2 items-center">
+                      {current.badges.map((badge, idx) => {
+                        const Icon = badge.icon;
+                        return (
+                          <div
+                            key={idx}
+                            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-extrabold uppercase tracking-wider backdrop-blur-md border shadow-sm ${badge.color}`}
+                          >
+                            <Icon size={13} />
+                            <span>{badge.label}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
             </div>
 
-            <Link
-              href="/request"
-              className="h-13 px-8 rounded-full bg-sky-500 hover:bg-sky-600 text-white font-extrabold uppercase tracking-widest text-xs flex items-center gap-2 shadow-lg shadow-sky-500/25 transition-all hover:scale-105"
-            >
-              <span>Explore Services</span>
-              <ArrowRight size={16} />
-            </Link>
-          </div>
+            {/* RIGHT COLUMN: Writeup & Metrics (Positioned on Right: order-2, lg:col-span-5) */}
+            <div className="lg:col-span-5 flex flex-col justify-between space-y-8 order-2">
+              
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={current.id}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.35, ease: "easeOut" }}
+                  className="space-y-4"
+                >
+                  <span className="text-[10px] font-black uppercase tracking-widest text-sky-700 bg-sky-100/80 border border-sky-200 px-3 py-1 rounded-full inline-block">
+                    {current.tag}
+                  </span>
 
-          {/* Right Column: High Quality Technician Photo */}
-          <div className="lg:col-span-5 relative flex justify-center">
-            <div className="relative w-full aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl shadow-sky-950/10 border-4 border-white bg-slate-100">
-              <Image
-                src="/tech-working.jpg"
-                alt="Smiling Professional Technician at work"
-                fill
-                className="object-cover object-top"
-                sizes="(max-width: 768px) 100vw, 500px"
-              />
-              <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-md px-4 py-3 rounded-2xl shadow-lg border border-sky-100 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-sky-600 text-white flex items-center justify-center shrink-0">
-                  <ShieldCheck size={18} />
+                  <h3 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight font-heading leading-snug">
+                    {current.heading}
+                  </h3>
+
+                  <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
+                    {current.desc}
+                  </p>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Minimalist Pill Slider Progress Indicators */}
+              <div className="flex items-center gap-4 pt-2">
+                <div className="flex items-center gap-1.5 bg-slate-200/80 p-1.5 rounded-full border border-slate-300">
+                  {PROOF_ITEMS.map((item, idx) => (
+                    <button
+                      key={item.id}
+                      onClick={() => setActiveIndex(idx)}
+                      aria-label={`Go to proof ${idx + 1}`}
+                      className={`transition-all duration-300 cursor-pointer ${
+                        activeIndex === idx
+                          ? "w-8 h-2.5 bg-sky-600 rounded-full shadow-xs"
+                          : "w-2.5 h-2.5 bg-slate-400 hover:bg-slate-600 rounded-full"
+                      }`}
+                    />
+                  ))}
                 </div>
-                <div>
-                  <p className="text-xs font-extrabold text-slate-900">Certified Repair Standards</p>
-                  <p className="text-[10px] text-slate-500 font-semibold">100% Escrow Protected Jobs</p>
+                <div className="flex gap-1.5">
+                  <button
+                    onClick={() => setActiveIndex((prev) => (prev - 1 + PROOF_ITEMS.length) % PROOF_ITEMS.length)}
+                    className="h-8 w-8 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-all cursor-pointer shadow-2xs"
+                  >
+                    <ChevronLeft size={16} />
+                  </button>
+                  <button
+                    onClick={() => setActiveIndex((prev) => (prev + 1) % PROOF_ITEMS.length)}
+                    className="h-8 w-8 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-all cursor-pointer shadow-2xs"
+                  >
+                    <ChevronRight size={16} />
+                  </button>
                 </div>
               </div>
+
+              {/* Big Bold Stat Metric */}
+              <div className="pt-4 border-t border-slate-200/80 flex items-baseline gap-4">
+                <span className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight font-heading">
+                  {current.metricValue}
+                </span>
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider max-w-[160px]">
+                  {current.metricLabel}
+                </span>
+              </div>
+
             </div>
+
+          </div>
+
+          {/* Bottom Step Tabs (01 - 04) */}
+          <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 border-t border-slate-200">
+            {PROOF_ITEMS.map((item, idx) => {
+              const active = activeIndex === idx;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveIndex(idx)}
+                  className={`p-4 rounded-2xl border transition-all text-left cursor-pointer flex items-center justify-between ${
+                    active
+                      ? "bg-slate-900 text-white border-sky-500 shadow-lg scale-102 ring-2 ring-sky-500/20"
+                      : "bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-100 shadow-2xs"
+                  }`}
+                >
+                  <div className="min-w-0">
+                    <span className={`text-[10px] font-black uppercase tracking-widest block ${active ? "text-sky-400" : "text-slate-400"}`}>
+                      Review {item.id}
+                    </span>
+                    <span className="text-xs font-extrabold uppercase tracking-wider truncate block mt-0.5">
+                      {item.tabLabel}
+                    </span>
+                  </div>
+                  <div className={`h-8 w-8 rounded-xl flex items-center justify-center font-black text-xs shrink-0 ${
+                    active ? "bg-sky-600 text-white" : "bg-slate-100 text-slate-500"
+                  }`}>
+                    {item.id}
+                  </div>
+                </button>
+              );
+            })}
           </div>
 
         </div>
 
-        {/* Customer Reviews Header & Cards */}
-        <div className="pt-16 border-t border-slate-100">
+        {/* Customer Reviews Grid */}
+        <div className="pt-16 border-t border-slate-100 mt-16">
           <div className="text-center mb-12">
             <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">
-              Loved by Homeowners Across Nigeria
+              Verified Client Outcomes &amp; Ratings
             </h3>
             <p className="text-slate-500 text-sm max-w-md mx-auto">
-              Real verified reviews from residents who got their repairs done seamlessly.
+              Real verified reviews from homeowners who got their repairs done seamlessly.
             </p>
           </div>
 
