@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
 import { Star, ChevronLeft, ChevronRight, ThumbsUp, CheckCircle2, ShieldCheck, Lock, AlertCircle } from "lucide-react";
 import { fetchAllReviews } from "@/lib/reviews";
 
@@ -181,7 +180,7 @@ export default function TestimonialsSection() {
           </p>
         </motion.div>
 
-        {/* Split Interactive Container matching candidate card UI layout */}
+        {/* Split Interactive Container matching exact candidate card UI layout (Writeup on LEFT, Card on RIGHT) */}
         <div 
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
@@ -189,8 +188,103 @@ export default function TestimonialsSection() {
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
-            {/* LEFT COLUMN: Candidate / Client Showcase Image Card (Positioned on Left: order-1, lg:col-span-7) */}
-            <div className="lg:col-span-7 relative order-1">
+            {/* LEFT COLUMN: Writeup & Metrics (Matching "Meet candidates worth meeting" writeup on LEFT in image) */}
+            <div className="lg:col-span-5 flex flex-col justify-between space-y-8 order-1">
+              
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={current.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.35, ease: "easeOut" }}
+                  className="space-y-4"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-sky-700 bg-sky-100/80 border border-sky-200 px-3 py-1 rounded-full inline-block">
+                      {current.tag}
+                    </span>
+                    <div className="flex text-amber-400">
+                      {[1, 2, 3, 4, 5].map((s) => (
+                        <Star key={s} size={14} fill="currentColor" />
+                      ))}
+                    </div>
+                  </div>
+
+                  <h3 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight font-heading leading-snug">
+                    {current.heading}
+                  </h3>
+
+                  <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
+                    {current.desc}
+                  </p>
+
+                  {/* Problem & Outcome Cards */}
+                  <div className="space-y-2.5 pt-2 text-xs">
+                    <div className="p-3 rounded-xl bg-rose-50 border border-rose-200/80 flex items-start gap-2.5">
+                      <AlertCircle size={15} className="text-rose-600 shrink-0 mt-0.5" />
+                      <div>
+                        <span className="font-extrabold text-rose-900 uppercase text-[10px] block">Problem:</span>
+                        <p className="text-slate-700 font-semibold">{current.problem}</p>
+                      </div>
+                    </div>
+                    <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200/80 flex items-start gap-2.5">
+                      <CheckCircle2 size={15} className="text-emerald-600 shrink-0 mt-0.5" />
+                      <div>
+                        <span className="font-extrabold text-emerald-900 uppercase text-[10px] block">Outcome:</span>
+                        <p className="text-slate-700 font-semibold">{current.outcome}</p>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Minimalist Pill Slider Progress Indicators (Matching Image candidate slider indicator) */}
+              <div className="flex items-center gap-4 pt-2">
+                <div className="flex items-center gap-1.5 bg-slate-200/80 p-1.5 rounded-full border border-slate-300">
+                  {CLIENT_OUTCOMES.map((item, idx) => (
+                    <button
+                      key={item.id}
+                      onClick={() => setActiveIndex(idx)}
+                      aria-label={`Go to review ${idx + 1}`}
+                      className={`transition-all duration-300 cursor-pointer ${
+                        activeIndex === idx
+                          ? "w-8 h-2.5 bg-sky-600 rounded-full shadow-xs"
+                          : "w-2.5 h-2.5 bg-slate-400 hover:bg-slate-600 rounded-full"
+                      }`}
+                    />
+                  ))}
+                </div>
+                <div className="flex gap-1.5">
+                  <button
+                    onClick={() => setActiveIndex((prev) => (prev - 1 + CLIENT_OUTCOMES.length) % CLIENT_OUTCOMES.length)}
+                    className="h-8 w-8 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-all cursor-pointer shadow-2xs"
+                  >
+                    <ChevronLeft size={16} />
+                  </button>
+                  <button
+                    onClick={() => setActiveIndex((prev) => (prev + 1) % CLIENT_OUTCOMES.length)}
+                    className="h-8 w-8 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-all cursor-pointer shadow-2xs"
+                  >
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Big Bold Stat Metric (Matching 70% Interview rate UI in reference image) */}
+              <div className="pt-4 border-t border-slate-200/80 flex items-baseline gap-4">
+                <span className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tight font-heading">
+                  {current.metricValue}
+                </span>
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider max-w-[160px]">
+                  {current.metricLabel}
+                </span>
+              </div>
+
+            </div>
+
+            {/* RIGHT COLUMN: Candidate / Client Showcase Image Card (Matching Kiara Washington card on RIGHT in image) */}
+            <div className="lg:col-span-7 relative order-2">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={current.id}
@@ -239,101 +333,6 @@ export default function TestimonialsSection() {
                   </div>
                 </motion.div>
               </AnimatePresence>
-            </div>
-
-            {/* RIGHT COLUMN: Writeup & Metrics (Positioned on Right: order-2, lg:col-span-5) */}
-            <div className="lg:col-span-5 flex flex-col justify-between space-y-8 order-2">
-              
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={current.id}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.35, ease: "easeOut" }}
-                  className="space-y-4"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-sky-700 bg-sky-100/80 border border-sky-200 px-3 py-1 rounded-full inline-block">
-                      {current.tag}
-                    </span>
-                    <div className="flex text-amber-400">
-                      {[1, 2, 3, 4, 5].map((s) => (
-                        <Star key={s} size={14} fill="currentColor" />
-                      ))}
-                    </div>
-                  </div>
-
-                  <h3 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight font-heading leading-snug">
-                    {current.heading}
-                  </h3>
-
-                  <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
-                    {current.desc}
-                  </p>
-
-                  {/* Problem & Outcome Cards */}
-                  <div className="space-y-2.5 pt-2 text-xs">
-                    <div className="p-3 rounded-xl bg-rose-50 border border-rose-200/80 flex items-start gap-2.5">
-                      <AlertCircle size={15} className="text-rose-600 shrink-0 mt-0.5" />
-                      <div>
-                        <span className="font-extrabold text-rose-900 uppercase text-[10px] block">Problem:</span>
-                        <p className="text-slate-700 font-semibold">{current.problem}</p>
-                      </div>
-                    </div>
-                    <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200/80 flex items-start gap-2.5">
-                      <CheckCircle2 size={15} className="text-emerald-600 shrink-0 mt-0.5" />
-                      <div>
-                        <span className="font-extrabold text-emerald-900 uppercase text-[10px] block">Outcome:</span>
-                        <p className="text-slate-700 font-semibold">{current.outcome}</p>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-
-              {/* Minimalist Pill Slider Progress Indicators */}
-              <div className="flex items-center gap-4 pt-2">
-                <div className="flex items-center gap-1.5 bg-slate-200/80 p-1.5 rounded-full border border-slate-300">
-                  {CLIENT_OUTCOMES.map((item, idx) => (
-                    <button
-                      key={item.id}
-                      onClick={() => setActiveIndex(idx)}
-                      aria-label={`Go to review ${idx + 1}`}
-                      className={`transition-all duration-300 cursor-pointer ${
-                        activeIndex === idx
-                          ? "w-8 h-2.5 bg-sky-600 rounded-full shadow-xs"
-                          : "w-2.5 h-2.5 bg-slate-400 hover:bg-slate-600 rounded-full"
-                      }`}
-                    />
-                  ))}
-                </div>
-                <div className="flex gap-1.5">
-                  <button
-                    onClick={() => setActiveIndex((prev) => (prev - 1 + CLIENT_OUTCOMES.length) % CLIENT_OUTCOMES.length)}
-                    className="h-8 w-8 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-all cursor-pointer shadow-2xs"
-                  >
-                    <ChevronLeft size={16} />
-                  </button>
-                  <button
-                    onClick={() => setActiveIndex((prev) => (prev + 1) % CLIENT_OUTCOMES.length)}
-                    className="h-8 w-8 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-all cursor-pointer shadow-2xs"
-                  >
-                    <ChevronRight size={16} />
-                  </button>
-                </div>
-              </div>
-
-              {/* Big Bold Stat Metric */}
-              <div className="pt-4 border-t border-slate-200/80 flex items-baseline gap-4">
-                <span className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight font-heading">
-                  {current.metricValue}
-                </span>
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider max-w-[160px]">
-                  {current.metricLabel}
-                </span>
-              </div>
-
             </div>
 
           </div>
