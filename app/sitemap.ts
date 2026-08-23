@@ -6,21 +6,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
   const routes = [
-    "/",
-    "/request",
-    "/auth/customer/login",
-    "/auth/customer/register",
-    "/auth/worker/login",
-    "/auth/worker/register",
-    "/customer/dashboard",
-    "/worker/dashboard",
+    { path: "/", priority: 1.0, changeFrequency: "daily" as const },
+    { path: "/request", priority: 0.9, changeFrequency: "daily" as const },
+    { path: "/store", priority: 0.9, changeFrequency: "daily" as const },
+    { path: "/reviews", priority: 0.9, changeFrequency: "daily" as const },
+    { path: "/auth/worker/register", priority: 0.9, changeFrequency: "daily" as const },
+    { path: "/auth/customer/register", priority: 0.8, changeFrequency: "weekly" as const },
+    { path: "/inspection", priority: 0.8, changeFrequency: "weekly" as const },
   ];
 
-  return routes.map((path) => ({
-    url: new URL(path, base).toString(),
+  return routes.map((r) => ({
+    url: new URL(r.path, base).toString(),
     lastModified: now,
-    changeFrequency: path === "/" ? "weekly" : "monthly",
-    priority: path === "/" ? 1 : 0.6,
+    changeFrequency: r.changeFrequency,
+    priority: r.priority,
   }));
 }
 
