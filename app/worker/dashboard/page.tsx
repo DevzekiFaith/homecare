@@ -240,7 +240,10 @@ export default function WorkerDashboardPage() {
         return;
       }
       setRequests((prev) => prev.filter((r) => r.id !== jobId));
-      toast.success("Job request removed from your feed.");
+      toast.error("Job request removed from feed", {
+        description: "This booking has been declined and removed from your radar.",
+        duration: 4000,
+      });
     } catch (err: any) {
       toast.error("Remove job error: " + err.message);
     }

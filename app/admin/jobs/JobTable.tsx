@@ -134,7 +134,10 @@ export default function JobTable({ initialJobs }: { initialJobs: Job[] }) {
       }
 
       setJobs((prev) => prev.filter((j) => j.id !== jobId));
-      toast.success(`Job #${jobId.slice(0, 6)} deleted.`);
+      toast.error(`Job Request #${jobId.slice(0, 6)} deleted`, {
+        description: `Service request for ${serviceType} has been removed.`,
+        duration: 4000,
+      });
     } catch (err: any) {
       toast.error("Delete error: " + err.message);
     } finally {

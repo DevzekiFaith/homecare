@@ -91,7 +91,10 @@ export default function WorkerTable({ initialWorkers }: { initialWorkers: Worker
       }
 
       setWorkers((prev) => prev.filter((w) => w.id !== id));
-      toast.success(`Worker "${name}" deleted successfully.`);
+      toast.error(`Worker "${name}" deleted`, {
+        description: "Professional record permanently removed from the database.",
+        duration: 4000,
+      });
     } catch (err: any) {
       toast.error("Delete error: " + err.message);
     } finally {
