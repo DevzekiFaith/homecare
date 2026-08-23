@@ -127,13 +127,15 @@ export default function JobTable({ initialJobs }: { initialJobs: Job[] }) {
         onClick: async () => {
           setDeletingId(jobId);
           try {
-            const { error } = await supabase
-              .from("service_requests")
-              .delete()
-              .eq("id", jobId);
+            const res = await fetch("/api/admin/delete-job", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ id: jobId }),
+            });
 
-            if (error) {
-              toast.error("Failed to delete job: " + error.message);
+            const data = await res.json();
+            if (!data.success) {
+              toast.error("Failed to delete job: " + (data.error || "Unknown error"));
               return;
             }
 

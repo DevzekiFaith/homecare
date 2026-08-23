@@ -234,15 +234,18 @@ export default function WorkerDashboardPage() {
         label: "Confirm Remove",
         onClick: async () => {
           try {
-            const { error } = await supabase
-              .from("service_requests")
-              .update({ status: "cancelled" })
-              .eq("id", jobId);
+            const res = await fetch("/api/admin/delete-job", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ id: jobId }),
+            });
 
-            if (error) {
-              toast.error("Failed to remove job: " + error.message);
+            const data = await res.json();
+            if (!data.success) {
+              toast.error("Failed to remove job: " + (data.error || "Unknown error"));
               return;
             }
+
             setRequests((prev) => prev.filter((r) => r.id !== jobId));
             toast.error("Job request removed from feed", {
               description: "This booking has been declined and removed from your radar.",

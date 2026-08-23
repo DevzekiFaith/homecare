@@ -84,13 +84,15 @@ export default function WorkerTable({ initialWorkers }: { initialWorkers: Worker
         onClick: async () => {
           setDeletingId(id);
           try {
-            const { error } = await supabase
-              .from("professionals")
-              .delete()
-              .eq("id", id);
+            const res = await fetch("/api/admin/delete-worker", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ id }),
+            });
 
-            if (error) {
-              toast.error("Failed to delete worker: " + error.message);
+            const data = await res.json();
+            if (!data.success) {
+              toast.error("Failed to delete worker: " + (data.error || "Unknown error"));
               return;
             }
 
