@@ -187,7 +187,7 @@ function OrderConfirmationContent() {
                    navigator.clipboard.writeText(orderRef);
                    toast.success("Order reference copied!");
                  }}
-                 className="flex items-center gap-2 h-9 px-4 rounded-full bg-white border border-slate-200 text-[10px] font-bold uppercase tracking-widest text-slate-600 hover:text-sky-600 hover:border-sky-300 transition-all shadow-2xs"
+                 className="flex items-center gap-2 h-9 px-4 rounded-full bg-sky-600 hover:bg-sky-500 text-white text-[10px] font-black uppercase tracking-widest shadow-xs transition-all cursor-pointer"
                >
                  <Copy size={12} /> Copy Ref
                </button>
@@ -363,21 +363,21 @@ function OrderConfirmationContent() {
               }
               setShowReceipt(true);
             }}
-            className="flex items-center justify-center gap-2 h-14 rounded-xl bg-brand-primary text-white text-[11px] font-bold uppercase tracking-[0.15em] hover:bg-brand-primary-hover hover:scale-102 transition-all shadow-md"
+            className="flex items-center justify-center gap-2 h-14 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-black uppercase tracking-wider transition-all shadow-md cursor-pointer"
           >
             <Download size={16} />
             Download Receipt
           </button>
           <Link
             href={`/store/track?ref=${orderRef}`}
-            className="flex items-center justify-center gap-2 h-14 rounded-xl bg-brand-primary text-white text-[11px] font-bold uppercase tracking-[0.15em] hover:bg-brand-primary-hover hover:shadow-[0_0_20px_rgba(249,115,22,0.4)] transition-all shadow-lg"
+            className="flex items-center justify-center gap-2 h-14 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-black uppercase tracking-wider transition-all shadow-md cursor-pointer"
           >
             <Truck size={18} />
             Track Order Status
           </Link>
           <Link
             href="/store"
-            className="flex items-center justify-center gap-2 h-14 rounded-xl bg-brand-primary text-white text-[11px] font-bold uppercase tracking-[0.15em] hover:bg-brand-primary-hover hover:scale-102 transition-all shadow-md"
+            className="flex items-center justify-center gap-2 h-14 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-black uppercase tracking-wider transition-all shadow-md cursor-pointer"
           >
             <ShoppingBag size={16} />
             Continue Shopping

@@ -239,7 +239,7 @@ export default function CheckoutPage() {
                       value={formData.fullName}
                       onChange={handleInputChange}
                       placeholder="e.g. David Adeleke"
-                      className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-4 py-3.5 text-sm text-slate-900 outline-none focus:border-sky-500 focus:bg-white transition-all"
+                      className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3.5 text-sm font-semibold text-slate-900 placeholder:text-slate-400 outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all shadow-2xs"
                     />
                   </div>
 
@@ -254,7 +254,7 @@ export default function CheckoutPage() {
                       value={formData.email}
                       onChange={handleInputChange}
                       placeholder="you@example.com"
-                      className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-4 py-3.5 text-sm text-slate-900 outline-none focus:border-sky-500 focus:bg-white transition-all"
+                      className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3.5 text-sm font-semibold text-slate-900 placeholder:text-slate-400 outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all shadow-2xs"
                     />
                   </div>
 
@@ -269,7 +269,7 @@ export default function CheckoutPage() {
                       value={formData.phone}
                       onChange={handleInputChange}
                       placeholder="08012345678"
-                      className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-4 py-3.5 text-sm text-slate-900 outline-none focus:border-sky-500 focus:bg-white transition-all"
+                      className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3.5 text-sm font-semibold text-slate-900 placeholder:text-slate-400 outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all shadow-2xs"
                     />
                   </div>
 
@@ -283,7 +283,7 @@ export default function CheckoutPage() {
                       value={formData.address}
                       onChange={handleInputChange}
                       placeholder="Street, Estate / Area, City, State"
-                      className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-4 py-3.5 text-sm text-slate-900 outline-none focus:border-sky-500 focus:bg-white transition-all"
+                      className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3.5 text-sm font-semibold text-slate-900 placeholder:text-slate-400 outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all shadow-2xs"
                     />
                   </div>
 
@@ -297,7 +297,7 @@ export default function CheckoutPage() {
                       onChange={handleInputChange}
                       rows={2}
                       placeholder="Any landmark, building number, or preferred delivery timing..."
-                      className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-500 focus:bg-white transition-all resize-none"
+                      className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-900 placeholder:text-slate-400 outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all resize-none shadow-2xs"
                     />
                   </div>
                 </div>

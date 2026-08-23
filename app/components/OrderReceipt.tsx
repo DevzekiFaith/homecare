@@ -102,14 +102,14 @@ export default function OrderReceipt({
             <button 
               onClick={handleDownload}
               disabled={downloading}
-              className="flex items-center gap-2 px-4 py-2 bg-zinc-900 text-white rounded-full text-xs font-bold uppercase tracking-widest hover:bg-black transition-all disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-full text-xs font-black uppercase tracking-wider transition-all shadow-xs cursor-pointer disabled:opacity-50"
             >
               {downloading ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />} 
               {downloading ? "Generating..." : "Download PDF"}
             </button>
             <button 
               onClick={handlePrint}
-              className="flex items-center gap-2 px-4 py-2 bg-brand-primary text-white rounded-full text-xs font-bold uppercase tracking-widest hover:bg-brand-glow transition-all"
+              className="flex items-center gap-2 px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-full text-xs font-black uppercase tracking-wider transition-all shadow-xs cursor-pointer"
             >
               <Printer size={14} /> Print
             </button>
