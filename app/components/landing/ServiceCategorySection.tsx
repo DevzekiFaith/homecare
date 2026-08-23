@@ -70,7 +70,7 @@ const CATEGORY_SLIDES = [
     desc: "Door lock fittings, kitchen cabinet construction, wardrobe repairs, bed frame assembly, and hardwood flooring.",
     metricValue: "90+",
     metricLabel: "Master Carpenters & Joiners",
-    image: "/slide_property_estate.jpg",
+    image: "/slide_carpentry_unique.jpg",
     proName: "Precision Cabinetry & Joinery",
     proRole: "Custom Furniture & Door Fittings",
     badges: [
@@ -89,7 +89,7 @@ const CATEGORY_SLIDES = [
     desc: "POP ceiling repairs, damp proofing wall treatments, exterior weatherproofing paints, tiling, and block work.",
     metricValue: "65+",
     metricLabel: "Certified Painters & Masons",
-    image: "/slide_verified_pro.jpg",
+    image: "/slide_painting_unique.jpg",
     proName: "Premium Wall Finishing & POP",
     proRole: "Anti-Damp Treatment & Tiling",
     badges: [
@@ -127,7 +127,7 @@ const CATEGORY_SLIDES = [
     desc: "TV wall mounts, curtain rod fittings, fixture assembly, plumbing leaks, minor electrical touchups, and home maintenance.",
     metricValue: "150+",
     metricLabel: "Multi-Skilled Handymen",
-    image: "/pipe-fitting.jpg",
+    image: "/slide_handyman_unique.jpg",
     proName: "Express All-Round Handyman",
     proRole: "Rapid Home Fixture Repairs",
     badges: [

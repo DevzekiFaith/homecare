@@ -26,7 +26,7 @@ const PROCESS_STEPS = [
     desc: "Describe the problem or upload a photo/video on the booking request page. Takes under 60 seconds.",
     metricValue: "< 60s",
     metricLabel: "Request Submission Time",
-    image: "/tech-working.jpg",
+    image: "/slide_matching_unique.jpg",
     badgeTitle: "Request Submitted",
     badgeRole: "Clear Problem Description & Media",
     badges: [
@@ -42,7 +42,7 @@ const PROCESS_STEPS = [
     desc: "HomeCare pairs you with accredited, location-verified local professionals matching your exact trade needs.",
     metricValue: "< 15m",
     metricLabel: "Average Artisan Match Speed",
-    image: "/hero-tech.jpg",
+    image: "/slide_verified_pros_unique.jpg",
     badgeTitle: "Artisan Matched",
     badgeRole: "Accredited Local Technician",
     badges: [
@@ -58,7 +58,7 @@ const PROCESS_STEPS = [
     desc: "Know the expected price quote and full scope of work upfront before any job commences. Zero hidden surprises.",
     metricValue: "100%",
     metricLabel: "Upfront Price Lock",
-    image: "/pipe-fitting.jpg",
+    image: "/slide_agreed_pricing_unique.jpg",
     badgeTitle: "Scope & Price Lock",
     badgeRole: "Zero Hidden Surplus Charges",
     badges: [
@@ -74,7 +74,7 @@ const PROCESS_STEPS = [
     desc: "The assigned professional arrives on time, follows safety protocols, and completes the work to specification.",
     metricValue: "4.9★",
     metricLabel: "Job Quality Rating",
-    image: "/tech-working.jpg",
+    image: "/slide_plumbing_unique.jpg",
     badgeTitle: "Professional Repair",
     badgeRole: "On-Time Safe Execution",
     badges: [
@@ -90,7 +90,7 @@ const PROCESS_STEPS = [
     desc: "Payment is held safely in HomeCare Protection and released only when you confirm satisfaction.",
     metricValue: "100%",
     metricLabel: "Safest Payment Process",
-    image: "/hero-tech.jpg",
+    image: "/slide_escrow_vault_unique.jpg",
     badgeTitle: "Safest Payment Process",
     badgeRole: "Funds Released Only Upon Your OK",
     badges: [

@@ -12,7 +12,9 @@ import {
   Star, 
   Sparkles, 
   ChevronLeft, 
-  ChevronRight 
+  ChevronRight,
+  Tag,
+  Wrench
 } from "lucide-react";
 import Link from "next/link";
 
@@ -26,11 +28,11 @@ const ESCROW_STEPS = [
     desc: "The client selects their needed artisan service, agrees on the transparent job quote, and submits the request on HomeCare.",
     metricValue: "100%",
     metricLabel: "Transparent Scope Lock",
-    image: "/tech-working.jpg",
+    image: "/slide_matching_unique.jpg",
     badgeTitle: "Booking Initiated",
     badgeRole: "Clear Upfront Job Parameters",
     badges: [
-      { label: "Transparent Quote", icon: UserCheck, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
+      { label: "Transparent Quote", icon: Tag, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
       { label: "Scope Confirmed", icon: CheckCircle2, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
     ],
   },
@@ -43,7 +45,7 @@ const ESCROW_STEPS = [
     desc: "Customer deposits payment into HomeCare. Funds are protected and never sent directly to unverified technician bank accounts.",
     metricValue: "🔒 Safe",
     metricLabel: "Zero Direct Transfer Risk",
-    image: "/hero-tech.jpg",
+    image: "/slide_agreed_pricing_unique.jpg",
     badgeTitle: "Protected Payment Deposit",
     badgeRole: "Funds Safely Held In Vault",
     badges: [
@@ -60,7 +62,7 @@ const ESCROW_STEPS = [
     desc: "Funds remain locked in neutral HomeCare Escrow protection. Neither party can tamper with or withdraw funds during the repair process.",
     metricValue: "100%",
     metricLabel: "Escrow Protection Guarantee",
-    image: "/pipe-fitting.jpg",
+    image: "/slide_escrow_vault_unique.jpg",
     badgeTitle: "HomeCare Escrow Lock",
     badgeRole: "Neutral Vault Security Active",
     badges: [
@@ -77,11 +79,11 @@ const ESCROW_STEPS = [
     desc: "The assigned NIN-verified artisan arrives on-site, executes the repair work to specification, and submits final completion photos.",
     metricValue: "4.9★",
     metricLabel: "NIN Verified Work Quality",
-    image: "/tech-working.jpg",
+    image: "/slide_plumbing_unique.jpg",
     badgeTitle: "Professional On-Site Work",
     badgeRole: "Verified Artisan Repair",
     badges: [
-      { label: "On-Site Execution", icon: Sparkles, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
+      { label: "On-Site Execution", icon: Wrench, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
       { label: "NIN Verified Pro", icon: UserCheck, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
     ],
   },
@@ -94,7 +96,7 @@ const ESCROW_STEPS = [
     desc: "The homeowner tests the completed work, verifies repair quality, and approves completion on their HomeCare dashboard.",
     metricValue: "1-Click",
     metricLabel: "Customer Release Control",
-    image: "/hero-tech.jpg",
+    image: "/slide_verified_pros_unique.jpg",
     badgeTitle: "Client Quality Sign-Off",
     badgeRole: "Explicit Homeowner Authorization",
     badges: [
@@ -111,7 +113,7 @@ const ESCROW_STEPS = [
     desc: "Once confirmed, HomeCare automatically releases payment directly to the technician's wallet. Satisfaction guaranteed.",
     metricValue: "⚡ Instant",
     metricLabel: "Automated Artisan Payout",
-    image: "/pipe-fitting.jpg",
+    image: "/slide_verified_pro.jpg",
     badgeTitle: "Disbursal Complete",
     badgeRole: "Artisan Earns Earnings",
     badges: [
