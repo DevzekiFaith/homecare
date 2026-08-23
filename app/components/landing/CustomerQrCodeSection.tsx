@@ -5,14 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   QrCode, 
   Smartphone, 
-  Download, 
   Printer, 
   ExternalLink, 
   ShieldCheck, 
   CheckCircle2, 
-  Building2, 
-  Home, 
-  Sparkles,
   X
 } from "lucide-react";
 import Link from "next/link";
@@ -65,7 +61,7 @@ export default function CustomerQrCodeSection() {
   };
 
   return (
-    <section className="py-20 px-4 sm:px-6 bg-slate-900 text-white relative z-10 overflow-hidden border-y border-slate-800">
+    <section className="py-20 px-4 sm:px-6 bg-white text-slate-900 relative z-10 overflow-hidden border-b border-slate-200">
       <div className="max-w-7xl mx-auto">
         
         {/* Main Split Grid */}
@@ -73,39 +69,39 @@ export default function CustomerQrCodeSection() {
           
           {/* Left Column: Information & Explanation */}
           <div className="lg:col-span-6 space-y-6">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-500/10 border border-sky-500/30 text-[11px] font-black uppercase tracking-widest text-sky-300 backdrop-blur-md">
-              <QrCode size={14} className="text-sky-400" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-50 border border-sky-200 text-[11px] font-black uppercase tracking-widest text-sky-700 shadow-2xs">
+              <QrCode size={14} className="text-sky-600" />
               <span>Outdoor Physical QR Code</span>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white uppercase font-heading leading-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 uppercase font-heading leading-tight">
               SCAN TO BOOK <br />
-              <span className="text-sky-400">OUTSIDE YOUR DOOR</span>
+              <span className="text-sky-600">OUTSIDE YOUR DOOR</span>
             </h2>
 
-            <p className="text-sm sm:text-base text-slate-300 font-medium leading-relaxed">
-              Place the official HomeCare QR Code outside your house, apartment block, shortlet, clinic, or estate gate. Anyone can scan it with a smartphone camera to request a verified professional instantly at <strong className="text-white underline">{targetDomain}</strong>.
+            <p className="text-sm sm:text-base text-slate-600 font-medium leading-relaxed">
+              Place the official HomeCare QR Code outside your house, apartment block, shortlet, clinic, or estate gate. Anyone can scan it with a smartphone camera to request a verified professional instantly at <strong className="text-slate-900 underline">{targetDomain}</strong>.
             </p>
 
             {/* Feature Highlights */}
             <div className="space-y-3.5 pt-2">
-              <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700/80">
-                <div className="w-9 h-9 rounded-xl bg-sky-500/10 text-sky-400 flex items-center justify-center shrink-0 border border-sky-500/20">
+              <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
+                <div className="w-9 h-9 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center shrink-0 border border-sky-200">
                   <Smartphone size={18} />
                 </div>
                 <div>
-                  <span className="text-xs font-black text-white block uppercase">Zero App Download Required</span>
-                  <span className="text-[11px] text-slate-400 font-medium">Opens www.homecare.com.ng directly in mobile browser</span>
+                  <span className="text-xs font-black text-slate-900 block uppercase">Zero App Download Required</span>
+                  <span className="text-[11px] text-slate-500 font-medium">Opens www.homecare.com.ng directly in mobile browser</span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700/80">
-                <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/20">
+              <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
+                <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-200">
                   <ShieldCheck size={18} />
                 </div>
                 <div>
-                  <span className="text-xs font-black text-white block uppercase">Instant Location Recognition</span>
-                  <span className="text-[11px] text-slate-400 font-medium">Auto-pairs request with nearest NIN-verified technician</span>
+                  <span className="text-xs font-black text-slate-900 block uppercase">Instant Location Recognition</span>
+                  <span className="text-[11px] text-slate-500 font-medium">Auto-pairs request with nearest NIN-verified technician</span>
                 </div>
               </div>
             </div>
@@ -114,7 +110,7 @@ export default function CustomerQrCodeSection() {
             <div className="flex flex-wrap items-center gap-3 pt-4">
               <button
                 onClick={handlePrint}
-                className="h-13 px-6 rounded-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs uppercase tracking-widest flex items-center gap-2 transition-all hover:scale-105 shadow-lg shadow-sky-500/20 cursor-pointer"
+                className="h-13 px-6 rounded-full bg-sky-600 hover:bg-sky-500 text-white font-black text-xs uppercase tracking-widest flex items-center gap-2 transition-all hover:scale-105 shadow-lg shadow-sky-600/25 cursor-pointer"
               >
                 <Printer size={16} />
                 <span>Print Sticker / Poster</span>
@@ -122,7 +118,7 @@ export default function CustomerQrCodeSection() {
 
               <button
                 onClick={() => setShowModal(true)}
-                className="h-13 px-6 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white font-extrabold text-xs uppercase tracking-widest flex items-center gap-2 transition-all cursor-pointer"
+                className="h-13 px-6 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-800 font-extrabold text-xs uppercase tracking-widest flex items-center gap-2 transition-all cursor-pointer"
               >
                 <QrCode size={16} />
                 <span>View Full-Screen QR</span>

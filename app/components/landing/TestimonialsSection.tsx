@@ -18,7 +18,7 @@ const PROOF_ITEMS = [
     metricLabel: "Escrow Protected Repair Payout",
     customerName: "Temiloluwa A.",
     customerRole: "Homeowner · Ikeja, Lagos",
-    image: "/slide_plumbing_unique.jpg",
+    image: "/pipe-fitting.jpg",
     badges: [
       { label: "Good Fit", icon: ThumbsUp, color: "bg-white/90 text-slate-900 border-white/40" },
       { label: "Plumbing Pro", icon: CheckCircle2, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
@@ -36,7 +36,7 @@ const PROOF_ITEMS = [
     metricLabel: "Borehole Power Restoration SLA",
     customerName: "Tony O.",
     customerRole: "Resident · Independence Layout, Enugu",
-    image: "/slide_verified_pro.jpg",
+    image: "/su3.jpg",
     badges: [
       { label: "Good Fit", icon: ThumbsUp, color: "bg-white/90 text-slate-900 border-white/40" },
       { label: "Electrical Pro", icon: ShieldCheck, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
@@ -54,7 +54,7 @@ const PROOF_ITEMS = [
     metricLabel: "Upfront Fixed Quote Lock",
     customerName: "Temilade A.",
     customerRole: "New Homeowner · Ibara, Abeokuta",
-    image: "/slide_carpentry_unique.jpg",
+    image: "/su4.jpg",
     badges: [
       { label: "Good Fit", icon: ThumbsUp, color: "bg-white/90 text-slate-900 border-white/40" },
       { label: "Carpentry Pro", icon: UserCheck, color: "bg-purple-500/20 text-purple-300 border-purple-500/30" },
@@ -72,7 +72,7 @@ const PROOF_ITEMS = [
     metricLabel: "Post-Service Follow-Up Guarantee",
     customerName: "Dr. Biola M.",
     customerRole: "Clinic Administrator · Victoria Island",
-    image: "/slide_ac_cooling.jpg",
+    image: "/su9.jpg",
     badges: [
       { label: "Good Fit", icon: ThumbsUp, color: "bg-white/90 text-slate-900 border-white/40" },
       { label: "HVAC Specialist", icon: ShieldCheck, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
