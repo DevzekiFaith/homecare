@@ -22,7 +22,7 @@ const FooterSection = dynamic(() => import("./landing/FooterSection"));
 
 export default function Gateway() {
   return (
-    <div className="min-h-screen bg-background text-foreground transition-all duration-300 antialiased overflow-x-hidden selection:bg-sky-500/30 selection:text-white">
+    <div className="min-h-screen bg-white text-slate-900 transition-all duration-300 antialiased overflow-x-hidden selection:bg-sky-500/30 selection:text-white">
       <HeroSection />
       <ProblemStorySection />
       <ProblemFinderSection />

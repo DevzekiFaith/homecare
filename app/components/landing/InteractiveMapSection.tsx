@@ -11,7 +11,7 @@ const RealTimeMap = dynamic(() => import('./RealTimeMap'), {
 
 export default function InteractiveMapSection() {
   return (
-    <section className="py-24 px-6 relative z-10 overflow-hidden">
+    <section className="py-24 px-6 bg-white text-slate-900 relative z-10 overflow-hidden border-b border-slate-200">
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-16">
         
         <div className="lg:w-1/2">

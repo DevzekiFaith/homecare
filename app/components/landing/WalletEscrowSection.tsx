@@ -15,30 +15,27 @@ export default function WalletEscrowSection() {
   ];
 
   return (
-    <section className="py-24 px-6 bg-slate-950 text-white relative z-10 overflow-hidden border-b border-slate-800">
-      {/* Ambient background glows */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-sky-600/10 rounded-full blur-[160px] pointer-events-none" />
-
+    <section className="py-24 px-6 bg-white text-slate-900 relative z-10 overflow-hidden border-b border-slate-200">
       <div className="max-w-7xl mx-auto relative z-10">
         
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[11px] font-black uppercase tracking-widest text-emerald-400 mb-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-[11px] font-black uppercase tracking-widest text-emerald-700 mb-4">
             <ShieldCheck size={14} />
             <span>Escrow &amp; Payment Safeguard</span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white uppercase font-heading leading-tight">
-            Your Money <span className="text-emerald-400">Stays Protected.</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 uppercase font-heading leading-tight">
+            Your Money <span className="text-emerald-600">Stays Protected.</span>
           </h2>
-          <p className="mt-4 text-slate-300 text-sm sm:text-base font-medium leading-relaxed max-w-2xl mx-auto">
+          <p className="mt-4 text-slate-600 text-sm sm:text-base font-medium leading-relaxed max-w-2xl mx-auto">
             Payment is held securely according to HomeCare&apos;s payment protection process until the job reaches the agreed completion stage and you explicitly approve.
           </p>
         </div>
 
         {/* Animated Visual Flow Diagram */}
-        <div className="bg-slate-900/90 rounded-3xl p-6 sm:p-10 border border-slate-800 shadow-2xl mb-12">
-          <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 text-center mb-8">
+        <div className="bg-slate-50 rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-xs mb-12">
+          <h3 className="text-xs font-black uppercase tracking-widest text-slate-500 text-center mb-8">
             How Escrow Protection Works Step-by-Step
           </h3>
 
@@ -52,13 +49,15 @@ export default function WalletEscrowSection() {
                 transition={{ delay: idx * 0.1 }}
                 className={`p-4 rounded-2xl border text-center flex flex-col items-center justify-center relative ${
                   step.highlight
-                    ? "bg-sky-600 text-white border-sky-400 shadow-lg shadow-sky-600/30 ring-2 ring-sky-400/40"
+                    ? "bg-sky-600 text-white border-sky-500 shadow-md ring-2 ring-sky-300"
                     : step.end
-                    ? "bg-emerald-600 text-white border-emerald-400 shadow-md"
-                    : "bg-slate-950 text-slate-200 border-slate-800"
+                    ? "bg-emerald-600 text-white border-emerald-500 shadow-md"
+                    : "bg-white text-slate-800 border-slate-200 shadow-2xs"
                 }`}
               >
-                <div className="w-10 h-10 rounded-full flex items-center justify-center mb-2 bg-white/10">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${
+                  step.highlight || step.end ? "bg-white/20 text-white" : "bg-sky-50 text-sky-600"
+                }`}>
                   <step.icon size={18} />
                 </div>
                 <p className="text-xs font-extrabold uppercase tracking-tight leading-snug">
@@ -76,7 +75,7 @@ export default function WalletEscrowSection() {
         <div className="text-center">
           <Link
             href="/request"
-            className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black uppercase tracking-widest shadow-lg shadow-emerald-600/30 transition-all hover:scale-102 cursor-pointer"
+            className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black uppercase tracking-widest shadow-lg shadow-emerald-600/25 transition-all hover:scale-102 cursor-pointer"
           >
             <span>Book With Payment Protection</span>
             <ArrowRight size={16} />
