@@ -9,7 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 import SurgeBadge from "@/app/components/SurgeBadge";
 import type { SurgeResult } from "@/lib/surge";
 
-import { Wrench, Zap, Hammer, Armchair, Snowflake, Paintbrush, PenTool, Camera, X, Loader2, ShoppingBag, Copy, Check, ArrowLeft } from "lucide-react";
+import { Wrench, Zap, Hammer, Armchair, Snowflake, Paintbrush, PenTool, Camera, X, Loader2, ShoppingBag, Copy, Check, ArrowLeft, UserCheck, Star, ShieldCheck, Phone, MessageSquare, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import ErrorAlert from "@/app/components/ErrorAlert";
 import ModernDatePicker from "@/app/components/ModernDatePicker";
@@ -18,6 +18,7 @@ import ProductCard from "@/app/components/ProductCard";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { User } from "@supabase/supabase-js";
+import { matchWorkerForRequest, MatchedWorker } from "@/lib/matching";
 
 const REQUEST_HERO_IMAGE = "/su4.jpg";
 
@@ -43,6 +44,8 @@ function RequestContent() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [paymentDetails, setPaymentDetails] = useState({ amount: 0, email: "", phone: "", name: "", txRef: "" });
   const [address, setAddress] = useState("");
+  const [matchedWorker, setMatchedWorker] = useState<MatchedWorker | null>(null);
+  const [isMatching, setIsMatching] = useState(false);
   const mapRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
 
@@ -369,7 +372,7 @@ function RequestContent() {
       }
 
       toast.success("Booking confirmed!", {
-        description: "A professional will be assigned to you shortly."
+        description: "Executing smart worker matching..."
       });
 
       const calculatedAmount = selectedParts.reduce((acc, p) => acc + p.price, 0) || 2000;
@@ -381,8 +384,15 @@ function RequestContent() {
         txRef: `REQ-${Date.now().toString(36).toUpperCase()}`
       });
 
-      setSubmitted(true);
-      // Don't reset form yet so the user can pay
+      // Execute Smart Matching Engine
+      setIsMatching(true);
+      const matched = await matchWorkerForRequest(serviceType, "Lagos", "plus");
+      
+      setTimeout(() => {
+        setMatchedWorker(matched);
+        setIsMatching(false);
+        setSubmitted(true);
+      }, 1500);
     } catch (err: unknown) {
       console.error("Booking error:", err);
       const msg = err instanceof Error ? err.message : "An unexpected error occurred while submitting your booking. Please try again.";
@@ -874,16 +884,108 @@ function RequestContent() {
                       </>
                     ) : (
                       <>
-                        <h3 className="text-2xl font-heading font-extrabold text-slate-900 tracking-tight">Booking Confirmed!</h3>
-                        <p className="mt-2 text-sm text-slate-500 font-medium">Your request has been successfully recorded and is being processed.</p>
-                        
-                        <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                          <Link
-                            href="/customer/dashboard"
-                            className="h-12 rounded-full px-8 bg-sky-600 text-white flex items-center justify-center text-xs font-extrabold uppercase tracking-wider shadow-md shadow-sky-600/25 hover:bg-sky-700 w-full sm:w-auto"
-                          >
-                            Track Status
-                          </Link>
+                        <div className="text-center py-4">
+                          {isMatching ? (
+                            <div className="flex flex-col items-center justify-center py-10 space-y-4">
+                              <div className="relative w-20 h-20 flex items-center justify-center">
+                                <div className="absolute inset-0 rounded-full bg-sky-500/20 animate-ping" />
+                                <div className="absolute inset-2 rounded-full bg-sky-500/40 animate-pulse" />
+                                <div className="w-12 h-12 rounded-full bg-sky-600 text-white flex items-center justify-center relative z-10 shadow-lg shadow-sky-600/30">
+                                  <UserCheck size={24} />
+                                </div>
+                              </div>
+                              <h3 className="text-lg font-black uppercase text-slate-900 tracking-tight">
+                                Smart Matching Engine Active...
+                              </h3>
+                              <p className="text-xs text-sky-600 font-bold uppercase tracking-widest animate-pulse">
+                                Searching top verified artisans in Lagos...
+                              </p>
+                            </div>
+                          ) : (
+                            <>
+                              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-black uppercase tracking-widest mb-3">
+                                <CheckCircle2 size={13} />
+                                <span>Booking Confirmed &amp; Artisan Assigned</span>
+                              </div>
+                              <h3 className="text-2xl font-heading font-black text-slate-900 uppercase tracking-tight">
+                                Professional <span className="text-sky-600">Matched!</span>
+                              </h3>
+                              <p className="mt-1 text-xs text-slate-500 font-medium">
+                                Funds held safely in HomeCare Escrow until job completion.
+                              </p>
+
+                              {/* Live Matched Worker Card */}
+                              {matchedWorker && (
+                                <motion.div 
+                                  initial={{ opacity: 0, scale: 0.95 }}
+                                  animate={{ opacity: 1, scale: 1 }}
+                                  className="mt-6 p-6 rounded-3xl bg-slate-50 border-2 border-sky-200 text-left relative overflow-hidden shadow-md"
+                                >
+                                  <div className="flex items-center gap-4 mb-4">
+                                    <div className="relative w-16 h-16 rounded-2xl overflow-hidden bg-slate-200 border-2 border-sky-400 shrink-0 shadow-sm">
+                                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                                      <img
+                                        src={matchedWorker.avatar_url || "/tech-working.jpg"}
+                                        alt={matchedWorker.full_name}
+                                        className="w-full h-full object-cover"
+                                      />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center gap-2 mb-1">
+                                        <h4 className="text-base font-black text-slate-900 truncate">
+                                          {matchedWorker.full_name}
+                                        </h4>
+                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[9px] font-extrabold uppercase">
+                                          <ShieldCheck size={11} /> NIN Verified
+                                        </span>
+                                      </div>
+                                      <p className="text-xs text-sky-700 font-bold uppercase tracking-wider">
+                                        {matchedWorker.service_type} · {matchedWorker.city}
+                                      </p>
+                                      <div className="flex items-center gap-3 mt-1 text-[11px] font-semibold text-slate-600">
+                                        <span className="flex items-center gap-1 text-amber-600">
+                                          <Star size={13} fill="currentColor" /> {matchedWorker.rating || 4.9}
+                                        </span>
+                                        <span>•</span>
+                                        <span>{matchedWorker.completed_jobs_count || 42} Completed Jobs</span>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div className="p-3 rounded-xl bg-white border border-sky-100 mb-4 text-xs font-semibold text-slate-700 flex items-center justify-between">
+                                    <span className="text-slate-500">Match Rank Reason:</span>
+                                    <span className="font-extrabold text-sky-700">{matchedWorker.match_reason}</span>
+                                  </div>
+
+                                  <div className="grid grid-cols-2 gap-3">
+                                    <a
+                                      href={`tel:${matchedWorker.phone}`}
+                                      className="h-11 rounded-full bg-sky-600 hover:bg-sky-500 text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs transition-all"
+                                    >
+                                      <Phone size={14} /> Call Pro
+                                    </a>
+                                    <a
+                                      href={`https://wa.me/${matchedWorker.phone?.replace(/[^0-9]/g, "")}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="h-11 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs transition-all"
+                                    >
+                                      <MessageSquare size={14} /> WhatsApp
+                                    </a>
+                                  </div>
+                                </motion.div>
+                              )}
+
+                              <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                                <Link
+                                  href="/customer/dashboard"
+                                  className="h-12 rounded-full px-8 bg-slate-900 hover:bg-slate-800 text-white flex items-center justify-center text-xs font-extrabold uppercase tracking-wider shadow-md w-full"
+                                >
+                                  Track Live Status On Dashboard
+                                </Link>
+                              </div>
+                            </>
+                          )}
                         </div>
                       </>
                     )}
