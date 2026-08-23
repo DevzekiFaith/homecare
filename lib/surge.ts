@@ -53,13 +53,28 @@ export function clearGlobalOverrides(): void {
 export function getSurgeResult(
   service: string,
   _city: string,
-  hour: number = new Date().getHours()
+  hour: number = new Date().getHours(),
+  userTier?: 'basic' | 'plus' | 'pro' | 'elite'
 ): SurgeResult {
   const overrides = getGlobalOverrides();
   
+  // Elite Tier: Zero Surge Ever (1.0x Fixed)
+  if (userTier === 'elite') {
+    return {
+      multiplier: 1.0,
+      level: 'standard',
+      label: 'Elite 0% Surge',
+      reason: 'Zero surge pricing ever for HomeCare Elite Members',
+      isOverride: false,
+    };
+  }
+
   // Check for active real-time override
   if (overrides[service] && typeof overrides[service] === 'number') {
-    const mult = Math.round(overrides[service] * 100) / 100;
+    let mult = Math.round(overrides[service] * 100) / 100;
+    if (userTier === 'pro') mult = Math.min(mult, 1.5);
+    if (userTier === 'plus') mult = Math.min(mult, 2.0);
+
     let level: SurgeResult['level'] = 'standard';
     let label = 'Standard';
     if (mult >= 1.25) {
@@ -108,6 +123,15 @@ export function getSurgeResult(
   const highDemandServices = ['Electrician', 'AC & Fridge Repair', 'Plumber'];
   if (highDemandServices.includes(service) && multiplier > 1.0) {
     multiplier = Math.min(multiplier + 0.05, 1.5);
+  }
+
+  // Apply Tier Caps
+  if (userTier === 'pro' && multiplier > 1.5) {
+    multiplier = 1.5;
+    reason += ' (Capped at 1.5x for HomeCare Pro)';
+  } else if (userTier === 'plus' && multiplier > 2.0) {
+    multiplier = 2.0;
+    reason += ' (Capped at 2.0x for HomeCare Plus)';
   }
 
   let level: SurgeResult['level'] = 'standard';

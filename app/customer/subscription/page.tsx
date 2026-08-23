@@ -272,10 +272,10 @@ export default function SubscriptionPage() {
             </ul>
             <button 
               onClick={() => handleUpgrade('plus')}
-              disabled={currentTier === 'plus' || !!upgrading}
+              disabled={currentTier === 'plus' || currentTier === 'pro' || currentTier === 'elite' || !!upgrading}
               className={`w-full rounded-full border-2 border-slate-300 bg-white hover:bg-slate-100 px-6 h-12 text-xs font-extrabold uppercase tracking-widest text-slate-800 transition-colors disabled:opacity-50 flex items-center justify-center shadow-xs cursor-pointer`}
             >
-              {upgrading === 'plus' ? <Loader2 className="animate-spin" size={16} /> : currentTier === 'plus' ? "Current Plan" : "Select Plus"}
+              {upgrading === 'plus' ? <Loader2 className="animate-spin" size={16} /> : currentTier === 'plus' ? "Current Plan" : currentTier === 'pro' || currentTier === 'elite' ? "Included in Plan" : "Select Plus"}
             </button>
           </motion.div>
 
@@ -314,7 +314,7 @@ export default function SubscriptionPage() {
               disabled={currentTier === 'pro' || currentTier === 'elite' || !!upgrading}
               className={`w-full rounded-full bg-sky-600 hover:bg-sky-500 text-white px-6 h-12 text-xs font-extrabold uppercase tracking-widest flex items-center justify-center disabled:opacity-50 shadow-lg shadow-sky-600/30 transition-all hover:scale-[1.02] cursor-pointer`}
             >
-              {upgrading === 'pro' ? <Loader2 className="animate-spin" size={16} /> : currentTier === 'pro' ? "Current Plan" : currentTier === 'elite' ? "Included" : "Upgrade to Pro"}
+              {upgrading === 'pro' ? <Loader2 className="animate-spin" size={16} /> : currentTier === 'pro' ? "Current Plan" : currentTier === 'elite' ? "Included in Plan" : "Upgrade to Pro"}
             </button>
           </motion.div>
 
