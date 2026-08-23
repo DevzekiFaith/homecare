@@ -264,22 +264,15 @@ export default function EducationalResourcesSection() {
               {/* Video Player Modal Content */}
               {selectedResource.type === "Video" ? (
                 <div>
-                  {/* Real-Time Live Video Embed Container */}
-                  <div className="relative bg-black aspect-video w-full overflow-hidden shadow-md group">
-                    <video
-                      ref={videoRef}
-                      key={selectedResource.id}
-                      controls
-                      autoPlay
-                      muted={isMuted}
-                      loop
-                      playsInline
-                      poster={selectedResource.image}
-                      className="w-full h-full object-cover"
-                    >
-                      <source src="/diy_faucet_fix.mp4" type="video/mp4" />
-                      Your browser does not support HTML5 video playback.
-                    </video>
+                  {/* Real-Time Live YouTube DIY Video Embed Container */}
+                  <div className="relative bg-black aspect-video w-full overflow-hidden shadow-md">
+                    <iframe
+                      src="https://www.youtube.com/embed/F6q0Nf6Y6K8?autoplay=1&rel=0"
+                      title="How to Fix a Leaky Faucet - DIY Guide"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                      className="w-full h-full border-0"
+                    />
                   </div>
 
                   {/* Video Details & Narration Chapters */}
