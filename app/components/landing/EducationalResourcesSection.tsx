@@ -95,33 +95,29 @@ export default function EducationalResourcesSection() {
     : RESOURCES.filter(r => r.type === activeTab);
 
   return (
-    <section className="py-24 px-4 sm:px-6 bg-slate-900 text-white relative z-10 overflow-hidden border-y border-slate-800">
+    <section className="py-24 px-4 sm:px-6 bg-white text-slate-900 relative z-10 overflow-hidden border-y border-slate-200">
       
-      {/* Background Ambient Glow */}
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
-
       <div className="max-w-7xl mx-auto">
         
         {/* Section Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-12 gap-6">
           <div className="max-w-2xl">
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-sky-400 bg-sky-500/10 border border-sky-500/20 px-3.5 py-1.5 rounded-full inline-flex items-center gap-1.5">
+              <span className="text-xs font-bold uppercase tracking-wider text-sky-600 bg-sky-50 border border-sky-100 px-3.5 py-1.5 rounded-full inline-flex items-center gap-1.5 shadow-2xs">
                 <Sparkles size={13} />
                 <span>Home Maintenance Knowledge Hub</span>
               </span>
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase font-heading tracking-tight text-white">
-              You Can Fix It <span className="text-sky-400">Yourself Too.</span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase font-heading tracking-tight text-slate-900">
+              You Can Fix It <span className="text-sky-600">Yourself Too.</span>
             </h2>
-            <p className="mt-3 text-slate-400 text-sm sm:text-base font-medium leading-relaxed">
+            <p className="mt-3 text-slate-600 text-sm sm:text-base font-medium leading-relaxed">
               Not every issue requires a technician visit. Browse our step-by-step DIY video walkthroughs with narration and expert maintenance guides.
             </p>
           </div>
 
           {/* Filter Tabs */}
-          <div className="flex items-center gap-2 bg-slate-800/80 p-1.5 rounded-2xl border border-slate-700/80 self-start lg:self-auto">
+          <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-2xl border border-slate-200 self-start lg:self-auto shadow-2xs">
             {(["All", "Video", "Article"] as const).map((tab) => (
               <button
                 key={tab}
@@ -129,7 +125,7 @@ export default function EducationalResourcesSection() {
                 className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
                   activeTab === tab
                     ? "bg-sky-600 text-white shadow-md shadow-sky-600/20"
-                    : "text-slate-400 hover:text-white hover:bg-slate-700/50"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
                 }`}
               >
                 {tab === "All" ? "All Resources" : `${tab}s`}
@@ -148,7 +144,7 @@ export default function EducationalResourcesSection() {
               viewport={{ once: true }}
               whileHover={{ y: -6 }}
               onClick={() => setSelectedResource(item)}
-              className="group cursor-pointer rounded-[32px] overflow-hidden bg-slate-800/80 border border-slate-700/80 hover:border-sky-500/80 transition-all flex flex-col justify-between shadow-2xl relative"
+              className="group cursor-pointer rounded-[32px] overflow-hidden bg-slate-50 border border-slate-200 hover:border-sky-400 transition-all flex flex-col justify-between shadow-2xs hover:shadow-xl relative"
             >
               {/* Top Media Image Header */}
               <div className="relative h-56 sm:h-64 overflow-hidden">
@@ -158,18 +154,18 @@ export default function EducationalResourcesSection() {
                   alt={item.title}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
 
                 {/* Type Badge */}
                 <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
                   <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border backdrop-blur-md ${
                     item.type === "Video"
-                      ? "bg-red-500/20 text-red-300 border-red-500/40"
-                      : "bg-sky-500/20 text-sky-300 border-sky-500/40"
+                      ? "bg-red-500/90 text-white border-red-400"
+                      : "bg-sky-600/90 text-white border-sky-400"
                   }`}>
                     {item.type}
                   </span>
-                  <span className="px-3 py-1 rounded-full text-[10px] font-bold text-slate-300 bg-slate-900/80 backdrop-blur-md border border-white/10">
+                  <span className="px-3 py-1 rounded-full text-[10px] font-bold text-slate-200 bg-slate-900/80 backdrop-blur-md border border-white/10">
                     {item.category}
                   </span>
                 </div>
@@ -177,7 +173,7 @@ export default function EducationalResourcesSection() {
                 {/* Video Play Overlay Button */}
                 {item.type === "Video" ? (
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-16 h-16 rounded-full bg-sky-600/90 text-white flex items-center justify-center shadow-xl border border-sky-400 group-hover:scale-110 transition-transform duration-300">
+                    <div className="w-16 h-16 rounded-full bg-sky-600 text-white flex items-center justify-center shadow-xl border border-sky-400 group-hover:scale-110 transition-transform duration-300">
                       <Play fill="currentColor" size={24} className="ml-1 text-white" />
                     </div>
                   </div>
@@ -193,19 +189,19 @@ export default function EducationalResourcesSection() {
               {/* Card Body */}
               <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between space-y-4">
                 <div>
-                  <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-sky-400 transition-colors leading-snug mb-3">
+                  <h3 className="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-sky-600 transition-colors leading-snug mb-3">
                     {item.title}
                   </h3>
-                  <p className="text-xs text-slate-400 leading-relaxed line-clamp-3 font-medium">
+                  <p className="text-xs text-slate-600 leading-relaxed line-clamp-3 font-medium">
                     {item.desc}
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-slate-700/60 flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-slate-400">
+                <div className="pt-4 border-t border-slate-200/80 flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-slate-500">
                     {item.author}
                   </span>
-                  <span className="text-xs font-black uppercase tracking-wider text-sky-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                  <span className="text-xs font-black uppercase tracking-wider text-sky-600 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                     <span>{item.duration}</span>
                     <ArrowRight size={14} />
                   </span>
