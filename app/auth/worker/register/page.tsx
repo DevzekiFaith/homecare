@@ -482,37 +482,19 @@ export default function WorkerRegisterPage() {
                 {/* Upload Clear Photo / Selfie */}
                 <div className="pt-2">
                   <label className="block text-xs font-black text-slate-900 uppercase tracking-wider mb-2">
-                    Upload Live Photo (Selfie)
+                    Upload Live Photo (Selfie) <span className="text-rose-500">*</span>
                   </label>
                   <p className="text-xs text-slate-500 font-medium mb-3">
                     Clear face photo for customer job matching card and AI facial screening.
                   </p>
                   
-                  <label className="group flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl border-2 border-dashed border-sky-300 bg-sky-50/50 hover:bg-sky-100/50 hover:border-sky-500 transition-all cursor-pointer">
-                    <div className="flex items-center gap-3.5">
-                      <div className="h-11 w-11 rounded-xl bg-sky-100 border border-sky-200 flex items-center justify-center text-sky-700 shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-                        <Camera size={20} />
-                      </div>
-                      <div>
-                        <p className="text-sm font-black text-slate-900">
-                          {photoFile ? photoFile.name : "Capture or Upload Selfie"}
-                        </p>
-                        <p className="text-xs text-slate-500 font-medium">
-                          {photoFile ? `${(photoFile.size / 1024).toFixed(1)} KB selected` : "Supports PNG, JPG (Max 5MB)"}
-                        </p>
-                      </div>
-                    </div>
-
-                    <span className="px-4 py-2 rounded-xl bg-sky-600 text-white text-xs font-bold uppercase tracking-wider shadow-2xs group-hover:bg-sky-500 transition-colors shrink-0">
-                      {photoFile ? "Change Photo" : "Choose File"}
-                    </span>
-
+                  <div className="space-y-3">
                     <input
                       required
                       type="file"
                       name="photo"
                       accept="image/*"
-                      className="sr-only"
+                      className="w-full text-xs text-slate-500 font-medium file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-xs file:font-black file:uppercase file:tracking-wider file:bg-sky-600 file:text-white hover:file:bg-sky-500 file:cursor-pointer cursor-pointer border border-slate-300 rounded-2xl bg-white p-3 shadow-2xs transition-all"
                       onChange={async (e) => {
                         const file = e.target.files?.[0];
                         setPhotoFile(file ?? null);
@@ -553,7 +535,7 @@ export default function WorkerRegisterPage() {
                         }
                       }}
                     />
-                  </label>
+                  </div>
                   <IdVerificationStatus status={verifyStatus} reason={verifyReason} confidence={verifyConfidence} />
                 </div>
               </div>
