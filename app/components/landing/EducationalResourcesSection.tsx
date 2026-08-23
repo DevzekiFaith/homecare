@@ -220,34 +220,34 @@ export default function EducationalResourcesSection() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] bg-slate-950/95 backdrop-blur-lg flex items-center justify-center p-4 sm:p-6 overflow-y-auto"
+            className="fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto"
           >
             {/* Fixed Top-Right Screen Close Button */}
             <button
               onClick={() => setSelectedResource(null)}
               aria-label="Close modal"
-              className="fixed top-5 right-5 sm:top-8 sm:right-8 z-[70] h-12 px-5 rounded-full bg-red-600 hover:bg-red-500 text-white font-extrabold text-xs uppercase tracking-wider flex items-center gap-2 shadow-2xl border-2 border-white/20 transition-all hover:scale-105 cursor-pointer"
+              className="fixed top-4 right-4 sm:top-6 sm:right-6 z-[70] h-10 px-4 rounded-full bg-red-600 hover:bg-red-500 text-white font-extrabold text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-2xl border border-white/20 transition-all hover:scale-105 cursor-pointer"
             >
-              <X size={18} />
-              <span>Close Video</span>
+              <X size={16} />
+              <span>Close</span>
             </button>
 
             <motion.div
               initial={{ scale: 0.95, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 20 }}
-              className="bg-slate-900 border border-slate-700 rounded-[32px] max-w-4xl w-full overflow-hidden shadow-2xl relative my-8"
+              className="bg-white border border-slate-200 rounded-[28px] max-w-2xl w-full overflow-hidden shadow-2xl relative my-6 text-slate-900"
             >
               {/* Internal Modal Card Header Bar */}
-              <div className="flex items-center justify-between px-6 py-4 bg-slate-950/80 border-b border-slate-800">
-                <span className="text-xs font-bold uppercase tracking-wider text-sky-400 flex items-center gap-2">
+              <div className="flex items-center justify-between px-5 py-3.5 bg-slate-50 border-b border-slate-200">
+                <span className="text-xs font-extrabold uppercase tracking-wider text-sky-600 flex items-center gap-2">
                   <Sparkles size={14} />
-                  <span>{selectedResource.type === "Video" ? "Video Tutorial & Narration" : "Expert Home Guide"}</span>
+                  <span>{selectedResource.type === "Video" ? "Live Video Tutorial & Narration" : "Expert Home Guide"}</span>
                 </span>
 
                 <button
                   onClick={() => setSelectedResource(null)}
-                  className="h-8 px-3 rounded-full bg-slate-800 hover:bg-red-600 text-slate-300 hover:text-white text-xs font-bold flex items-center gap-1 border border-slate-700 transition-colors cursor-pointer"
+                  className="h-8 px-3 rounded-full bg-slate-200 hover:bg-red-600 text-slate-700 hover:text-white text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
                 >
                   <X size={14} />
                   <span>Close</span>
@@ -257,78 +257,38 @@ export default function EducationalResourcesSection() {
               {/* Video Player Modal Content */}
               {selectedResource.type === "Video" ? (
                 <div>
-                  {/* Embedded Video Showcase Container */}
-                  <div className="relative bg-black aspect-video w-full overflow-hidden flex items-center justify-center">
-                    {/* Simulated High-Def Video Player */}
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={selectedResource.image}
-                      alt={selectedResource.title}
-                      className="w-full h-full object-cover opacity-70"
+                  {/* Real-Time Live Video Embed Container */}
+                  <div className="relative bg-black aspect-video w-full overflow-hidden shadow-md">
+                    <iframe
+                      src="https://www.youtube-nocookie.com/embed/5a2xWn_Mv7Y?autoplay=1&rel=0&modestbranding=1"
+                      title={selectedResource.title}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="w-full h-full border-0"
                     />
-                    
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-slate-950/60" />
-
-                    {/* Central Interactive Narration Player Overlay */}
-                    <div className="absolute inset-0 flex flex-col justify-between p-6 z-10">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold uppercase tracking-wider text-white bg-red-600 px-3 py-1 rounded-full flex items-center gap-1.5 shadow-md">
-                          <Play size={12} fill="currentColor" />
-                          <span>HD Video Narration Active</span>
-                        </span>
-
-                        <button 
-                          onClick={() => setIsMuted(!isMuted)}
-                          className="h-9 px-3 rounded-full bg-slate-900/80 text-white text-xs font-bold flex items-center gap-1.5 border border-white/20 hover:bg-slate-800 cursor-pointer"
-                        >
-                          {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
-                          <span>{isMuted ? "Muted" : "Narration Audio On"}</span>
-                        </button>
-                      </div>
-
-                      <div className="text-center my-auto">
-                        <div className="w-20 h-20 rounded-full bg-sky-600/90 hover:bg-sky-500 text-white mx-auto flex items-center justify-center shadow-2xl border-2 border-white/30 cursor-pointer transition-transform hover:scale-105">
-                          <Play fill="currentColor" size={32} className="ml-1" />
-                        </div>
-                        <p className="text-xs font-extrabold uppercase tracking-widest text-sky-300 mt-3">
-                          Click to Start 10-Min Faucet Fix Narration
-                        </p>
-                      </div>
-
-                      {/* Video Timeline Progress */}
-                      <div className="space-y-2">
-                        <div className="w-full h-1.5 bg-white/20 rounded-full overflow-hidden">
-                          <div className="w-1/3 h-full bg-sky-500 rounded-full" />
-                        </div>
-                        <div className="flex justify-between text-[11px] font-bold text-slate-300">
-                          <span>01:45 / 05:00</span>
-                          <span>Narration Track: Engr. Felix (Voice Guide Enabled)</span>
-                        </div>
-                      </div>
-                    </div>
                   </div>
 
                   {/* Video Details & Narration Chapters */}
-                  <div className="p-6 sm:p-8 space-y-6">
+                  <div className="p-5 sm:p-6 space-y-5">
                     <div>
-                      <h3 className="text-2xl font-black text-white">{selectedResource.title}</h3>
-                      <p className="text-xs text-slate-400 mt-1 font-medium">{selectedResource.desc}</p>
+                      <h3 className="text-xl font-black text-slate-900">{selectedResource.title}</h3>
+                      <p className="text-xs text-slate-600 mt-1 font-medium leading-relaxed">{selectedResource.desc}</p>
                     </div>
 
                     {/* Step-by-Step Chapters */}
-                    <div className="space-y-3 pt-4 border-t border-slate-800">
-                      <h4 className="text-xs font-bold uppercase tracking-widest text-sky-400 flex items-center gap-1.5">
+                    <div className="space-y-2.5 pt-3 border-t border-slate-100">
+                      <h4 className="text-xs font-bold uppercase tracking-widest text-sky-600 flex items-center gap-1.5">
                         <Clock size={14} />
                         <span>Step-by-Step Narration Timeline Chapters</span>
                       </h4>
-                      <div className="space-y-2">
+                      <div className="space-y-1.5">
                         {selectedResource.chapters?.map((chap, cIdx) => (
                           <div
                             key={cIdx}
-                            className="p-3 rounded-xl bg-slate-800/80 border border-slate-700/80 flex items-center justify-between text-xs font-medium hover:border-sky-500/50 transition-colors"
+                            className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs font-medium hover:border-sky-300 transition-colors"
                           >
-                            <span className="text-slate-300">{chap.text}</span>
-                            <span className="font-mono font-bold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded border border-sky-500/20">
+                            <span className="text-slate-700">{chap.text}</span>
+                            <span className="font-mono font-bold text-sky-700 bg-sky-50 px-2 py-0.5 rounded border border-sky-100">
                               {chap.time}
                             </span>
                           </div>
@@ -336,15 +296,15 @@ export default function EducationalResourcesSection() {
                       </div>
                     </div>
 
-                    <div className="pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-                      <div className="flex items-center gap-2 text-xs text-slate-400 font-medium">
-                        <Wrench size={15} className="text-sky-400" />
+                    <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+                      <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
+                        <Wrench size={15} className="text-sky-600" />
                         <span>Need a pro plumber instead? We dispatch in 15 mins.</span>
                       </div>
                       <Link
                         href="/request?category=plumbing"
                         onClick={() => setSelectedResource(null)}
-                        className="px-6 py-3 rounded-full bg-sky-600 hover:bg-sky-500 text-white text-xs font-extrabold uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-sky-600/30"
+                        className="px-5 py-2.5 rounded-full bg-sky-600 hover:bg-sky-500 text-white text-xs font-extrabold uppercase tracking-wider flex items-center gap-1.5 shadow-md shadow-sky-600/20"
                       >
                         <span>Book Plumber Now</span>
                         <ArrowRight size={14} />
@@ -354,28 +314,28 @@ export default function EducationalResourcesSection() {
                 </div>
               ) : (
                 /* Article Reader Modal Content */
-                <div className="p-6 sm:p-10 space-y-6 max-h-[85vh] overflow-y-auto">
-                  <div className="space-y-2">
-                    <span className="text-xs font-bold uppercase tracking-wider text-sky-400 bg-sky-500/10 border border-sky-500/20 px-3 py-1 rounded-full inline-block">
+                <div className="p-5 sm:p-8 space-y-5 max-h-[80vh] overflow-y-auto">
+                  <div className="space-y-1.5">
+                    <span className="text-xs font-bold uppercase tracking-wider text-sky-600 bg-sky-50 border border-sky-100 px-3 py-1 rounded-full inline-block">
                       {selectedResource.category} Guide
                     </span>
-                    <h3 className="text-2xl sm:text-3xl font-black text-white">{selectedResource.title}</h3>
-                    <p className="text-xs text-slate-400 font-bold">Written by {selectedResource.author}</p>
+                    <h3 className="text-xl sm:text-2xl font-black text-slate-900">{selectedResource.title}</h3>
+                    <p className="text-xs text-slate-500 font-bold">Written by {selectedResource.author}</p>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-sky-200 text-xs leading-relaxed font-medium">
+                  <div className="p-3.5 rounded-xl bg-sky-50 border border-sky-100 text-sky-900 text-xs leading-relaxed font-medium">
                     {selectedResource.desc}
                   </div>
 
                   {/* Article Content Chapters */}
-                  <div className="space-y-6 pt-4 border-t border-slate-800">
+                  <div className="space-y-4 pt-3 border-t border-slate-100">
                     {selectedResource.articleContent?.map((sec, sIdx) => (
-                      <div key={sIdx} className="space-y-2 p-5 rounded-2xl bg-slate-800/60 border border-slate-700/60">
-                        <h4 className="text-base font-bold text-white flex items-center gap-2">
-                          <CheckCircle2 size={16} className="text-emerald-400" />
+                      <div key={sIdx} className="space-y-1.5 p-4 rounded-xl bg-slate-50 border border-slate-200">
+                        <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                          <CheckCircle2 size={16} className="text-emerald-600" />
                           <span>{sec.title}</span>
                         </h4>
-                        <p className="text-xs text-slate-300 leading-relaxed font-medium">
+                        <p className="text-xs text-slate-600 leading-relaxed font-medium">
                           {sec.body}
                         </p>
                       </div>
@@ -383,15 +343,15 @@ export default function EducationalResourcesSection() {
                   </div>
 
                   {/* Action CTA */}
-                  <div className="pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div className="flex items-center gap-2 text-xs text-slate-400 font-medium">
-                      <ShieldAlert size={16} className="text-amber-400" />
+                  <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
+                      <ShieldAlert size={16} className="text-amber-600" />
                       <span>If you suspect a dangerous failure, do not risk DIY.</span>
                     </div>
                     <Link
                       href="/request"
                       onClick={() => setSelectedResource(null)}
-                      className="px-6 py-3 rounded-full bg-sky-600 hover:bg-sky-500 text-white text-xs font-extrabold uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-sky-600/30"
+                      className="px-5 py-2.5 rounded-full bg-sky-600 hover:bg-sky-500 text-white text-xs font-extrabold uppercase tracking-wider flex items-center gap-1.5 shadow-md shadow-sky-600/20"
                     >
                       <span>Request Pro Inspection</span>
                       <ArrowRight size={14} />
@@ -407,4 +367,5 @@ export default function EducationalResourcesSection() {
     </section>
   );
 }
+
 
