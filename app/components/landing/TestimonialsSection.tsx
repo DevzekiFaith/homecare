@@ -2,36 +2,39 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
-import { Star, ArrowRight, ShieldCheck, ChevronLeft, ChevronRight, ThumbsUp, CheckCircle2, UserCheck, Lock } from "lucide-react";
+import { Star, ChevronLeft, ChevronRight, ThumbsUp, CheckCircle2, ShieldCheck, Lock, AlertCircle } from "lucide-react";
 import { fetchAllReviews } from "@/lib/reviews";
 
-const PROOF_ITEMS = [
+const CLIENT_OUTCOMES = [
   {
     id: "01",
     tabLabel: "Temiloluwa (Ikeja)",
-    tag: "Verified Plumbing Review",
-    heading: "Kitchen Pipe Burst Fixed In Under 2 Hours",
-    desc: "Age-long kitchen pipe burst causing severe flooding under the sink vanity. Verified plumber arrived, replaced corroded copper fittings, and locked the repair with escrow protection.",
-    metricValue: "100%",
-    metricLabel: "Escrow Protected Repair Payout",
+    tag: "Plumbing Repair Outcome",
+    heading: "Kitchen Pipe Burst Stopped Cleanly Under Escrow",
+    desc: "Age-long kitchen pipe burst causing severe flooding under the sink vanity. Verified plumber arrived within 45 minutes, replaced corroded copper fittings, and stopped the leak with zero property damage.",
+    problem: "Kitchen pipe burst causing severe under-sink flooding",
+    outcome: "Corroded fittings replaced & leak stopped under 2 hours",
+    metricValue: "5.0★",
+    metricLabel: "Verified Plumbing Service Rating",
     customerName: "Temiloluwa A.",
     customerRole: "Homeowner · Ikeja, Lagos",
     image: "/pipe-fitting.jpg",
     badges: [
       { label: "Good Fit", icon: ThumbsUp, color: "bg-white/90 text-slate-900 border-white/40" },
       { label: "Plumbing Pro", icon: CheckCircle2, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
-      { label: "Escrow Protected", icon: Lock, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
+      { label: "Escrow Locked", icon: Lock, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
       { label: "Rated ★ 5.0", icon: Star, color: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
     ],
   },
   {
     id: "02",
     tabLabel: "Tony (Enugu)",
-    tag: "Verified Electrical Review",
-    heading: "Borehole Control Box Rewired After Surge",
-    desc: "Borehole pump control box blew out during a power surge in Independence Layout. Electrician replaced control panel and rewired surge protection safely.",
+    tag: "Electrical & Pump Outcome",
+    heading: "Borehole Surge Control Box Rewired Same-Day",
+    desc: "Borehole pump control box blew out during a sudden power surge in Independence Layout. Electrician replaced damaged control panel and rewired surge protection safely.",
+    problem: "Borehole pump control box blown during power surge",
+    outcome: "Control panel replaced & surge protection rewired",
     metricValue: "Same Day",
     metricLabel: "Borehole Power Restoration SLA",
     customerName: "Tony O.",
@@ -47,29 +50,33 @@ const PROOF_ITEMS = [
   {
     id: "03",
     tabLabel: "Temilade (Abeokuta)",
-    tag: "Verified Carpentry Review",
-    heading: "Front Door Security & Mortise Lock Aligned",
-    desc: "Damaged front door mortise lock and unaligned wooden frame. Carpenter re-aligned frame, installed heavy-duty mortise lock, and restored full entrance security.",
+    tag: "Carpentry & Locks Outcome",
+    heading: "Front Door Security Mortise Lock Fully Aligned",
+    desc: "Damaged front door mortise lock and unaligned wooden door frame causing security risks. Carpenter re-aligned door frame, installed heavy-duty mortise lock, and restored full entrance security.",
+    problem: "Damaged mortise lock & unaligned wooden frame",
+    outcome: "Frame re-aligned & heavy-duty lock installed",
     metricValue: "Pre-Agreed",
-    metricLabel: "Upfront Fixed Quote Lock",
+    metricLabel: "Upfront Fixed Price Lock",
     customerName: "Temilade A.",
     customerRole: "New Homeowner · Ibara, Abeokuta",
     image: "/su4.jpg",
     badges: [
       { label: "Good Fit", icon: ThumbsUp, color: "bg-white/90 text-slate-900 border-white/40" },
-      { label: "Carpentry Pro", icon: UserCheck, color: "bg-purple-500/20 text-purple-300 border-purple-500/30" },
-      { label: "Frame Aligned", icon: CheckCircle2, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
+      { label: "Carpentry Pro", icon: CheckCircle2, color: "bg-purple-500/20 text-purple-300 border-purple-500/30" },
+      { label: "Frame Aligned", icon: ShieldCheck, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
       { label: "Rated ★ 5.0", icon: Star, color: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
     ],
   },
   {
     id: "04",
     tabLabel: "Dr. Biola (VI)",
-    tag: "Verified AC Maintenance Review",
+    tag: "Clinic AC Cooling Outcome",
     heading: "Clinic Consultation Room Cooling Restored",
-    desc: "Two clinic consultation room AC units stopped cooling due to gas leaks. HVAC technician pressure-tested gas lines, refilled R410a coolant, and restored ice-cold airflow.",
+    desc: "Two clinic consultation room AC units stopped cooling due to gas leakage. HVAC technician pressure-tested gas lines, refilled R410a coolant, and restored ice-cold airflow for patients.",
+    problem: "Clinic AC units stopped cooling due to gas leak",
+    outcome: "Gas lines pressure-tested & R410a refilled",
     metricValue: "30 Days",
-    metricLabel: "Post-Service Follow-Up Guarantee",
+    metricLabel: "Post-Job Warranty Guarantee",
     customerName: "Dr. Biola M.",
     customerRole: "Clinic Administrator · Victoria Island",
     image: "/su9.jpg",
@@ -82,7 +89,7 @@ const PROOF_ITEMS = [
   },
 ];
 
-const fallbackTestimonials = [
+const fallbackReviews = [
   {
     name: "Temiloluwa A.",
     location: "Ikeja, Lagos",
@@ -142,13 +149,13 @@ export default function TestimonialsSection() {
   useEffect(() => {
     if (isPaused) return;
     const timer = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % PROOF_ITEMS.length);
+      setActiveIndex((prev) => (prev + 1) % CLIENT_OUTCOMES.length);
     }, 6000);
     return () => clearInterval(timer);
   }, [isPaused]);
 
-  const current = PROOF_ITEMS[activeIndex];
-  const allTestimonials = [...liveReviews, ...fallbackTestimonials];
+  const current = CLIENT_OUTCOMES[activeIndex];
+  const allReviews = [...liveReviews, ...fallbackReviews];
 
   return (
     <section className="py-20 px-4 sm:px-6 bg-white text-slate-900 relative z-10 border-b border-slate-200">
@@ -163,14 +170,14 @@ export default function TestimonialsSection() {
           className="text-center max-w-3xl mx-auto mb-12"
         >
           <span className="text-xs font-bold uppercase tracking-wider text-sky-600 bg-sky-50 px-3.5 py-1.5 rounded-full border border-sky-100 mb-3 inline-block shadow-2xs">
-            Proven Track Record &amp; Real Proof
+            Verified Client Outcomes &amp; Ratings
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 uppercase font-heading tracking-tight">
             LOVED BY HOMEOWNERS <br />
             <span className="text-sky-600">ACROSS NIGERIA</span>
           </h2>
           <p className="mt-4 text-slate-600 text-sm sm:text-base font-medium max-w-2xl mx-auto leading-relaxed">
-            Real verified outcomes from residents across Lagos, Enugu, and Abeokuta who got their repairs fixed without guesswork.
+            Real verified reviews from homeowners who got their repairs done seamlessly.
           </p>
         </motion.div>
 
@@ -246,9 +253,16 @@ export default function TestimonialsSection() {
                   transition={{ duration: 0.35, ease: "easeOut" }}
                   className="space-y-4"
                 >
-                  <span className="text-[10px] font-black uppercase tracking-widest text-sky-700 bg-sky-100/80 border border-sky-200 px-3 py-1 rounded-full inline-block">
-                    {current.tag}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-sky-700 bg-sky-100/80 border border-sky-200 px-3 py-1 rounded-full inline-block">
+                      {current.tag}
+                    </span>
+                    <div className="flex text-amber-400">
+                      {[1, 2, 3, 4, 5].map((s) => (
+                        <Star key={s} size={14} fill="currentColor" />
+                      ))}
+                    </div>
+                  </div>
 
                   <h3 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight font-heading leading-snug">
                     {current.heading}
@@ -257,17 +271,35 @@ export default function TestimonialsSection() {
                   <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
                     {current.desc}
                   </p>
+
+                  {/* Problem & Outcome Cards */}
+                  <div className="space-y-2.5 pt-2 text-xs">
+                    <div className="p-3 rounded-xl bg-rose-50 border border-rose-200/80 flex items-start gap-2.5">
+                      <AlertCircle size={15} className="text-rose-600 shrink-0 mt-0.5" />
+                      <div>
+                        <span className="font-extrabold text-rose-900 uppercase text-[10px] block">Problem:</span>
+                        <p className="text-slate-700 font-semibold">{current.problem}</p>
+                      </div>
+                    </div>
+                    <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200/80 flex items-start gap-2.5">
+                      <CheckCircle2 size={15} className="text-emerald-600 shrink-0 mt-0.5" />
+                      <div>
+                        <span className="font-extrabold text-emerald-900 uppercase text-[10px] block">Outcome:</span>
+                        <p className="text-slate-700 font-semibold">{current.outcome}</p>
+                      </div>
+                    </div>
+                  </div>
                 </motion.div>
               </AnimatePresence>
 
               {/* Minimalist Pill Slider Progress Indicators */}
               <div className="flex items-center gap-4 pt-2">
                 <div className="flex items-center gap-1.5 bg-slate-200/80 p-1.5 rounded-full border border-slate-300">
-                  {PROOF_ITEMS.map((item, idx) => (
+                  {CLIENT_OUTCOMES.map((item, idx) => (
                     <button
                       key={item.id}
                       onClick={() => setActiveIndex(idx)}
-                      aria-label={`Go to proof ${idx + 1}`}
+                      aria-label={`Go to review ${idx + 1}`}
                       className={`transition-all duration-300 cursor-pointer ${
                         activeIndex === idx
                           ? "w-8 h-2.5 bg-sky-600 rounded-full shadow-xs"
@@ -278,13 +310,13 @@ export default function TestimonialsSection() {
                 </div>
                 <div className="flex gap-1.5">
                   <button
-                    onClick={() => setActiveIndex((prev) => (prev - 1 + PROOF_ITEMS.length) % PROOF_ITEMS.length)}
+                    onClick={() => setActiveIndex((prev) => (prev - 1 + CLIENT_OUTCOMES.length) % CLIENT_OUTCOMES.length)}
                     className="h-8 w-8 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-all cursor-pointer shadow-2xs"
                   >
                     <ChevronLeft size={16} />
                   </button>
                   <button
-                    onClick={() => setActiveIndex((prev) => (prev + 1) % PROOF_ITEMS.length)}
+                    onClick={() => setActiveIndex((prev) => (prev + 1) % CLIENT_OUTCOMES.length)}
                     className="h-8 w-8 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-all cursor-pointer shadow-2xs"
                   >
                     <ChevronRight size={16} />
@@ -308,7 +340,7 @@ export default function TestimonialsSection() {
 
           {/* Bottom Step Tabs (01 - 04) */}
           <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 border-t border-slate-200">
-            {PROOF_ITEMS.map((item, idx) => {
+            {CLIENT_OUTCOMES.map((item, idx) => {
               const active = activeIndex === idx;
               return (
                 <button
@@ -340,7 +372,7 @@ export default function TestimonialsSection() {
 
         </div>
 
-        {/* Customer Reviews Grid */}
+        {/* Verified Customer Reviews Grid */}
         <div className="pt-16 border-t border-slate-100 mt-16">
           <div className="text-center mb-12">
             <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">
@@ -352,7 +384,7 @@ export default function TestimonialsSection() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {allTestimonials.map((t, index) => (
+            {allReviews.map((t, index) => (
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
