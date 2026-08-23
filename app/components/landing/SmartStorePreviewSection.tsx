@@ -8,8 +8,13 @@ import { useCart } from "@/lib/cart";
 
 export default function SmartStorePreviewSection() {
   const { addToCart, setIsCartOpen } = useCart();
-  // Highlight top 4 everyday Nigerian essential smart devices
-  const featured = PRODUCTS.slice(0, 4);
+  // Highlight top everyday essential smart devices (including Smart Ultrasonic Water Tank Level Monitor)
+  const featured = [
+    PRODUCTS.find(p => p.id === "sp-water-5") || PRODUCTS[0],
+    PRODUCTS.find(p => p.id === "sp-power-1") || PRODUCTS[1],
+    PRODUCTS.find(p => p.id === "sp-water-6") || PRODUCTS[2],
+    PRODUCTS.find(p => p.id === "sp-power-5") || PRODUCTS[3],
+  ];
 
   return (
     <section className="py-20 bg-white text-slate-900 relative overflow-hidden border-b border-slate-200">
