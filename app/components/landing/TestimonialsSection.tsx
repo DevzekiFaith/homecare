@@ -59,7 +59,7 @@ const CLIENT_OUTCOMES = [
     metricLabel: "Upfront Fixed Price Lock",
     customerName: "Temilade A.",
     customerRole: "New Homeowner · Ibara, Abeokuta",
-    image: "/su4.jpg",
+    image: "/su10.jpg",
     badges: [
       { label: "Good Fit", icon: ThumbsUp, color: "bg-white/90 text-slate-900 border-white/40" },
       { label: "Carpentry Pro", icon: CheckCircle2, color: "bg-purple-500/20 text-purple-300 border-purple-500/30" },
