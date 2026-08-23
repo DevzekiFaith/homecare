@@ -32,7 +32,7 @@ const SLIDES = [
     metricLabel: "Artisan Satisfaction Rate",
     proName: "Babatunde Adeleke",
     proRole: "Lead Electrical Engineer · Lagos",
-    image: "/tech-working.jpg",
+    image: "/slide_verified_pro.jpg",
     badges: [
       { label: "NIN Verified", icon: ShieldCheck, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
       { label: "4.9★ Rated", icon: Star, color: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
@@ -52,7 +52,7 @@ const SLIDES = [
     metricLabel: "Hidden Extra Charges",
     proName: "Upfront Price Guarantee",
     proRole: "Guaranteed Scope & Cost Lock",
-    image: "/pipe-fitting.jpg",
+    image: "/slide_ac_cooling.jpg",
     badges: [
       { label: "Fixed Upfront Quote", icon: Tag, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
       { label: "Price Lock Protection", icon: Zap, color: "bg-purple-500/20 text-purple-300 border-purple-500/30" },
@@ -72,7 +72,7 @@ const SLIDES = [
     metricLabel: "Protected Deposit Guarantee",
     proName: "HomeCare Escrow Protection",
     proRole: "Funds Released Only Upon Your OK",
-    image: "/hero-tech.jpg",
+    image: "/slide_generator_repair.jpg",
     badges: [
       { label: "Escrow Deposit Lock", icon: Lock, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
       { label: "Inspection Required", icon: Sparkles, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },

@@ -32,7 +32,7 @@ const CATEGORY_SLIDES = [
     desc: "Complete house wiring, conduit fittings, circuit breaker trips, inverter/solar setups, socket repairs, and lighting installations.",
     metricValue: "120+",
     metricLabel: "Active Electricians in Lagos",
-    image: "/tech-working.jpg",
+    image: "/slide_verified_pro.jpg",
     proName: "Master Electrical Engineering",
     proRole: "Safety-Tested Conduit & Panel Wiring",
     badges: [
@@ -51,7 +51,7 @@ const CATEGORY_SLIDES = [
     desc: "Split AC installation, gas refilling, compressor diagnostics, duct cleaning, and industrial refrigerator repairs.",
     metricValue: "85+",
     metricLabel: "Cooling System Experts",
-    image: "/hero-tech.jpg",
+    image: "/slide_ac_cooling.jpg",
     proName: "HVAC & Refrigeration Technicians",
     proRole: "R22/R410a Gas Refills & Servicing",
     badges: [
@@ -70,7 +70,7 @@ const CATEGORY_SLIDES = [
     desc: "Door lock fittings, kitchen cabinet construction, wardrobe repairs, bed frame assembly, and hardwood flooring.",
     metricValue: "90+",
     metricLabel: "Master Carpenters & Joiners",
-    image: "/pipe-fitting.jpg",
+    image: "/slide_property_estate.jpg",
     proName: "Precision Cabinetry & Joinery",
     proRole: "Custom Furniture & Door Fittings",
     badges: [
@@ -89,7 +89,7 @@ const CATEGORY_SLIDES = [
     desc: "POP ceiling repairs, damp proofing wall treatments, exterior weatherproofing paints, tiling, and block work.",
     metricValue: "65+",
     metricLabel: "Certified Painters & Masons",
-    image: "/tech-working.jpg",
+    image: "/slide_verified_pro.jpg",
     proName: "Premium Wall Finishing & POP",
     proRole: "Anti-Damp Treatment & Tiling",
     badges: [
@@ -108,7 +108,7 @@ const CATEGORY_SLIDES = [
     desc: "Automatic changeover switch panels, AVR voltage regulator replacements, diesel plant overhauling, and carb servicing.",
     metricValue: "70+",
     metricLabel: "Generator Mechanics",
-    image: "/hero-tech.jpg",
+    image: "/slide_generator_repair.jpg",
     proName: "Power Plant & Generator Service",
     proRole: "Diesel/Petrol Overhauling & AVR",
     badges: [
