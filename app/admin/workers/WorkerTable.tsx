@@ -76,30 +76,42 @@ export default function WorkerTable({ initialWorkers }: { initialWorkers: Worker
     }
   };
 
-  const handleDeleteWorker = async (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to delete worker record "${name}"? This cannot be undone.`)) return;
-    setDeletingId(id);
-    try {
-      const { error } = await supabase
-        .from("professionals")
-        .delete()
-        .eq("id", id);
+  const handleDeleteWorker = (id: string, name: string) => {
+    toast(`Delete Worker "${name}"?`, {
+      description: "Permanently delete this technician profile record from the system database.",
+      action: {
+        label: "Confirm Delete",
+        onClick: async () => {
+          setDeletingId(id);
+          try {
+            const { error } = await supabase
+              .from("professionals")
+              .delete()
+              .eq("id", id);
 
-      if (error) {
-        toast.error("Failed to delete worker: " + error.message);
-        return;
-      }
+            if (error) {
+              toast.error("Failed to delete worker: " + error.message);
+              return;
+            }
 
-      setWorkers((prev) => prev.filter((w) => w.id !== id));
-      toast.error(`Worker "${name}" deleted`, {
-        description: "Professional record permanently removed from the database.",
-        duration: 4000,
-      });
-    } catch (err: any) {
-      toast.error("Delete error: " + err.message);
-    } finally {
-      setDeletingId(null);
-    }
+            setWorkers((prev) => prev.filter((w) => w.id !== id));
+            toast.error(`Worker "${name}" deleted`, {
+              description: "Professional record permanently removed from the database.",
+              duration: 4000,
+            });
+          } catch (err: any) {
+            toast.error("Delete error: " + err.message);
+          } finally {
+            setDeletingId(null);
+          }
+        },
+      },
+      cancel: {
+        label: "Cancel",
+        onClick: () => {},
+      },
+      duration: 8000,
+    });
   };
 
   const filtered = useMemo(() => {

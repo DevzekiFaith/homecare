@@ -227,26 +227,38 @@ export default function WorkerDashboardPage() {
      }
   };
 
-  const handleDeleteJobWorker = async (jobId: string) => {
-    if (!confirm("Decline/Remove this request from your worker feed?")) return;
-    try {
-      const { error } = await supabase
-        .from("service_requests")
-        .update({ status: "cancelled" })
-        .eq("id", jobId);
+  const handleDeleteJobWorker = (jobId: string) => {
+    toast("Decline & Remove Job Request?", {
+      description: "Are you sure you want to remove this booking request from your radar?",
+      action: {
+        label: "Confirm Remove",
+        onClick: async () => {
+          try {
+            const { error } = await supabase
+              .from("service_requests")
+              .update({ status: "cancelled" })
+              .eq("id", jobId);
 
-      if (error) {
-        toast.error("Failed to remove job: " + error.message);
-        return;
-      }
-      setRequests((prev) => prev.filter((r) => r.id !== jobId));
-      toast.error("Job request removed from feed", {
-        description: "This booking has been declined and removed from your radar.",
-        duration: 4000,
-      });
-    } catch (err: any) {
-      toast.error("Remove job error: " + err.message);
-    }
+            if (error) {
+              toast.error("Failed to remove job: " + error.message);
+              return;
+            }
+            setRequests((prev) => prev.filter((r) => r.id !== jobId));
+            toast.error("Job request removed from feed", {
+              description: "This booking has been declined and removed from your radar.",
+              duration: 4000,
+            });
+          } catch (err: any) {
+            toast.error("Remove job error: " + err.message);
+          }
+        },
+      },
+      cancel: {
+        label: "Keep Job",
+        onClick: () => {},
+      },
+      duration: 8000,
+    });
   };
 
   const toggleTracking = (jobId: string) => {

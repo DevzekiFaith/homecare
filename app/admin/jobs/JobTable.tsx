@@ -119,30 +119,42 @@ export default function JobTable({ initialJobs }: { initialJobs: Job[] }) {
     }
   };
 
-  const handleDeleteJob = async (jobId: string, serviceType: string) => {
-    if (!confirm(`Are you sure you want to delete job request "${serviceType}" (#${jobId.slice(0, 6)})? This cannot be undone.`)) return;
-    setDeletingId(jobId);
-    try {
-      const { error } = await supabase
-        .from("service_requests")
-        .delete()
-        .eq("id", jobId);
+  const handleDeleteJob = (jobId: string, serviceType: string) => {
+    toast(`Delete Request #${jobId.slice(0, 6)}?`, {
+      description: `Permanently remove service request for "${serviceType}".`,
+      action: {
+        label: "Confirm Delete",
+        onClick: async () => {
+          setDeletingId(jobId);
+          try {
+            const { error } = await supabase
+              .from("service_requests")
+              .delete()
+              .eq("id", jobId);
 
-      if (error) {
-        toast.error("Failed to delete job: " + error.message);
-        return;
-      }
+            if (error) {
+              toast.error("Failed to delete job: " + error.message);
+              return;
+            }
 
-      setJobs((prev) => prev.filter((j) => j.id !== jobId));
-      toast.error(`Job Request #${jobId.slice(0, 6)} deleted`, {
-        description: `Service request for ${serviceType} has been removed.`,
-        duration: 4000,
-      });
-    } catch (err: any) {
-      toast.error("Delete error: " + err.message);
-    } finally {
-      setDeletingId(null);
-    }
+            setJobs((prev) => prev.filter((j) => j.id !== jobId));
+            toast.error(`Job Request #${jobId.slice(0, 6)} deleted`, {
+              description: `Service request for ${serviceType} has been removed.`,
+              duration: 4000,
+            });
+          } catch (err: any) {
+            toast.error("Delete error: " + err.message);
+          } finally {
+            setDeletingId(null);
+          }
+        },
+      },
+      cancel: {
+        label: "Cancel",
+        onClick: () => {},
+      },
+      duration: 8000,
+    });
   };
 
   const filtered = useMemo(() => {
