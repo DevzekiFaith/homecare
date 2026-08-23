@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Play, 
@@ -87,8 +87,15 @@ const RESOURCES: ArticleItem[] = [
 
 export default function EducationalResourcesSection() {
   const [selectedResource, setSelectedResource] = useState<ArticleItem | null>(null);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const [activeTab, setActiveTab] = useState<"All" | "Video" | "Article">("All");
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  useEffect(() => {
+    if (selectedResource?.type === "Video" && videoRef.current) {
+      videoRef.current.play().catch(() => {});
+    }
+  }, [selectedResource]);
 
   const filteredResources = activeTab === "All" 
     ? RESOURCES 
@@ -260,15 +267,17 @@ export default function EducationalResourcesSection() {
                   {/* Real-Time Live Video Embed Container */}
                   <div className="relative bg-black aspect-video w-full overflow-hidden shadow-md group">
                     <video
+                      ref={videoRef}
                       key={selectedResource.id}
                       controls
                       autoPlay
+                      muted={isMuted}
+                      loop
                       playsInline
                       poster={selectedResource.image}
                       className="w-full h-full object-cover"
                     >
-                      <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4" />
-                      <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
+                      <source src="/diy_faucet_fix.mp4" type="video/mp4" />
                       Your browser does not support HTML5 video playback.
                     </video>
                   </div>
