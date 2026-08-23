@@ -50,6 +50,7 @@ export default function CustomerRegisterPage() {
           setSubmitting(false);
           const parsed = handleAuthError(new Error("User already registered"), "registration");
           setError(`${parsed.title}: ${parsed.description}`);
+          toast.error(parsed.title, { description: parsed.description });
           return;
         }
 
@@ -88,6 +89,7 @@ export default function CustomerRegisterPage() {
       console.error("Registration error:", err);
       const parsed = handleAuthError(err, "registration");
       setError(`${parsed.title}: ${parsed.description}`);
+      toast.error(parsed.title, { description: parsed.description });
     } finally {
       setSubmitting(false);
     }

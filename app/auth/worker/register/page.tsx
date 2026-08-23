@@ -94,36 +94,42 @@ export default function WorkerRegisterPage() {
     const areas = formData.getAll("areas") as string[];
 
     if (!name) {
+      toast.error("Missing Full Name", { description: "Please enter your full legal name." });
       setErrorMessage("Please enter your full legal name.");
       setSubmitting(false);
       return;
     }
 
     if (!email) {
+      toast.error("Missing Email Address", { description: "Please enter your email address." });
       setErrorMessage("Please enter your email address.");
       setSubmitting(false);
       return;
     }
 
     if (!phone) {
+      toast.error("Missing Phone Number", { description: "Please enter your phone number." });
       setErrorMessage("Please enter your phone number.");
       setSubmitting(false);
       return;
     }
 
     if (!pin || pin.length !== 6) {
+      toast.error("Invalid Security PIN", { description: "Please enter a 6-digit security PIN." });
       setErrorMessage("Please enter a 6-digit security PIN.");
       setSubmitting(false);
       return;
     }
 
     if (nin.length !== NIN_LENGTH || !/^\d+$/.test(nin)) {
+      toast.error("Invalid NIN", { description: `NIN must be exactly ${NIN_LENGTH} digits.` });
       setNinError(`NIN must be exactly ${NIN_LENGTH} digits.`);
       setSubmitting(false);
       return;
     }
 
     if (!photoFile) {
+      toast.error("Selfie Required", { description: "Please select or capture a live selfie photo before submitting." });
       setErrorMessage("Please select or capture a live selfie photo before submitting.");
       setSubmitting(false);
       return;
@@ -152,6 +158,7 @@ export default function WorkerRegisterPage() {
           });
         } else {
           const parsed = handleAuthError(authError, "artisan registration");
+          toast.error(parsed.title, { description: parsed.description });
           setErrorMessage(`${parsed.title}: ${parsed.description}`);
         }
         return;
