@@ -8,10 +8,10 @@ import { useEffect, useState } from "react";
 import { fetchAllReviews } from "@/lib/reviews";
 
 const stats = [
-  { value: "41%", label: "Faster Dispatch", desc: "Instant matching algorithm connects you to nearby pros in under 15 mins." },
-  { value: "28%", label: "Cost Savings", desc: "Transparent upfront pricing eliminates unvetted middleman markups." },
-  { value: "35%", label: "Repeat Bookings", desc: "Homeowners consistently trust our network for ongoing maintenance." },
-  { value: "100%", label: "Warranty Protected", desc: "All repair jobs come with a mandatory 30-day service guarantee." },
+  { value: "Verified", label: "NIN & Skill Checked", desc: "Every professional undergoes identity and technical background vetting before listing." },
+  { value: "Upfront", label: "Agreed Quotes", desc: "Pre-agreed transparent pricing with zero surprise charges or hidden fees." },
+  { value: "Protected", label: "Escrow Guarantee", desc: "Your payment is held safely until you inspect and approve the finished job." },
+  { value: "Accredited", label: "30-Day Support", desc: "Dedicated customer service and inspection assistance on every completed job." },
 ];
 
 const testimonials = [
@@ -114,7 +114,7 @@ export default function TestimonialsSection() {
                 </div>
                 <div>
                   <p className="text-xs font-extrabold text-slate-900">Certified Repair Standards</p>
-                  <p className="text-[10px] text-slate-500 font-semibold">15,000+ Completed Projects</p>
+                  <p className="text-[10px] text-slate-500 font-semibold">100% Escrow Protected Jobs</p>
                 </div>
               </div>
             </div>

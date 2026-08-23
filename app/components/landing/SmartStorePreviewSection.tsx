@@ -22,23 +22,31 @@ export default function SmartStorePreviewSection() {
           <div>
             <div className="inline-flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-widest text-sky-400 bg-sky-500/10 px-3.5 py-1.5 rounded-full border border-sky-500/20 mb-3">
               <Sparkles size={12} />
-              <span>Everyday Smart Home Store</span>
+              <span>Smart Home Store &amp; Installation</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
-              Affordable Smart Living <span className="text-sky-400">for Nigerian Homes</span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase font-heading tracking-tight text-white">
+              Make Your Home <span className="text-sky-400">Smarter.</span>
             </h2>
             <p className="mt-2 text-sm sm:text-base text-slate-400 max-w-xl">
-              Power surge protectors, smart wall sockets, laptop power banks, rechargeable solar fans, and emergency lights with pro technician installation.
+              Power surge protectors, smart wall sockets, solar appliances, and emergency lighting — paired with verified electrician installation.
             </p>
           </div>
 
-          <Link
-            href="/store"
-            className="inline-flex items-center gap-2 rounded-full px-6 py-3 bg-sky-500 hover:bg-sky-400 text-slate-950 text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-sky-500/25 hover:scale-105 active:scale-95 w-fit"
-          >
-            <span>Explore All {PRODUCTS.length} Devices</span>
-            <ArrowRight size={14} />
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/request?service=Electrician"
+              className="inline-flex items-center gap-2 rounded-full px-5 py-3 bg-slate-800 hover:bg-slate-700 text-sky-300 border border-sky-500/30 text-xs font-black uppercase tracking-widest transition-all"
+            >
+              <span>Need Pro Installation?</span>
+            </Link>
+            <Link
+              href="/store"
+              className="inline-flex items-center gap-2 rounded-full px-6 py-3 bg-sky-500 hover:bg-sky-400 text-slate-950 text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-sky-500/25 hover:scale-105 active:scale-95 w-fit"
+            >
+              <span>Explore Store</span>
+              <ArrowRight size={14} />
+            </Link>
+          </div>
         </div>
 
         {/* 4-Card Grid */}
@@ -81,24 +89,33 @@ export default function SmartStorePreviewSection() {
                 </p>
               </div>
 
-              <div className="mt-5 pt-4 border-t border-slate-700/60 flex items-center justify-between gap-2">
-                <div>
-                  <span className="text-[10px] text-slate-400 block font-medium">Price</span>
-                  <span className="text-base font-extrabold text-white">
-                    ₦{product.price.toLocaleString()}
-                  </span>
+              <div className="mt-5 pt-4 border-t border-slate-700/60 flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] text-slate-400 block font-medium">Price</span>
+                    <span className="text-base font-extrabold text-white">
+                      ₦{product.price.toLocaleString()}
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      addToCart(product, 1);
+                      setIsCartOpen(true);
+                    }}
+                    className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 text-[10px] font-extrabold uppercase tracking-wider transition-all shadow-md active:scale-95 cursor-pointer"
+                  >
+                    <ShoppingBag size={12} />
+                    <span>Buy Device</span>
+                  </button>
                 </div>
 
-                <button
-                  onClick={() => {
-                    addToCart(product, 1);
-                    setIsCartOpen(true);
-                  }}
-                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 text-[10px] font-extrabold uppercase tracking-wider transition-all shadow-md active:scale-95"
+                <Link
+                  href="/request?service=Electrician"
+                  className="text-[10px] font-bold text-sky-400 hover:underline flex items-center justify-center gap-1 pt-1"
                 >
-                  <ShoppingBag size={12} />
-                  <span>Add</span>
-                </button>
+                  <span>Need help installing? Book electrician →</span>
+                </Link>
               </div>
             </div>
           ))}

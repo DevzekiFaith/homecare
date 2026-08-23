@@ -1,93 +1,86 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ShieldAlert, CreditCard, Lock, Check } from "lucide-react";
+import { ShieldCheck, Lock, UserCheck, CheckCircle2, ArrowRight, Wallet } from "lucide-react";
+import Link from "next/link";
 
 export default function WalletEscrowSection() {
+  const flowSteps = [
+    { label: "Customer", sub: "Places Order", icon: UserCheck },
+    { label: "Payment", sub: "Held Safely", icon: Wallet },
+    { label: "HomeCare Protection", sub: "Locked in Escrow", icon: Lock, highlight: true },
+    { label: "Job Completed", sub: "Technician Finishes", icon: CheckCircle2 },
+    { label: "Customer Confirms", sub: "Inspection Done", icon: ShieldCheck },
+    { label: "Payment Released", sub: "Pro Disbursed", icon: ArrowRight, end: true },
+  ];
+
   return (
-    <section className="py-24 px-6 relative z-10">
-      <div className="max-w-6xl mx-auto flex flex-col-reverse lg:flex-row items-center gap-16">
+    <section className="py-24 px-6 bg-slate-950 text-white relative z-10 overflow-hidden border-b border-slate-800">
+      {/* Ambient background glows */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-sky-600/10 rounded-full blur-[160px] pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto relative z-10">
         
-        <div className="lg:w-1/2 w-full">
-           <motion.div 
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="relative w-full max-w-sm mx-auto lg:mx-0 p-8 rounded-3xl bg-gradient-to-tr from-zinc-900 to-green-950/20 border-2 border-brand-primary/20 shadow-[0_0_60px_rgba(34,197,94,0.15)] overflow-hidden"
-          >
-             {/* decorative gradient */}
-             <div className="absolute top-0 right-0 w-32 h-32 bg-brand-primary/20 rounded-full blur-3xl pointer-events-none" />
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[11px] font-black uppercase tracking-widest text-emerald-400 mb-4">
+            <ShieldCheck size={14} />
+            <span>Escrow &amp; Payment Safeguard</span>
+          </div>
 
-             <div className="flex justify-between items-center mb-8 relative z-10">
-                <span className="text-zinc-500 text-xs font-bold uppercase tracking-widest">In-App Wallet</span>
-                <CreditCard size={20} className="text-zinc-400" />
-             </div>
-
-             <div className="mb-8 relative z-10">
-               <span className="text-zinc-500 text-sm block mb-1">Total Balance</span>
-               <span className="text-4xl font-extrabold text-white tracking-tighter">₦145,000</span>
-             </div>
-
-             <div className="space-y-3 relative z-10">
-               <div className="p-4 rounded-xl border border-white/5 bg-white/5 flex items-center justify-between">
-                 <div className="flex items-center gap-3">
-                   <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
-                     <Lock size={14} className="text-green-400" />
-                   </div>
-                   <div>
-                     <p className="text-sm font-bold text-white">Funds in Escrow</p>
-                     <p className="text-[10px] text-zinc-500 uppercase">Plumbing Fix</p>
-                   </div>
-                 </div>
-                 <span className="text-sm font-bold text-zinc-300">-₦15,000</span>
-               </div>
-               
-               <div className="p-4 rounded-xl border border-white/5 bg-white/5 flex items-center justify-between opacity-50">
-                 <div className="flex items-center gap-3">
-                   <div className="w-8 h-8 rounded-full bg-brand-primary/20 flex items-center justify-center">
-                     <Check size={14} className="text-brand-primary" />
-                   </div>
-                   <div>
-                     <p className="text-sm border-b border-transparent font-bold text-white">Cashback Earned</p>
-                     <p className="text-[10px] text-zinc-500 uppercase">Direct App Payment</p>
-                   </div>
-                 </div>
-                 <span className="text-sm font-bold text-zinc-300">+₦1,500</span>
-               </div>
-             </div>
-          </motion.div>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white uppercase font-heading leading-tight">
+            Your Money <span className="text-emerald-400">Stays Protected.</span>
+          </h2>
+          <p className="mt-4 text-slate-300 text-sm sm:text-base font-medium leading-relaxed max-w-2xl mx-auto">
+            Payment is held securely according to HomeCare&apos;s payment protection process until the job reaches the agreed completion stage and you explicitly approve.
+          </p>
         </div>
 
-        <div className="lg:w-1/2">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mb-6 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-[10px] font-bold uppercase tracking-widest text-green-400"
-          >
-            <ShieldAlert size={14} />
-            <span>Escrow Protection</span>
-          </motion.div>
-          
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-3xl md:text-5xl font-bold text-foreground mb-6 leading-tight"
-          >
-            Your money is safe <br />until you&apos;re satisfied.
-          </motion.h2>
+        {/* Animated Visual Flow Diagram */}
+        <div className="bg-slate-900/90 rounded-3xl p-6 sm:p-10 border border-slate-800 shadow-2xl mb-12">
+          <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 text-center mb-8">
+            How Escrow Protection Works Step-by-Step
+          </h3>
 
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="text-slate-600 text-base leading-relaxed mb-8"
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-4 items-center">
+            {flowSteps.map((step, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                className={`p-4 rounded-2xl border text-center flex flex-col items-center justify-center relative ${
+                  step.highlight
+                    ? "bg-sky-600 text-white border-sky-400 shadow-lg shadow-sky-600/30 ring-2 ring-sky-400/40"
+                    : step.end
+                    ? "bg-emerald-600 text-white border-emerald-400 shadow-md"
+                    : "bg-slate-950 text-slate-200 border-slate-800"
+                }`}
+              >
+                <div className="w-10 h-10 rounded-full flex items-center justify-center mb-2 bg-white/10">
+                  <step.icon size={18} />
+                </div>
+                <p className="text-xs font-extrabold uppercase tracking-tight leading-snug">
+                  {step.label}
+                </p>
+                <p className="text-[10px] opacity-80 font-medium mt-0.5">
+                  {step.sub}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="text-center">
+          <Link
+            href="/request"
+            className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black uppercase tracking-widest shadow-lg shadow-emerald-600/30 transition-all hover:scale-102 cursor-pointer"
           >
-            With our integrated Escrow Wallet system, you can fund your balance and book services without risk. Your payment is held securely and only released to the professional when you explicitly confirm the job is done perfectly.
-          </motion.p>
+            <span>Book With Payment Protection</span>
+            <ArrowRight size={16} />
+          </Link>
         </div>
 
       </div>
