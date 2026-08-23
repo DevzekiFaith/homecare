@@ -258,14 +258,19 @@ export default function EducationalResourcesSection() {
               {selectedResource.type === "Video" ? (
                 <div>
                   {/* Real-Time Live Video Embed Container */}
-                  <div className="relative bg-black aspect-video w-full overflow-hidden shadow-md">
-                    <iframe
-                      src="https://www.youtube-nocookie.com/embed/5a2xWn_Mv7Y?autoplay=1&rel=0&modestbranding=1"
-                      title={selectedResource.title}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      className="w-full h-full border-0"
-                    />
+                  <div className="relative bg-black aspect-video w-full overflow-hidden shadow-md group">
+                    <video
+                      key={selectedResource.id}
+                      controls
+                      autoPlay
+                      playsInline
+                      poster={selectedResource.image}
+                      className="w-full h-full object-cover"
+                    >
+                      <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4" />
+                      <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
+                      Your browser does not support HTML5 video playback.
+                    </video>
                   </div>
 
                   {/* Video Details & Narration Chapters */}
