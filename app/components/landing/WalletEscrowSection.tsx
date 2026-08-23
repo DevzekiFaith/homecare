@@ -1,5 +1,6 @@
 "use client";
 
+// Refreshed Escrow Protection Slider
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
