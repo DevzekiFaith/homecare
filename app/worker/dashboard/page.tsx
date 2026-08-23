@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { X, ExternalLink, AlertCircle, CheckCircle2, Navigation, ClipboardList, Check, MessageCircle, Camera } from "lucide-react";
+import { X, ExternalLink, AlertCircle, CheckCircle2, Navigation, ClipboardList, Check, MessageCircle, Camera, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import Logo from "@/app/components/Logo";
 import dynamic from "next/dynamic";
@@ -225,6 +225,25 @@ export default function WorkerDashboardPage() {
      } catch (err: unknown) {
        toast.error("Update failed", { description: err instanceof Error ? err.message : "Error" });
      }
+  };
+
+  const handleDeleteJobWorker = async (jobId: string) => {
+    if (!confirm("Decline/Remove this request from your worker feed?")) return;
+    try {
+      const { error } = await supabase
+        .from("service_requests")
+        .update({ status: "cancelled" })
+        .eq("id", jobId);
+
+      if (error) {
+        toast.error("Failed to remove job: " + error.message);
+        return;
+      }
+      setRequests((prev) => prev.filter((r) => r.id !== jobId));
+      toast.success("Job request removed from your feed.");
+    } catch (err: any) {
+      toast.error("Remove job error: " + err.message);
+    }
   };
 
   const toggleTracking = (jobId: string) => {
@@ -540,12 +559,21 @@ export default function WorkerDashboardPage() {
                                 <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mt-0.5">Base Call-Out</p>
                             </div>
                             {activeTab === 'radar' ? (
-                                <button 
-                                  onClick={() => handleAcceptJob(job.id)}
-                                  className="btn-minimal h-9 px-6 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] shadow-premium hover:shadow-[0_0_15px_rgba(249,115,22,0.3)] transition-all cursor-pointer"
-                                >
-                                  Accept Job
-                                </button>
+                                <div className="flex items-center gap-2">
+                                  <button 
+                                    onClick={() => handleAcceptJob(job.id)}
+                                    className="btn-minimal h-9 px-6 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] shadow-premium hover:shadow-[0_0_15px_rgba(249,115,22,0.3)] transition-all cursor-pointer"
+                                  >
+                                    Accept Job
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteJobWorker(job.id)}
+                                    title="Decline/Remove Request"
+                                    className="h-9 w-9 rounded-full bg-rose-500/10 hover:bg-rose-600 text-rose-400 hover:text-white border border-rose-500/20 flex items-center justify-center transition-all cursor-pointer"
+                                  >
+                                    <Trash2 size={14} />
+                                  </button>
+                                </div>
                             ) : activeTab === 'my-jobs' ? (
                               <div className="flex flex-wrap items-center justify-end gap-2">
                                 <button 

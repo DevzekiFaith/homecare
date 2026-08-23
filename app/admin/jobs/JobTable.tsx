@@ -19,7 +19,8 @@ import {
   Snowflake,
   ShieldCheck,
   ChevronDown,
-  Layers
+  Layers,
+  Trash2
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
@@ -90,6 +91,7 @@ export default function JobTable({ initialJobs }: { initialJobs: Job[] }) {
   const [cityFilter, setCityFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const supabase = useMemo(() => createClient(), []);
 
@@ -114,6 +116,29 @@ export default function JobTable({ initialJobs }: { initialJobs: Job[] }) {
       toast.error("Error updating status: " + err.message);
     } finally {
       setUpdatingId(null);
+    }
+  };
+
+  const handleDeleteJob = async (jobId: string, serviceType: string) => {
+    if (!confirm(`Are you sure you want to delete job request "${serviceType}" (#${jobId.slice(0, 6)})? This cannot be undone.`)) return;
+    setDeletingId(jobId);
+    try {
+      const { error } = await supabase
+        .from("service_requests")
+        .delete()
+        .eq("id", jobId);
+
+      if (error) {
+        toast.error("Failed to delete job: " + error.message);
+        return;
+      }
+
+      setJobs((prev) => prev.filter((j) => j.id !== jobId));
+      toast.success(`Job #${jobId.slice(0, 6)} deleted.`);
+    } catch (err: any) {
+      toast.error("Delete error: " + err.message);
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -381,8 +406,8 @@ export default function JobTable({ initialJobs }: { initialJobs: Job[] }) {
                           </span>
                         </div>
 
-                        {/* Manage Status Action Dropdown */}
-                        <div>
+                        {/* Manage Status Action Dropdown & Delete */}
+                        <div className="flex items-center gap-2">
                           <select
                             disabled={isUpdating}
                             value={currentStatus === "matched" || currentStatus === "accepted" ? "in_progress" : currentStatus}
@@ -394,6 +419,15 @@ export default function JobTable({ initialJobs }: { initialJobs: Job[] }) {
                             <option value="completed">Mark: Completed</option>
                             <option value="cancelled">Mark: Cancelled</option>
                           </select>
+
+                          <button
+                            onClick={() => handleDeleteJob(job.id, job.service_type)}
+                            disabled={deletingId === job.id}
+                            title="Delete Request Record"
+                            className="inline-flex items-center justify-center p-2 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white transition-all disabled:opacity-50 cursor-pointer shadow-2xs shrink-0"
+                          >
+                            <Trash2 size={14} />
+                          </button>
                         </div>
                       </motion.div>
                     );

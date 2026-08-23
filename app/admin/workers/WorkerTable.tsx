@@ -16,7 +16,8 @@ import {
   UserCheck, 
   ShieldCheck, 
   User,
-  Sparkles
+  Sparkles,
+  Trash2
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -35,6 +36,7 @@ export type Worker = {
 export default function WorkerTable({ initialWorkers }: { initialWorkers: Worker[] }) {
   const [workers, setWorkers] = useState<Worker[]>(initialWorkers);
   const [verifyingId, setVerifyingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [skillFilter, setSkillFilter] = useState("all");
@@ -71,6 +73,29 @@ export default function WorkerTable({ initialWorkers }: { initialWorkers: Worker
       toast.error("Action error: " + err.message);
     } finally {
       setVerifyingId(null);
+    }
+  };
+
+  const handleDeleteWorker = async (id: string, name: string) => {
+    if (!confirm(`Are you sure you want to delete worker record "${name}"? This cannot be undone.`)) return;
+    setDeletingId(id);
+    try {
+      const { error } = await supabase
+        .from("professionals")
+        .delete()
+        .eq("id", id);
+
+      if (error) {
+        toast.error("Failed to delete worker: " + error.message);
+        return;
+      }
+
+      setWorkers((prev) => prev.filter((w) => w.id !== id));
+      toast.success(`Worker "${name}" deleted successfully.`);
+    } catch (err: any) {
+      toast.error("Delete error: " + err.message);
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -340,7 +365,7 @@ export default function WorkerTable({ initialWorkers }: { initialWorkers: Worker
                           <button
                             onClick={() => handleVerify(worker.id, true)}
                             disabled={verifyingId === worker.id}
-                            className="inline-flex items-center justify-center rounded-xl bg-sky-600 hover:bg-sky-500 text-white px-4 py-2 text-xs font-bold uppercase tracking-wider shadow-sm transition-all disabled:opacity-50 cursor-pointer"
+                            className="inline-flex items-center justify-center rounded-xl bg-sky-600 hover:bg-sky-500 text-white px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider shadow-sm transition-all disabled:opacity-50 cursor-pointer"
                           >
                             {verifyingId === worker.id ? "…" : "Approve"}
                           </button>
@@ -348,12 +373,21 @@ export default function WorkerTable({ initialWorkers }: { initialWorkers: Worker
                           <button
                             onClick={() => handleVerify(worker.id, false)}
                             disabled={verifyingId === worker.id}
-                            className="inline-flex items-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition-all disabled:opacity-50 cursor-pointer"
+                            className="inline-flex items-center gap-1 rounded-xl border border-amber-200 bg-amber-50 hover:bg-amber-100 text-amber-800 px-2.5 py-1.5 text-xs font-bold uppercase tracking-wider transition-all disabled:opacity-50 cursor-pointer"
                           >
                             <XCircle size={13} />
                             Revoke
                           </button>
                         )}
+
+                        <button
+                          onClick={() => handleDeleteWorker(worker.id, worker.full_name)}
+                          disabled={deletingId === worker.id}
+                          title="Delete Worker Record"
+                          className="inline-flex items-center justify-center p-2 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white transition-all disabled:opacity-50 cursor-pointer shadow-2xs"
+                        >
+                          <Trash2 size={14} />
+                        </button>
                       </div>
                     </motion.div>
                   ))}
