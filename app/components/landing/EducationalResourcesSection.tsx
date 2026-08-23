@@ -30,9 +30,10 @@ export default function EducationalResourcesSection() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
+              whileHover={{ y: -6, scale: 1.03 }}
+              transition={{ delay: i * 0.1, type: "spring", stiffness: 300, damping: 20 }}
               key={i}
-              className="group cursor-pointer rounded-2xl overflow-hidden border border-slate-200 bg-white hover:border-brand-primary/40 transition-all flex flex-col h-full shadow-2xs"
+              className="group cursor-pointer rounded-2xl overflow-hidden border border-slate-200 bg-white hover:border-sky-400 transition-all flex flex-col h-full shadow-2xs hover:shadow-lg"
             >
               <div className="h-32 bg-slate-50 border-b border-slate-100 flex items-center justify-center relative overflow-hidden">
                 <div className="absolute inset-0 bg-brand-primary/5 group-hover:bg-brand-primary/10 transition-colors" />

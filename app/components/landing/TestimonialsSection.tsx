@@ -139,9 +139,10 @@ export default function TestimonialsSection() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+                whileHover={{ y: -6, scale: 1.02 }}
+                transition={{ delay: index * 0.1, type: "spring", stiffness: 300, damping: 20 }}
                 key={index} 
-                className="p-6 sm:p-8 rounded-3xl bg-slate-50 border border-sky-100/80 shadow-xs relative flex flex-col justify-between"
+                className="p-6 sm:p-8 rounded-3xl bg-slate-50 border border-sky-100/80 shadow-2xs hover:shadow-lg hover:border-sky-300 transition-all relative flex flex-col justify-between cursor-pointer"
               >
                 <div>
                   <div className="flex items-center gap-2 mb-4">

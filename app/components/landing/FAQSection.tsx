@@ -39,9 +39,10 @@ export default function FAQSection() {
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: index * 0.1 }}
+            whileHover={{ y: -3, scale: 1.01 }}
+            transition={{ delay: index * 0.1, type: "spring", stiffness: 300, damping: 20 }}
             key={index} 
-            className="border border-slate-200 bg-white rounded-2xl overflow-hidden shadow-2xs"
+            className="border border-slate-200 bg-white rounded-2xl overflow-hidden shadow-2xs hover:shadow-md hover:border-sky-300 transition-all cursor-pointer"
           >
             <button 
               onClick={() => setOpenIndex(openIndex === index ? null : index)}

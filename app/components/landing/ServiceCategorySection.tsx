@@ -99,7 +99,13 @@ export default function ServiceCategorySection() {
         </div>
 
         {/* Secondary Category Grid */}
-        <div className="bg-white rounded-3xl p-8 sm:p-12 shadow-xl shadow-slate-200/50 border border-sky-100">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="bg-white rounded-3xl p-8 sm:p-12 shadow-xl shadow-slate-200/50 border border-sky-100"
+        >
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-sky-600 bg-sky-50 px-3 py-1 rounded-full border border-sky-100">
@@ -111,7 +117,7 @@ export default function ServiceCategorySection() {
             </div>
             <Link
               href="/request"
-              className="inline-flex items-center gap-2 text-xs font-bold text-sky-600 hover:text-sky-700 uppercase tracking-widest"
+              className="inline-flex items-center gap-2 text-xs font-bold text-sky-600 hover:text-sky-700 uppercase tracking-widest hover:translate-x-1 transition-transform"
             >
               <span>View All Services</span>
               <ArrowRight size={14} />
@@ -120,24 +126,32 @@ export default function ServiceCategorySection() {
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {secondaryCategories.map((item, i) => (
-              <Link
+              <motion.div
                 key={i}
-                href={item.link}
-                className="group p-5 rounded-2xl bg-slate-50 hover:bg-sky-50 border border-slate-100 hover:border-sky-200 transition-all flex flex-col items-center text-center"
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                whileHover={{ y: -5, scale: 1.05 }}
               >
-                <div className="w-12 h-12 rounded-xl bg-white group-hover:bg-sky-600 text-sky-600 group-hover:text-white shadow-xs flex items-center justify-center mb-3 transition-colors">
-                  <item.icon size={22} />
-                </div>
-                <h4 className="text-xs font-bold text-slate-800 group-hover:text-sky-700 transition-colors">
-                  {item.name}
-                </h4>
-                <span className="text-[10px] text-slate-400 font-semibold mt-1">
-                  {item.count}
-                </span>
-              </Link>
+                <Link
+                  href={item.link}
+                  className="group p-5 rounded-2xl bg-slate-50 hover:bg-sky-50 border border-slate-100 hover:border-sky-200 transition-all flex flex-col items-center text-center h-full shadow-2xs hover:shadow-md"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-white group-hover:bg-sky-600 text-sky-600 group-hover:text-white shadow-xs flex items-center justify-center mb-3 transition-all duration-300 group-hover:rotate-6">
+                    <item.icon size={22} />
+                  </div>
+                  <h4 className="text-xs font-bold text-slate-800 group-hover:text-sky-700 transition-colors">
+                    {item.name}
+                  </h4>
+                  <span className="text-[10px] text-slate-400 font-semibold mt-1">
+                    {item.count}
+                  </span>
+                </Link>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
 
       </div>
     </section>
