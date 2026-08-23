@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#e2e8f0"/>
+    </linearGradient>
+
+    <!-- Metal Brass Fittings Gradient -->
+    <linearGradient id="brassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="50%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </linearGradient>
+
+    <!-- Red Valve Handle Gradient -->
+    <linearGradient id="redLeverGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#b91c1c"/>
+    </linearGradient>
+
+    <!-- Sensor Screen Glow -->
+    <linearGradient id="screenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#064e3b"/>
+      <stop offset="100%" stop-color="#022c22"/>
+    </linearGradient>
+
+    <!-- Shadow Filter -->
+    <filter id="dropShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#0f172a" flood-opacity="0.15"/>
+    </filter>
+
+    <filter id="sensorShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0284c7" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="800" height="800" fill="url(#bgGrad)"/>
+  <circle cx="400" cy="400" r="350" fill="#ffffff" opacity="0.6"/>
+
+  <!-- Connecting Cable between Gas Detector and Motor Manipulator -->
+  <path d="M 310 320 C 310 440, 480 340, 480 440" fill="none" stroke="#334155" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- ========================================== -->
+  <!-- 1. TUYA SMART GAS DETECTOR SENSOR (UPPER LEFT) -->
+  <!-- ========================================== -->
+  <g transform="translate(130, 110)" filter="url(#dropShadow)">
+    <!-- Main Wall Mount Casing -->
+    <rect x="0" y="0" width="220" height="260" rx="36" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+    <rect x="10" y="10" width="200" height="240" rx="28" fill="#f8fafc"/>
+
+    <!-- Digital LCD Screen -->
+    <rect x="25" y="30" width="170" height="75" rx="14" fill="url(#screenGrad)"/>
+    
+    <!-- Screen Text Readout -->
+    <text x="110" y="60" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="900" fill="#10b981" text-anchor="middle" letter-spacing="1">LPG GAS: 0 PPM</text>
+    <text x="110" y="85" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="900" fill="#34d399" text-anchor="middle" letter-spacing="2">SYSTEM SAFE</text>
+
+    <!-- Wi-Fi & Power Status Indicators -->
+    <circle cx="50" cy="130" r="6" fill="#10b981"/>
+    <text x="65" y="134" font-family="system-ui, sans-serif" font-size="10" font-weight="800" fill="#64748b">POWER</text>
+
+    <circle cx="120" cy="130" r="6" fill="#0284c7"/>
+    <text x="135" y="134" font-family="system-ui, sans-serif" font-size="10" font-weight="800" fill="#64748b">WIFI</text>
+
+    <!-- Alarm Grill Slots -->
+    <g fill="#94a3b8">
+      <rect x="45" y="160" width="130" height="4" rx="2"/>
+      <rect x="45" y="172" width="130" height="4" rx="2"/>
+      <rect x="45" y="184" width="130" height="4" rx="2"/>
+      <rect x="45" y="196" width="130" height="4" rx="2"/>
+      <rect x="45" y="208" width="130" height="4" rx="2"/>
+    </g>
+
+    <!-- 85dB Siren Badge -->
+    <rect x="65" y="224" width="90" height="20" rx="10" fill="#ef4444"/>
+    <text x="110" y="238" font-family="system-ui, sans-serif" font-size="10" font-weight="900" fill="#ffffff" text-anchor="middle">85dB ALARM</text>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- 2. AUTOMATIC GAS CYLINDER VALVE SHUT-OFF MOTOR (LOWER RIGHT) -->
+  <!-- ========================================== -->
+  <g transform="translate(380, 360)" filter="url(#dropShadow)">
+    
+    <!-- Gas Pipe (Brass Pipeline) -->
+    <rect x="40" y="220" width="280" height="44" rx="8" fill="url(#brassGrad)"/>
+    <!-- Pipe Joint Nuts -->
+    <rect x="25" y="210" width="30" height="64" rx="6" fill="#b45309"/>
+    <rect x="305" y="210" width="30" height="64" rx="6" fill="#b45309"/>
+
+    <!-- Valve Body -->
+    <path d="M 150 180 L 210 180 L 220 220 L 140 220 Z" fill="#d97706"/>
+
+    <!-- Robotic Manipulator Motor Housing -->
+    <rect x="110" y="40" width="140" height="130" rx="24" fill="#1e293b" stroke="#334155" stroke-width="3"/>
+    <rect x="125" y="55" width="110" height="60" rx="12" fill="#0f172a"/>
+    <text x="180" y="80" font-family="system-ui, sans-serif" font-size="11" font-weight="900" fill="#38bdf8" text-anchor="middle">AUTO-SHUTOFF</text>
+    <text x="180" y="98" font-family="system-ui, sans-serif" font-size="10" font-weight="800" fill="#94a3b8" text-anchor="middle">MOTOR DRIVE</text>
+
+    <!-- Mechanical Rocker Arm Clamps -->
+    <rect x="160" y="155" width="40" height="40" fill="#475569"/>
+
+    <!-- Red Gas Cylinder Valve Handle Lever -->
+    <g transform="rotate(-35, 180, 200)">
+      <rect x="70" y="190" width="220" height="28" rx="14" fill="url(#redLeverGrad)" stroke="#991b1b" stroke-width="2"/>
+      <circle cx="180" cy="204" r="8" fill="#ffffff"/>
+      <text x="140" y="209" font-family="system-ui, sans-serif" font-size="11" font-weight="900" fill="#ffffff">SHUT OFF</text>
+    </g>
+    
+    <!-- Automatic Direction Arrow -->
+    <path d="M 120 140 Q 90 180 130 200" fill="none" stroke="#ef4444" stroke-width="4" stroke-dasharray="6,4" stroke-linecap="round"/>
+    <polygon points="135,195 142,208 128,206" fill="#ef4444"/>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- 3. TOP BRANDING & FEATURE BADGES -->
+  <!-- ========================================== -->
+  <g transform="translate(400, 720)">
+    <rect x="-240" y="-30" width="480" height="46" rx="23" fill="#0f172a" filter="url(#sensorShadow)"/>
+    <text x="0" y="-2" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="1">
+      TUYA SMART LPG GAS DETECTOR &amp; VALVE SHUT-OFF
+    </text>
+    <text x="0" y="13" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="800" fill="#38bdf8" text-anchor="middle" letter-spacing="0.5">
+      INSTANT 85dB ALARM • AUTOMATIC CYLINDER VALVE TWIST
+    </text>
+  </g>
+</svg>
