@@ -36,12 +36,31 @@ const TARGETS = [
 ];
 
 export default function PropertyFacilitySection() {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 },
+    },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 25 },
+    show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 240, damping: 20 } },
+  };
+
   return (
-    <section className="py-20 px-6 bg-slate-50 relative z-10 border-b border-slate-200">
+    <section className="py-20 px-6 bg-white relative z-10 border-b border-slate-200">
       <div className="max-w-7xl mx-auto">
         
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-xs font-black uppercase tracking-widest text-sky-600 bg-sky-50 px-3.5 py-1.5 rounded-full border border-sky-100 inline-block mb-3">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-3xl mx-auto mb-16"
+        >
+          <span className="text-xs font-black uppercase tracking-widest text-sky-600 bg-sky-50 px-3.5 py-1.5 rounded-full border border-sky-100 inline-block mb-3 shadow-2xs">
             B2B &amp; Property Maintenance
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 uppercase font-heading tracking-tight">
@@ -50,18 +69,23 @@ export default function PropertyFacilitySection() {
           <p className="mt-2 text-slate-600 text-sm sm:text-base font-medium">
             HomeCare goes beyond emergency repairs. We provide recurring maintenance contracts and preventive inspection sweeps.
           </p>
-        </div>
+        </motion.div>
 
         {/* 4 Target Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12"
+        >
           {TARGETS.map((item, idx) => (
             <motion.div
               key={idx}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.1 }}
-              className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-xs hover:border-sky-400 hover:shadow-md transition-all flex flex-col justify-between"
+              variants={cardVariants}
+              whileHover={{ y: -6, scale: 1.025 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="p-6 sm:p-8 rounded-3xl bg-slate-50 border border-slate-200 shadow-2xs hover:border-sky-400 hover:shadow-lg transition-all flex flex-col justify-between"
             >
               <div>
                 <div className="w-12 h-12 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center mb-6 border border-sky-100">
@@ -97,7 +121,7 @@ export default function PropertyFacilitySection() {
               </Link>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
 
       </div>
     </section>

@@ -63,11 +63,12 @@ export default function HowItWorksSection() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className={`p-6 rounded-3xl border flex flex-col justify-between relative ${
+              whileHover={{ y: -6, scale: 1.03 }}
+              transition={{ delay: index * 0.1, type: "spring", stiffness: 300, damping: 20 }}
+              className={`p-6 rounded-3xl border flex flex-col justify-between relative cursor-pointer ${
                 item.highlight
                   ? "bg-slate-900 text-white border-slate-900 shadow-xl"
-                  : "bg-slate-50 text-slate-900 border-slate-200"
+                  : "bg-slate-50 text-slate-900 border-slate-200 shadow-2xs hover:shadow-md hover:border-sky-400"
               }`}
             >
               <div>

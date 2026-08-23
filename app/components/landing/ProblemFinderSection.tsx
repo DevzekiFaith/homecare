@@ -56,12 +56,31 @@ const PROBLEMS = [
 ];
 
 export default function ProblemFinderSection() {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 },
+    },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 25 },
+    show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 240, damping: 20 } },
+  };
+
   return (
-    <section className="py-20 px-6 bg-slate-50 relative z-10 border-b border-slate-200">
+    <section className="py-20 px-6 bg-white relative z-10 border-b border-slate-200">
       <div className="max-w-7xl mx-auto">
         
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs font-bold uppercase tracking-wider text-sky-600 bg-sky-100/80 px-3.5 py-1.5 rounded-full border border-sky-200 inline-block mb-3">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-2xl mx-auto mb-14"
+        >
+          <span className="text-xs font-bold uppercase tracking-wider text-sky-600 bg-sky-50 px-3.5 py-1.5 rounded-full border border-sky-200 inline-block mb-3 shadow-2xs">
             Symptom Finder
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 uppercase font-heading tracking-tight">
@@ -70,21 +89,26 @@ export default function ProblemFinderSection() {
           <p className="mt-3 text-slate-600 text-sm sm:text-base font-medium">
             Select what you are experiencing. We will instantly pair you with the exact right technician.
           </p>
-        </div>
+        </motion.div>
 
         {/* 6 Symptom Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10"
+        >
           {PROBLEMS.map((item, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.08 }}
+              variants={cardVariants}
+              whileHover={{ y: -6, scale: 1.025 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
               <Link
                 href={item.href}
-                className="group flex flex-col justify-between p-6 rounded-3xl bg-white border border-slate-200 shadow-xs hover:shadow-md hover:border-sky-400 transition-all h-full"
+                className="group flex flex-col justify-between p-6 rounded-3xl bg-slate-50 border border-slate-200 shadow-2xs hover:shadow-lg hover:border-sky-400 transition-all h-full"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
@@ -104,19 +128,24 @@ export default function ProblemFinderSection() {
                   </p>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-sky-600 group-hover:translate-x-1 transition-transform">
+                <div className="mt-6 pt-4 border-t border-slate-200/80 flex items-center justify-between text-xs font-bold text-sky-600 group-hover:translate-x-1 transition-transform">
                   <span>Book Technician Now</span>
                   <ArrowRight size={14} />
                 </div>
               </Link>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
 
-        <div className="flex items-center justify-center gap-2 text-xs font-semibold text-slate-500">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="flex items-center justify-center gap-2 text-xs font-semibold text-slate-500"
+        >
           <ShieldCheck size={16} className="text-emerald-600" />
           <span>Not sure? Describe your issue on the booking form and our team will assign the right specialist.</span>
-        </div>
+        </motion.div>
 
       </div>
     </section>
