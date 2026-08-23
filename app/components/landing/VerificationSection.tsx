@@ -138,15 +138,67 @@ export default function VerificationSection() {
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
-            {/* Left Content Column */}
-            <div className="lg:col-span-5 flex flex-col justify-between space-y-8">
+            {/* LEFT COLUMN: Image Showcase Card (Positioned on Left) */}
+            <div className="lg:col-span-7 relative order-1">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={current.id}
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.96 }}
+                  transition={{ duration: 0.4 }}
+                  className="relative rounded-[28px] sm:rounded-[36px] overflow-hidden min-h-[380px] sm:min-h-[440px] flex flex-col justify-between p-6 sm:p-8 shadow-2xl border border-slate-900/10 group"
+                >
+                  {/* Background Image */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={current.image}
+                    alt={current.proName}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  {/* Dark Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/40 to-slate-950/30" />
+
+                  {/* Top Floating Dark Glass Badge */}
+                  <div className="relative z-10 self-start p-4 rounded-2xl bg-slate-900/85 backdrop-blur-md border border-white/15 max-w-xs shadow-lg">
+                    <h5 className="text-lg font-black text-white tracking-tight">
+                      {current.proName}
+                    </h5>
+                    <p className="text-[11px] font-bold text-sky-300 uppercase tracking-wider mt-0.5">
+                      → {current.proRole}
+                    </p>
+                  </div>
+
+                  {/* Bottom Overlay Badges */}
+                  <div className="relative z-10 space-y-3">
+                    <div className="flex flex-wrap gap-2 items-center">
+                      {current.badges.map((badge, idx) => {
+                        const Icon = badge.icon;
+                        return (
+                          <div
+                            key={idx}
+                            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-extrabold uppercase tracking-wider backdrop-blur-md border shadow-sm ${badge.color}`}
+                          >
+                            <Icon size={13} />
+                            <span>{badge.label}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* RIGHT COLUMN: Writeup & Metrics (Positioned on Right) */}
+            <div className="lg:col-span-5 flex flex-col justify-between space-y-8 order-2">
               
               <AnimatePresence mode="wait">
                 <motion.div
                   key={current.id}
-                  initial={{ opacity: 0, x: -20 }}
+                  initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
+                  exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.35, ease: "easeOut" }}
                   className="space-y-4"
                 >
@@ -164,7 +216,7 @@ export default function VerificationSection() {
                 </motion.div>
               </AnimatePresence>
 
-              {/* Minimalist Pill Slider Progress Indicators (Matching Image candidate slider indicator) */}
+              {/* Minimalist Pill Slider Progress Indicators */}
               <div className="flex items-center gap-4 pt-2">
                 <div className="flex items-center gap-1.5 bg-slate-200/80 p-1.5 rounded-full border border-slate-300">
                   {VERIFICATION_STEPS.map((step, idx) => (
@@ -196,7 +248,7 @@ export default function VerificationSection() {
                 </div>
               </div>
 
-              {/* Big Bold Stat Metric (Matching 70% Interview Rate UI in reference image) */}
+              {/* Big Bold Stat Metric */}
               <div className="pt-4 border-t border-slate-200/80 flex items-baseline gap-4">
                 <span className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tight font-heading">
                   {current.metricValue}
@@ -206,58 +258,6 @@ export default function VerificationSection() {
                 </span>
               </div>
 
-            </div>
-
-            {/* Right Card Column: Visual Candidate Card (Matching Kiara Washington candidate card in reference image) */}
-            <div className="lg:col-span-7 relative">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={current.id}
-                  initial={{ opacity: 0, scale: 0.96 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.96 }}
-                  transition={{ duration: 0.4 }}
-                  className="relative rounded-[28px] sm:rounded-[36px] overflow-hidden min-h-[380px] sm:min-h-[440px] flex flex-col justify-between p-6 sm:p-8 shadow-2xl border border-slate-900/10 group"
-                >
-                  {/* Background Image */}
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={current.image}
-                    alt={current.proName}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/40 to-slate-950/30" />
-
-                  {/* Top Floating Dark Glass Badge (Matching Kiara Washington badge in image) */}
-                  <div className="relative z-10 self-start p-4 rounded-2xl bg-slate-900/85 backdrop-blur-md border border-white/15 max-w-xs shadow-lg">
-                    <h5 className="text-lg font-black text-white tracking-tight">
-                      {current.proName}
-                    </h5>
-                    <p className="text-[11px] font-bold text-sky-300 uppercase tracking-wider mt-0.5">
-                      → {current.proRole}
-                    </p>
-                  </div>
-
-                  {/* Bottom Overlay Badges (Matching Good fit / AI/ML / Enterprise / Rated pills in reference image) */}
-                  <div className="relative z-10 space-y-3">
-                    <div className="flex flex-wrap gap-2 items-center">
-                      {current.badges.map((badge, idx) => {
-                        const Icon = badge.icon;
-                        return (
-                          <div
-                            key={idx}
-                            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-extrabold uppercase tracking-wider backdrop-blur-md border shadow-sm ${badge.color}`}
-                          >
-                            <Icon size={13} />
-                            <span>{badge.label}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
             </div>
 
           </div>
