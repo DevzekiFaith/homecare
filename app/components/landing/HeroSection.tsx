@@ -20,10 +20,10 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative bg-gradient-to-br from-slate-950 via-sky-950 to-blue-950 text-white pt-16 pb-28 lg:pb-32 px-6 overflow-hidden rounded-b-[40px] md:rounded-b-[60px] shadow-2xl shadow-slate-950/40 border-b border-sky-500/20">
+    <section className="relative bg-gradient-to-br from-sky-600 via-blue-600 to-blue-800 text-white pt-16 pb-28 lg:pb-32 px-6 overflow-hidden rounded-b-[40px] md:rounded-b-[60px] shadow-2xl shadow-blue-900/20">
       {/* Ambient background glows */}
-      <div className="absolute -top-32 -left-32 w-96 h-96 bg-sky-500/20 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute top-1/2 -right-32 w-96 h-96 bg-blue-500/15 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute -top-32 -left-32 w-96 h-96 bg-sky-400/20 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-1/2 -right-32 w-96 h-96 bg-cyan-300/15 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center relative z-10">
         
@@ -36,7 +36,7 @@ export default function HeroSection() {
         >
           <motion.div 
             variants={itemVariants} 
-            className="mb-4 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-500/10 border border-sky-400/30 text-[11px] font-black uppercase tracking-widest text-sky-300 backdrop-blur-md"
+            className="mb-4 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-[11px] font-black uppercase tracking-widest text-sky-100 backdrop-blur-md"
           >
             <ShieldCheck size={14} className="text-cyan-300" />
             <span>The Trust Layer for Home Services</span>
@@ -48,14 +48,14 @@ export default function HeroSection() {
           >
             A Professional <br />
             For The Job. <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-300 to-blue-400">
+            <span className="text-cyan-200">
               Without The Guesswork.
             </span>
           </motion.h1>
 
           <motion.p 
             variants={itemVariants} 
-            className="text-base sm:text-lg text-slate-300 font-medium max-w-xl leading-relaxed mb-8"
+            className="text-base sm:text-lg text-sky-100/90 font-medium max-w-xl leading-relaxed mb-8"
           >
             Verified plumbers, electricians, AC technicians, carpenters and other home-service professionals — matched to your needs, with your payment protected until you&apos;re satisfied.
           </motion.p>
@@ -64,47 +64,47 @@ export default function HeroSection() {
           <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-4 w-full sm:w-auto mb-10">
             <Link
               href="/request"
-              className="w-full sm:w-auto h-14 px-8 rounded-full bg-sky-600 hover:bg-sky-500 text-white flex items-center justify-center gap-3 text-xs sm:text-sm font-black uppercase tracking-widest shadow-xl shadow-sky-600/30 hover:scale-102 transition-all cursor-pointer border border-sky-400/40"
+              className="w-full sm:w-auto h-14 px-8 rounded-full bg-sky-500 hover:bg-sky-400 text-white flex items-center justify-center gap-3 text-xs sm:text-sm font-black uppercase tracking-widest shadow-xl shadow-sky-500/35 hover:scale-102 transition-all cursor-pointer border border-sky-400/40"
             >
               <span>Book a Service</span> <ArrowRight size={18} />
             </Link>
             <Link
               href="/auth/worker/register"
-              className="w-full sm:w-auto h-14 px-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white flex items-center justify-center text-xs sm:text-sm font-extrabold uppercase tracking-widest transition-all backdrop-blur-md cursor-pointer"
+              className="w-full sm:w-auto h-14 px-8 rounded-full bg-blue-900/60 hover:bg-blue-900/90 border border-white/25 text-white flex items-center justify-center text-xs sm:text-sm font-extrabold uppercase tracking-widest transition-all backdrop-blur-md cursor-pointer"
             >
               <span>Join as a Professional</span>
             </Link>
           </motion.div>
 
           {/* 3 Core Trust Pillars */}
-          <motion.div variants={itemVariants} className="w-full pt-6 border-t border-white/10 grid grid-cols-3 gap-3 text-center sm:text-left">
+          <motion.div variants={itemVariants} className="w-full pt-6 border-t border-white/15 grid grid-cols-3 gap-3 text-center sm:text-left">
             <div className="flex flex-col sm:flex-row items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/30">
+              <div className="w-8 h-8 rounded-full bg-white/10 text-cyan-300 flex items-center justify-center shrink-0 border border-white/20">
                 <UserCheck size={16} />
               </div>
               <div>
                 <span className="block text-xs font-black uppercase tracking-wider text-white">✓ Verified</span>
-                <span className="text-[10px] text-slate-400 font-medium hidden sm:block">Identity & Skills</span>
+                <span className="text-[10px] text-sky-100/80 font-medium hidden sm:block">Identity &amp; Skills</span>
               </div>
             </div>
 
             <div className="flex flex-col sm:flex-row items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-sky-500/20 text-sky-300 flex items-center justify-center shrink-0 border border-sky-500/30">
+              <div className="w-8 h-8 rounded-full bg-white/10 text-cyan-300 flex items-center justify-center shrink-0 border border-white/20">
                 <Award size={16} />
               </div>
               <div>
                 <span className="block text-xs font-black uppercase tracking-wider text-white">✓ Transparent</span>
-                <span className="text-[10px] text-slate-400 font-medium hidden sm:block">Agreed Quotes</span>
+                <span className="text-[10px] text-sky-100/80 font-medium hidden sm:block">Agreed Quotes</span>
               </div>
             </div>
 
             <div className="flex flex-col sm:flex-row items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-cyan-500/20 text-cyan-300 flex items-center justify-center shrink-0 border border-cyan-500/30">
+              <div className="w-8 h-8 rounded-full bg-white/10 text-cyan-300 flex items-center justify-center shrink-0 border border-white/20">
                 <Lock size={16} />
               </div>
               <div>
                 <span className="block text-xs font-black uppercase tracking-wider text-white">✓ Protected</span>
-                <span className="text-[10px] text-slate-400 font-medium hidden sm:block">Escrow Guarantee</span>
+                <span className="text-[10px] text-sky-100/80 font-medium hidden sm:block">Escrow Guarantee</span>
               </div>
             </div>
           </motion.div>
