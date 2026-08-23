@@ -144,17 +144,23 @@ export default function WorkerRegisterPage() {
         }
       });
 
-      if (authError && !authError.message.includes("already registered")) {
-        const parsed = handleAuthError(authError, "artisan registration");
-        setErrorMessage(`${parsed.title}: ${parsed.description}`);
+      if (authError) {
+        if (authError.message.toLowerCase().includes("already registered") || authError.status === 422) {
+          setErrorMessage("An account with this email address is already registered. Please log in to your Pro Portal or use a different email.");
+          toast.error("Email Already Registered", {
+            description: "An account with this email already exists. Please log in to your Pro Portal or use a different email."
+          });
+        } else {
+          const parsed = handleAuthError(authError, "artisan registration");
+          setErrorMessage(`${parsed.title}: ${parsed.description}`);
+        }
         return;
       }
 
       const userId = authData?.user?.id;
 
       if (!userId) {
-        const parsed = handleAuthError(new Error("Could not generate technician account ID. Please try another email."), "artisan registration");
-        setErrorMessage(`${parsed.title}: ${parsed.description}`);
+        setErrorMessage("Could not generate technician account ID. Please try another email.");
         return;
       }
 
