@@ -1,105 +1,149 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Play, 
   BookOpen, 
   ArrowRight, 
   X, 
-  Clock, 
-  Volume2, 
-  VolumeX, 
   ShieldAlert, 
   CheckCircle2, 
-  Wrench, 
   Sparkles,
-  Zap
+  Wrench,
+  Clock,
+  ShieldCheck
 } from "lucide-react";
 import Link from "next/link";
 
 interface ArticleItem {
   id: string;
-  type: "Video" | "Article";
   title: string;
   duration: string;
   desc: string;
   image: string;
   author: string;
   category: string;
-  videoUrl?: string;
-  chapters?: { time: string; text: string }[];
-  articleContent?: { title: string; body: string }[];
+  articleContent: { step: string; title: string; body: string }[];
 }
 
 const RESOURCES: ArticleItem[] = [
   {
     id: "faucet-fix",
-    type: "Video",
     title: "How to fix a leaky bathroom faucet in 10 mins.",
-    duration: "5 min tech",
-    desc: "Step-by-step video narration showing how to turn off supply valves, remove worn O-rings, replace washers, and stop annoying drips fast.",
+    duration: "5 Min Read",
+    desc: "Step-by-step DIY guide showing how to shut off supply valves, remove worn O-rings, replace washers, and stop annoying drips fast.",
     image: "/slide_plumbing_unique.jpg",
     author: "Engr. Felix · Lead Plumber",
     category: "Plumbing DIY",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1", // Embeddable video URL
-    chapters: [
-      { time: "0:00", text: "Shutting off the water supply valve under the sink" },
-      { time: "1:15", text: "Removing decorative faucet caps & handle screw" },
-      { time: "2:40", text: "Extracting the worn cartridge & damaged O-ring seal" },
-      { time: "3:50", text: "Installing new rubber washer & applying plumber tape" },
-      { time: "4:30", text: "Reassembling faucet and testing water pressure" },
+    articleContent: [
+      { 
+        step: "01", 
+        title: "Shut Off Water Supply Valves", 
+        body: "Locate the hot and cold shutoff valves underneath your bathroom sink vanity. Turn both handles clockwise until tight to completely cut off water flow before loosening any fittings." 
+      },
+      { 
+        step: "02", 
+        title: "Remove Handle & Decorative Caps", 
+        body: "Use a flathead screwdriver to pop off the decorative hot/cold button caps on the handle. Unscrew the internal setscrew with an Allen wrench or Phillips screwdriver and lift off the handle." 
+      },
+      { 
+        step: "03", 
+        title: "Extract Cartridge & Inspect O-Rings", 
+        body: "Unscrew the retaining nut with an adjustable wrench. Carefully pull out the inner stem cartridge and check the rubber O-rings for cracking, erosion, or mineral buildup." 
+      },
+      { 
+        step: "04", 
+        title: "Replace Seat Washer & Apply Teflon Tape", 
+        body: "Swap out worn rubber seat washers and springs with exact matching replacement parts. Wrap Teflon plumber's tape 2-3 times clockwise around the threaded connections to ensure a watertight seal." 
+      },
+      { 
+        step: "05", 
+        title: "Reassemble & Test Water Flow", 
+        body: "Reinsert the cartridge, tighten the retaining nut, reinstall the handle, and slowly reopen the supply valves under the sink to test for a smooth, leak-free stream." 
+      },
     ],
   },
   {
     id: "generator-signs",
-    type: "Article",
     title: "5 signs your generator needs maintenance right now.",
-    duration: "Read Guide",
+    duration: "4 Min Read",
     desc: "Don't get caught in a blackout. Learn the 5 warning signs — from dark exhaust smoke to AVR voltage fluctuations — before total engine breakdown.",
     image: "/slide_generator_repair.jpg",
     author: "Mechanic David · Power Specialist",
     category: "Generator Care",
     articleContent: [
-      { title: "1. Difficulty Starting & Excessive Choking", body: "If your petrol or diesel engine requires 10+ pulls or extended cranking, the carburetor is clogged or spark plugs are fouled." },
-      { title: "2. Dark Exhaust Smoke & Oil Burning", body: "Black smoke indicates unburnt fuel mixture, while blueish smoke signals oil passing piston rings into combustion chambers." },
-      { title: "3. Low Voltage Output & Flickering Lights", body: "Flickering home appliances point to a failing Automatic Voltage Regulator (AVR) or worn carbon brushes." },
-      { title: "4. Unusual Knocking or Grinding Sounds", body: "Metallic knocking noises indicate loose connecting rods or dry bearings requiring immediate lubrication overhaul." },
-      { title: "5. Visible Fuel or Oil Leaks Under Frame", body: "Fuel leaks present a severe fire hazard. Inspect fuel lines and sump gaskets before starting." },
+      { 
+        step: "01", 
+        title: "Difficulty Starting & Repeated Cord Pulls", 
+        body: "If your petrol or diesel generator requires 10+ pull-recoil cranks or extended key turning, your carburetor jets are clogged with varnish or spark plugs are fouled." 
+      },
+      { 
+        step: "02", 
+        title: "Dark Exhaust Smoke & Burning Smell", 
+        body: "Black smoke signals unburnt fuel mixture from air filter blockage, while blue smoke indicates engine oil blowing past piston rings into the combustion chamber." 
+      },
+      { 
+        step: "03", 
+        title: "Voltage Output Drops & Appliance Flickering", 
+        body: "Flickering lights and sensitive electronic resets indicate a degrading Automatic Voltage Regulator (AVR) or worn alternator carbon brushes." 
+      },
+      { 
+        step: "04", 
+        title: "Unusual Knocking or Grinding Engine Noise", 
+        body: "Severe metallic knocking sounds point to dry main bearings or worn connecting rods that demand an immediate oil flush and mechanical overhaul." 
+      },
+      { 
+        step: "05", 
+        title: "Visible Fuel or Oil Puddles Under Frame", 
+        body: "Fuel leaks present a severe fire hazard. Regularly inspect fuel lines, petcocks, and crankcase sump gaskets before powering heavy home loads." 
+      },
     ],
   },
   {
     id: "electrician-vs-diy",
-    type: "Article",
     title: "Knowing when to call an electrician vs DIY.",
-    duration: "Read Guide",
+    duration: "6 Min Read",
     desc: "Safety-first guide detailing simple tasks you can fix yourself vs high-risk electrical hazards requiring a certified HomeCare electrician.",
     image: "/slide_verified_pro.jpg",
     author: "Babatunde A. · Electrical Pro",
     category: "Electrical Safety",
     articleContent: [
-      { title: "SAFE FOR DIY (With Power Main Off)", body: "Replacing a surface socket faceplate, changing light bulbs, or screwing external switch covers after isolating circuit breakers." },
-      { title: "CALL AN ELECTRICIAN IMMEDIATELY", body: "Burning smell from wall sockets, warm breaker panels, burning smells, circuit breakers constantly tripping, or re-wiring high-voltage air conditioners." },
-      { title: "NIGERIAN BUILDING CODE SAFETY", body: "Improper electrical connections cause 60%+ of domestic fire incidents. Always use NIN-verified licensed electricians for DB panel repairs." },
+      { 
+        step: "01", 
+        title: "SAFE FOR DIY: Replacing Surface Faceplates", 
+        body: "Swapping cracked plastic light switch plates or cosmetic socket covers is safe as long as the main circuit breaker is switched off and tested with a voltage pen." 
+      },
+      { 
+        step: "02", 
+        title: "SAFE FOR DIY: Resetting Tripped Breakers", 
+        body: "Resetting a tripped MCB switch in your consumer unit is simple. Turn off overloaded appliances first, then firmly push the breaker lever up." 
+      },
+      { 
+        step: "03", 
+        title: "CALL A PRO: Sparking Sockets & Burning Smells", 
+        body: "If wall outlets emit sparks, popping sounds, or acrid burning odors, disconnect power immediately. Internal arcing can melt wiring and ignite wall insulation." 
+      },
+      { 
+        step: "04", 
+        title: "CALL A PRO: Main DB Board & Earthing Rod Faults", 
+        body: "Upgrading main distribution boards, installing changeover switches, or driving copper earth rods requires certified load calculations and professional tools." 
+      },
+      { 
+        step: "05", 
+        title: "CALL A PRO: High-Voltage Appliance Rewiring", 
+        body: "Connecting 2HP+ air conditioners, water heaters, or pumping machines to dedicated circuit breakers demands proper cable gauge selection and NIN-verified technicians." 
+      },
     ],
   },
 ];
 
 export default function EducationalResourcesSection() {
   const [selectedResource, setSelectedResource] = useState<ArticleItem | null>(null);
-  const [isMuted, setIsMuted] = useState(true);
-  const [activeTab, setActiveTab] = useState<"All" | "Video" | "Article">("All");
-  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string>("All");
 
-  useEffect(() => {
-    if (selectedResource?.type === "Video" && videoRef.current) {
-      videoRef.current.play().catch(() => {});
-    }
-  }, [selectedResource]);
-
-  const filteredResources = activeTab === "All" 
+  const filteredResources = activeCategory === "All" 
     ? RESOURCES 
-    : RESOURCES.filter(r => r.type === activeTab);
+    : RESOURCES.filter(r => r.category.toLowerCase().includes(activeCategory.toLowerCase()));
 
   return (
     <section className="py-24 px-4 sm:px-6 bg-white text-slate-900 relative z-10 overflow-hidden border-y border-slate-200">
@@ -119,23 +163,23 @@ export default function EducationalResourcesSection() {
               You Can Fix It <span className="text-sky-600">Yourself Too.</span>
             </h2>
             <p className="mt-3 text-slate-600 text-sm sm:text-base font-medium leading-relaxed">
-              Not every issue requires a technician visit. Browse our step-by-step DIY video walkthroughs with narration and expert maintenance guides.
+              Not every issue requires a technician visit. Read our expert step-by-step DIY guides and practical home maintenance walkthroughs.
             </p>
           </div>
 
-          {/* Filter Tabs */}
-          <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-2xl border border-slate-200 self-start lg:self-auto shadow-2xs">
-            {(["All", "Video", "Article"] as const).map((tab) => (
+          {/* Filter Categories */}
+          <div className="flex flex-wrap items-center gap-2 bg-slate-100 p-1.5 rounded-2xl border border-slate-200 self-start lg:self-auto shadow-2xs">
+            {(["All", "Plumbing", "Generator", "Electrical"] as const).map((cat) => (
               <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
                 className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                  activeTab === tab
+                  activeCategory === cat
                     ? "bg-sky-600 text-white shadow-md shadow-sky-600/20"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
                 }`}
               >
-                {tab === "All" ? "All Resources" : `${tab}s`}
+                {cat === "All" ? "All Guides" : `${cat}`}
               </button>
             ))}
           </div>
@@ -163,34 +207,21 @@ export default function EducationalResourcesSection() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
 
-                {/* Type Badge */}
+                {/* Type & Category Badges */}
                 <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
-                  <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border backdrop-blur-md ${
-                    item.type === "Video"
-                      ? "bg-red-500/90 text-white border-red-400"
-                      : "bg-sky-600/90 text-white border-sky-400"
-                  }`}>
-                    {item.type}
+                  <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-sky-600 text-white border border-sky-400 shadow-xs">
+                    Article Guide
                   </span>
                   <span className="px-3 py-1 rounded-full text-[10px] font-bold text-slate-200 bg-slate-900/80 backdrop-blur-md border border-white/10">
                     {item.category}
                   </span>
                 </div>
 
-                {/* Video Play Overlay Button */}
-                {item.type === "Video" ? (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-16 h-16 rounded-full bg-sky-600 text-white flex items-center justify-center shadow-xl border border-sky-400 group-hover:scale-110 transition-transform duration-300">
-                      <Play fill="currentColor" size={24} className="ml-1 text-white" />
-                    </div>
+                <div className="absolute bottom-4 right-4 z-10">
+                  <div className="w-10 h-10 rounded-full bg-slate-900/80 text-sky-400 flex items-center justify-center border border-sky-500/30 shadow-md group-hover:scale-110 transition-transform">
+                    <BookOpen size={18} />
                   </div>
-                ) : (
-                  <div className="absolute bottom-4 right-4 z-10">
-                    <div className="w-10 h-10 rounded-full bg-slate-900/80 text-sky-400 flex items-center justify-center border border-sky-500/30">
-                      <BookOpen size={18} />
-                    </div>
-                  </div>
-                )}
+                </div>
               </div>
 
               {/* Card Body */}
@@ -220,7 +251,7 @@ export default function EducationalResourcesSection() {
 
       </div>
 
-      {/* Interactive Modal Reader & Video Narration Player */}
+      {/* Interactive Modal Article Reader */}
       <AnimatePresence>
         {selectedResource && (
           <motion.div
@@ -248,8 +279,8 @@ export default function EducationalResourcesSection() {
               {/* Internal Modal Card Header Bar */}
               <div className="flex items-center justify-between px-5 py-3.5 bg-slate-50 border-b border-slate-200">
                 <span className="text-xs font-extrabold uppercase tracking-wider text-sky-600 flex items-center gap-2">
-                  <Sparkles size={14} />
-                  <span>{selectedResource.type === "Video" ? "Live Video Tutorial & Narration" : "Expert Home Guide"}</span>
+                  <BookOpen size={14} />
+                  <span>Expert DIY Home Guide</span>
                 </span>
 
                 <button
@@ -261,111 +292,71 @@ export default function EducationalResourcesSection() {
                 </button>
               </div>
 
-              {/* Video Player Modal Content */}
-              {selectedResource.type === "Video" ? (
-                <div>
-                  {/* Real-Time Live YouTube DIY Video Embed Container */}
-                  <div className="relative bg-black aspect-video w-full overflow-hidden shadow-md">
-                    <iframe
-                      src="https://www.youtube.com/embed/F6q0Nf6Y6K8?autoplay=1&rel=0"
-                      title="How to Fix a Leaky Faucet - DIY Guide"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                      className="w-full h-full border-0"
-                    />
-                  </div>
-
-                  {/* Video Details & Narration Chapters */}
-                  <div className="p-5 sm:p-6 space-y-5">
-                    <div>
-                      <h3 className="text-xl font-black text-slate-900">{selectedResource.title}</h3>
-                      <p className="text-xs text-slate-600 mt-1 font-medium leading-relaxed">{selectedResource.desc}</p>
-                    </div>
-
-                    {/* Step-by-Step Chapters */}
-                    <div className="space-y-2.5 pt-3 border-t border-slate-100">
-                      <h4 className="text-xs font-bold uppercase tracking-widest text-sky-600 flex items-center gap-1.5">
-                        <Clock size={14} />
-                        <span>Step-by-Step Narration Timeline Chapters</span>
-                      </h4>
-                      <div className="space-y-1.5">
-                        {selectedResource.chapters?.map((chap, cIdx) => (
-                          <div
-                            key={cIdx}
-                            className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs font-medium hover:border-sky-300 transition-colors"
-                          >
-                            <span className="text-slate-700">{chap.text}</span>
-                            <span className="font-mono font-bold text-sky-700 bg-sky-50 px-2 py-0.5 rounded border border-sky-100">
-                              {chap.time}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-                      <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-                        <Wrench size={15} className="text-sky-600" />
-                        <span>Need a pro plumber instead? We dispatch in 15 mins.</span>
-                      </div>
-                      <Link
-                        href="/request?category=plumbing"
-                        onClick={() => setSelectedResource(null)}
-                        className="px-5 py-2.5 rounded-full bg-sky-600 hover:bg-sky-500 text-white text-xs font-extrabold uppercase tracking-wider flex items-center gap-1.5 shadow-md shadow-sky-600/20"
-                      >
-                        <span>Book Plumber Now</span>
-                        <ArrowRight size={14} />
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                /* Article Reader Modal Content */
-                <div className="p-5 sm:p-8 space-y-5 max-h-[80vh] overflow-y-auto">
-                  <div className="space-y-1.5">
-                    <span className="text-xs font-bold uppercase tracking-wider text-sky-600 bg-sky-50 border border-sky-100 px-3 py-1 rounded-full inline-block">
-                      {selectedResource.category} Guide
+              {/* Article Content Header & Body */}
+              <div className="p-6 sm:p-8 space-y-6 max-h-[80vh] overflow-y-auto">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-sky-700 bg-sky-50 border border-sky-100 px-3 py-1 rounded-full">
+                      {selectedResource.category}
                     </span>
-                    <h3 className="text-xl sm:text-2xl font-black text-slate-900">{selectedResource.title}</h3>
-                    <p className="text-xs text-slate-500 font-bold">Written by {selectedResource.author}</p>
+                    <span className="text-[10px] font-bold text-slate-500 flex items-center gap-1">
+                      <Clock size={12} />
+                      {selectedResource.duration}
+                    </span>
                   </div>
-
-                  <div className="p-3.5 rounded-xl bg-sky-50 border border-sky-100 text-sky-900 text-xs leading-relaxed font-medium">
-                    {selectedResource.desc}
-                  </div>
-
-                  {/* Article Content Chapters */}
-                  <div className="space-y-4 pt-3 border-t border-slate-100">
-                    {selectedResource.articleContent?.map((sec, sIdx) => (
-                      <div key={sIdx} className="space-y-1.5 p-4 rounded-xl bg-slate-50 border border-slate-200">
-                        <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                          <CheckCircle2 size={16} className="text-emerald-600" />
-                          <span>{sec.title}</span>
-                        </h4>
-                        <p className="text-xs text-slate-600 leading-relaxed font-medium">
-                          {sec.body}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Action CTA */}
-                  <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-                    <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-                      <ShieldAlert size={16} className="text-amber-600" />
-                      <span>If you suspect a dangerous failure, do not risk DIY.</span>
-                    </div>
-                    <Link
-                      href="/request"
-                      onClick={() => setSelectedResource(null)}
-                      className="px-5 py-2.5 rounded-full bg-sky-600 hover:bg-sky-500 text-white text-xs font-extrabold uppercase tracking-wider flex items-center gap-1.5 shadow-md shadow-sky-600/20"
-                    >
-                      <span>Request Pro Inspection</span>
-                      <ArrowRight size={14} />
-                    </Link>
-                  </div>
+                  
+                  <h3 className="text-xl sm:text-2xl font-black text-slate-900 leading-snug">
+                    {selectedResource.title}
+                  </h3>
+                  
+                  <p className="text-xs text-slate-500 font-bold">
+                    Written by {selectedResource.author}
+                  </p>
                 </div>
-              )}
+
+                <div className="p-4 rounded-2xl bg-sky-50 border border-sky-100 text-sky-950 text-xs leading-relaxed font-medium">
+                  {selectedResource.desc}
+                </div>
+
+                {/* Step-by-Step Article Steps */}
+                <div className="space-y-4 pt-4 border-t border-slate-100">
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-slate-500">
+                    Step-by-Step DIY Guide Instructions
+                  </h4>
+
+                  {selectedResource.articleContent.map((sec, sIdx) => (
+                    <div key={sIdx} className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                      <div className="flex items-center gap-3">
+                        <span className="h-7 w-7 rounded-lg bg-sky-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-xs">
+                          {sec.step}
+                        </span>
+                        <h5 className="text-sm font-extrabold text-slate-900">
+                          {sec.title}
+                        </h5>
+                      </div>
+                      <p className="text-xs text-slate-600 leading-relaxed font-medium pl-10">
+                        {sec.body}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Action CTA */}
+                <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+                  <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
+                    <ShieldAlert size={16} className="text-amber-600 shrink-0" />
+                    <span>Prefer an accredited pro? We dispatch in 15 mins.</span>
+                  </div>
+                  <Link
+                    href="/request"
+                    onClick={() => setSelectedResource(null)}
+                    className="px-5 py-2.5 rounded-full bg-sky-600 hover:bg-sky-500 text-white text-xs font-extrabold uppercase tracking-wider flex items-center gap-1.5 shadow-md shadow-sky-600/20"
+                  >
+                    <span>Book Technician Now</span>
+                    <ArrowRight size={14} />
+                  </Link>
+                </div>
+              </div>
             </motion.div>
           </motion.div>
         )}
@@ -374,5 +365,6 @@ export default function EducationalResourcesSection() {
     </section>
   );
 }
+
 
 
