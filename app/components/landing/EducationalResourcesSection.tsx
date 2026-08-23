@@ -224,21 +224,39 @@ export default function EducationalResourcesSection() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto"
+            className="fixed inset-0 z-[60] bg-slate-950/95 backdrop-blur-lg flex items-center justify-center p-4 sm:p-6 overflow-y-auto"
           >
+            {/* Fixed Top-Right Screen Close Button */}
+            <button
+              onClick={() => setSelectedResource(null)}
+              aria-label="Close modal"
+              className="fixed top-5 right-5 sm:top-8 sm:right-8 z-[70] h-12 px-5 rounded-full bg-red-600 hover:bg-red-500 text-white font-extrabold text-xs uppercase tracking-wider flex items-center gap-2 shadow-2xl border-2 border-white/20 transition-all hover:scale-105 cursor-pointer"
+            >
+              <X size={18} />
+              <span>Close Video</span>
+            </button>
+
             <motion.div
               initial={{ scale: 0.95, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 20 }}
               className="bg-slate-900 border border-slate-700 rounded-[32px] max-w-4xl w-full overflow-hidden shadow-2xl relative my-8"
             >
-              {/* Modal Close Button */}
-              <button
-                onClick={() => setSelectedResource(null)}
-                className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center border border-slate-700 transition-colors cursor-pointer"
-              >
-                <X size={20} />
-              </button>
+              {/* Internal Modal Card Header Bar */}
+              <div className="flex items-center justify-between px-6 py-4 bg-slate-950/80 border-b border-slate-800">
+                <span className="text-xs font-bold uppercase tracking-wider text-sky-400 flex items-center gap-2">
+                  <Sparkles size={14} />
+                  <span>{selectedResource.type === "Video" ? "Video Tutorial & Narration" : "Expert Home Guide"}</span>
+                </span>
+
+                <button
+                  onClick={() => setSelectedResource(null)}
+                  className="h-8 px-3 rounded-full bg-slate-800 hover:bg-red-600 text-slate-300 hover:text-white text-xs font-bold flex items-center gap-1 border border-slate-700 transition-colors cursor-pointer"
+                >
+                  <X size={14} />
+                  <span>Close</span>
+                </button>
+              </div>
 
               {/* Video Player Modal Content */}
               {selectedResource.type === "Video" ? (
