@@ -27,6 +27,9 @@ import {
   Check,
   ChevronRight,
   BookOpen,
+  Download,
+  MessageCircle,
+  Receipt,
   Trash2,
   RefreshCw,
   Zap
@@ -35,6 +38,7 @@ import { createClient } from "@/lib/supabase/client";
 import { optimizeProfilePhoto } from "@/lib/imageOptimizer";
 import LocationMapPicker from "@/app/components/LocationMapPicker";
 import IdVerificationStatus, { type VerificationStatus } from "@/app/components/IdVerificationStatus";
+import AccreditationReceiptModal, { type AccreditationReceiptData } from "@/app/components/AccreditationReceiptModal";
 import Logo from "@/app/components/Logo";
 import ErrorAlert from "@/app/components/ErrorAlert";
 import NinVerificationCard, { type NinDetails } from "@/app/components/NinVerificationCard";
@@ -103,6 +107,7 @@ function WorkerRegisterContent() {
   const [isInitializingFlw, setIsInitializingFlw] = useState(false);
   const [showManualTransfer, setShowManualTransfer] = useState(false);
   const [manualTransferRef, setManualTransferRef] = useState("");
+  const [receiptModalData, setReceiptModalData] = useState<AccreditationReceiptData | null>(null);
 
   // Location cascade state
   const [selState, setSelState] = useState("");
@@ -732,7 +737,7 @@ function WorkerRegisterContent() {
                 {/* Payment Checkout Box */}
                 <div className="p-6 rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-md space-y-4">
                   {accreditationPaid ? (
-                    <div className="p-4 rounded-2xl bg-emerald-950/60 border border-emerald-500/40 flex items-center justify-between gap-3">
+                    <div className="p-4 rounded-2xl bg-emerald-950/60 border border-emerald-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div className="flex items-center gap-3">
                         <CheckCircle2 size={20} className="text-emerald-400 shrink-0" />
                         <div>
@@ -742,13 +747,36 @@ function WorkerRegisterContent() {
                           <p className="text-[11px] text-emerald-300/80 font-mono">Ref: {paymentRef || "FLW-VERIFIED"}</p>
                         </div>
                       </div>
-                      <Link
-                        href="/worker/handbook"
-                        target="_blank"
-                        className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 transition-all"
-                      >
-                        <BookOpen size={13} /> Handbook
-                      </Link>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setReceiptModalData({
+                              receiptNumber: `HC-ACC-${(paymentRef || Date.now().toString(36)).toUpperCase()}`,
+                              date: new Date().toLocaleDateString("en-NG", { dateStyle: "long" }),
+                              proName: fullName || "Registered Professional",
+                              proPhone: phone || "N/A",
+                              proEmail: email,
+                              skill: primarySkill,
+                              tier: selectedTier,
+                              amount: currentFee,
+                              paymentMethod: "flutterwave",
+                              paymentRef: paymentRef || "FLW-VERIFIED",
+                              status: "verified",
+                            });
+                          }}
+                          className="px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 text-white text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer"
+                        >
+                          <Receipt size={13} /> View Receipt
+                        </button>
+                        <Link
+                          href="/worker/handbook"
+                          target="_blank"
+                          className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 transition-all"
+                        >
+                          <BookOpen size={13} /> Handbook
+                        </Link>
+                      </div>
                     </div>
                   ) : (
                     <div className="space-y-3">
@@ -820,8 +848,8 @@ function WorkerRegisterContent() {
                             <span className="text-slate-400">Account Name:</span>
                             <span className="font-bold text-white text-[11px]">{PAYMENT_ACCOUNT.accountName}</span>
                           </div>
-                          <div className="pt-2">
-                            <label className="block text-[10px] font-bold uppercase text-slate-400 mb-1">
+                          <div className="pt-2 space-y-2">
+                            <label className="block text-[10px] font-bold uppercase text-slate-400">
                               Transfer Reference / Sender Name:
                             </label>
                             <input
@@ -831,6 +859,65 @@ function WorkerRegisterContent() {
                               onChange={(e) => setManualTransferRef(e.target.value)}
                               className="w-full rounded-xl bg-white/10 border border-white/20 px-3 py-2 text-xs font-mono text-white placeholder:text-slate-500 outline-none focus:border-sky-400"
                             />
+
+                            {/* Download Receipt & WhatsApp Action Buttons */}
+                            <div className="pt-2 flex flex-col sm:flex-row items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (!manualTransferRef || manualTransferRef.trim().length < 3) {
+                                    toast.error("Enter Transfer Ref First", {
+                                      description: "Please type your sender name or bank transfer transaction reference above before generating a receipt.",
+                                    });
+                                    return;
+                                  }
+                                  setReceiptModalData({
+                                    receiptNumber: `HC-ACC-${Date.now().toString(36).toUpperCase()}`,
+                                    date: new Date().toLocaleDateString("en-NG", { dateStyle: "long" }),
+                                    proName: fullName || "Registered Professional",
+                                    proPhone: phone || "08000000000",
+                                    proEmail: email,
+                                    skill: primarySkill,
+                                    tier: selectedTier,
+                                    amount: currentFee,
+                                    paymentMethod: "bank_transfer",
+                                    paymentRef: manualTransferRef,
+                                    bankName: PAYMENT_ACCOUNT.bankName,
+                                    accountNumber: PAYMENT_ACCOUNT.accountNumber,
+                                    accountName: PAYMENT_ACCOUNT.accountName,
+                                    status: "pending_audit",
+                                  });
+                                }}
+                                className="w-full flex-1 inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold transition-all shadow-sm cursor-pointer"
+                              >
+                                <Download size={13} /> Download Deposit Slip (PDF)
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (!manualTransferRef || manualTransferRef.trim().length < 3) {
+                                    toast.error("Enter Transfer Ref First", {
+                                      description: "Please type your sender name or bank transfer transaction reference above.",
+                                    });
+                                    return;
+                                  }
+                                  const msg = encodeURIComponent(
+                                    `*HOMECARE PRO ACCREDITATION PAYMENT VERIFICATION*\n\n` +
+                                    `*Name:* ${fullName || 'Professional'}\n` +
+                                    `*Phone:* ${phone || 'N/A'}\n` +
+                                    `*Accreditation Tier:* ${selectedTier === 'elite' ? 'Elite Pro Accelerator (₦3,500)' : 'Starter Pro (₦1,500)'}\n` +
+                                    `*Amount Deposited:* ₦${currentFee.toLocaleString()}\n` +
+                                    `*Bank:* Globus Bank (1000501179)\n` +
+                                    `*Transfer Reference / Sender:* ${manualTransferRef}\n\n` +
+                                    `Hello Customer Care Unit, I have made my accreditation transfer to Globus Bank. Kindly verify my payment.`
+                                  );
+                                  window.open(`https://wa.me/2349119059859?text=${msg}`, '_blank');
+                                }}
+                                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-sm cursor-pointer"
+                              >
+                                <MessageCircle size={13} /> Send on WhatsApp
+                              </button>
+                            </div>
                           </div>
                         </motion.div>
                       )}
@@ -1543,6 +1630,16 @@ function WorkerRegisterContent() {
           </div>
         </motion.aside>
       </div>
+
+      {/* Official Accreditation Receipt & Deposit Slip Modal */}
+      <AnimatePresence>
+        {receiptModalData && (
+          <AccreditationReceiptModal
+            data={receiptModalData}
+            onClose={() => setReceiptModalData(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
