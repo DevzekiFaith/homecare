@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, useState, useEffect, Suspense } from "react";
+import { FormEvent, useState, useEffect, Suspense, useRef } from "react";
 import "leaflet/dist/leaflet.css";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   ShieldCheck, 
   UserCircle, 
@@ -22,7 +22,10 @@ import {
   Lock,
   Copy,
   ExternalLink,
-  AlertCircle
+  AlertCircle,
+  Camera,
+  Check,
+  ChevronRight
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import LocationMapPicker from "@/app/components/LocationMapPicker";
@@ -59,6 +62,7 @@ function WorkerRegisterContent() {
   const [ninError, setNinError] = useState<string | null>(null);
   const [certFile, setCertFile] = useState<File | null>(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [verifyStatus, setVerifyStatus] = useState<VerificationStatus>("idle");
   const [verifyReason, setVerifyReason] = useState<string | undefined>(undefined);
   const [verifyConfidence, setVerifyConfidence] = useState<"high" | "medium" | "low" | null>(null);
@@ -93,6 +97,10 @@ function WorkerRegisterContent() {
   const [selCity, setSelCity] = useState("");
   const [selArea, setSelArea] = useState("");
 
+  // Refs for smooth scroll targetting
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const certInputRef = useRef<HTMLInputElement>(null);
+
   // Check URL query parameters for Flutterwave verified callback
   useEffect(() => {
     const paidParam = searchParams.get("paid");
@@ -100,8 +108,8 @@ function WorkerRegisterContent() {
     if (paidParam === "true" && refParam) {
       setAccreditationPaid(true);
       setPaymentRef(refParam);
-      toast.success("₦3,500 Accreditation Payment Verified!", {
-        description: `Flutterwave Ref: ${refParam}. Please complete your identity details below.`,
+      toast.success("₦3,500 Accreditation Payment Confirmed!", {
+        description: `Flutterwave Ref: ${refParam}. Please proceed with legal name and identity verification.`,
       });
     }
 
@@ -121,6 +129,8 @@ function WorkerRegisterContent() {
         if (d.selCity) setSelCity(d.selCity);
         if (d.selArea) setSelArea(d.selArea);
         if (d.nin) setNin(d.nin);
+        if (d.manualTransferRef) setManualTransferRef(d.manualTransferRef);
+        if (d.accreditationPaid) setAccreditationPaid(true);
       }
     } catch {
       // Ignore parse errors
@@ -141,12 +151,22 @@ function WorkerRegisterContent() {
         selState,
         selCity,
         selArea,
-        nin
+        nin,
+        manualTransferRef,
+        accreditationPaid
       }));
     } catch {
       // Ignore
     }
   };
+
+  // Status checks for progressive unlock
+  const isPaymentValid = accreditationPaid || manualTransferRef.trim().length >= 4;
+  const isPersonalValid = fullName.trim().length >= 3 && email.trim().length >= 5 && phone.trim().length >= 10 && pin.length === 6 && homeAddress.trim().length >= 5;
+  const isNinValid = ninStatus === "verified";
+  const isPhotoValid = Boolean(photoFile);
+  const isTradeValid = Boolean(primarySkill);
+  const isAllComplete = isPaymentValid && isPersonalValid && isNinValid && isPhotoValid && isTradeValid;
 
   // Primary Payment Route: Flutterwave Gateway (No. 1 Priority)
   const handleFlutterwavePayment = async () => {
@@ -154,6 +174,11 @@ function WorkerRegisterContent() {
       toast.error("Email Required First", {
         description: "Please enter your email address in Step 2 so we can link your payment receipt.",
       });
+      const emailInput = document.getElementById("pro-email-input");
+      if (emailInput) {
+        emailInput.focus();
+        emailInput.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
       return;
     }
 
@@ -197,13 +222,22 @@ function WorkerRegisterContent() {
     }
   };
 
-  // NIN NIMC Verification with Mandatory Name Enforcement
+  // NIN NIMC Verification with Mandatory Name Enforcement & Payment Check
   const handleVerifyNin = async (inputNin: string) => {
     const cleanNin = inputNin.replace(/\D/g, "");
     
-    // Strict validation: Full Legal Name MUST be entered first
+    // 1. Validate payment first
+    if (!isPaymentValid) {
+      toast.error("Accreditation Fee Required", {
+        description: "Please pay or confirm your ₦3,500 accreditation fee in Step 1 first before verifying with NIMC.",
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    // 2. Validate Full Legal Name
     if (!fullName || fullName.trim().length < 3) {
-      toast.error("NIMC Name Required First", {
+      toast.error("NIMC Legal Name Required", {
         description: "Please enter your Full Legal Name in Step 2 first as registered with NIMC before verifying your NIN.",
       });
       setNinError("Please enter your Full Legal Name in Step 2 first before verifying your NIN.");
@@ -249,7 +283,7 @@ function WorkerRegisterContent() {
       if (data.status === "verified" && data.details) {
         setNinDetails(data.details);
         toast.success("NIN Authenticated with NIMC Registry!", {
-          description: `Identity confirmed for ${data.details.fullName || fullName}.`,
+          description: `Identity confirmed for ${data.details.fullName || fullName}. Photo screening is now unlocked.`,
         });
       } else {
         setNinDetails(undefined);
@@ -265,26 +299,76 @@ function WorkerRegisterContent() {
     }
   };
 
+  // Guard for Selfie Photo File Upload: Only allows opening if top details + NIN verified
+  const handlePhotoClick = (e: React.MouseEvent) => {
+    if (!isPaymentValid) {
+      e.preventDefault();
+      toast.error("Step 1 Incomplete", {
+        description: "Please pay or confirm the ₦3,500 accreditation fee before uploading your face photo.",
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    if (!fullName || fullName.trim().length < 3) {
+      e.preventDefault();
+      toast.error("Step 2 Incomplete", {
+        description: "Please enter your Full Legal Name in Step 2 before uploading your photo.",
+      });
+      const nameInput = document.getElementById("pro-full-name-input");
+      if (nameInput) {
+        nameInput.focus();
+        nameInput.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      return;
+    }
+
+    if (ninStatus !== "verified") {
+      e.preventDefault();
+      toast.error("NIN Authentication Required", {
+        description: "Please enter your 11-digit NIN and verify with NIMC before uploading your live selfie.",
+      });
+      const ninInput = document.getElementById("nin-input");
+      if (ninInput) {
+        ninInput.focus();
+        ninInput.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      return;
+    }
+  };
+
+  // Guard for Certificate upload
+  const handleCertClick = (e: React.MouseEvent) => {
+    if (!primarySkill) {
+      e.preventDefault();
+      toast.error("Select Trade First", {
+        description: "Please select your primary trade skill before attaching a trade certificate.",
+      });
+    }
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMessage(null);
     setSuccessMessage(null);
     setNinError(null);
 
-    // 1. Mandatory Accreditation Payment Validation
-    if (!accreditationPaid && !manualTransferRef) {
+    // Strict Gate 1: Flutterwave / Accreditation Payment
+    if (!isPaymentValid) {
       toast.error("₦3,500 Accreditation Payment Required", {
-        description: "Please pay the ₦3,500 accreditation fee via Flutterwave (or enter transfer ref) to complete registration.",
+        description: "Flutterwave accreditation payment must be completed before your profile can be submitted.",
       });
       setErrorMessage("Accreditation fee of ₦3,500 is required to authenticate your profile against national databases.");
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
 
-    // 2. Personal fields validation
+    // Strict Gate 2: Personal Legal Information
     if (!fullName || fullName.trim().length < 3) {
       toast.error("Missing Full Name", { description: "Please enter your full legal name as on your ID." });
       setErrorMessage("Please enter your full legal name.");
+      const nameInput = document.getElementById("pro-full-name-input");
+      if (nameInput) nameInput.focus();
       return;
     }
 
@@ -295,7 +379,7 @@ function WorkerRegisterContent() {
     }
 
     if (!phone) {
-      toast.error("Missing Phone Number", { description: "Please enter your WhatsApp active phone number." });
+      toast.error("Missing Phone Number", { description: "Please enter your WhatsApp phone number." });
       setErrorMessage("Please enter your phone number.");
       return;
     }
@@ -306,6 +390,7 @@ function WorkerRegisterContent() {
       return;
     }
 
+    // Strict Gate 3: NIN NIMC Verification
     const cleanNin = nin.replace(/\D/g, "");
     if (cleanNin.length !== NIN_LENGTH) {
       toast.error("Invalid NIN", { description: `NIN must be exactly ${NIN_LENGTH} digits.` });
@@ -313,15 +398,25 @@ function WorkerRegisterContent() {
       return;
     }
 
-    if (!primarySkill) {
-      toast.error("Select Trade Skill", { description: "Please select your primary trade skill." });
-      setErrorMessage("Please select your primary trade skill.");
+    if (ninStatus !== "verified") {
+      toast.error("NIN Verification Required", {
+        description: "Please click 'Verify NIN' to authenticate your identity with NIMC before submitting.",
+      });
+      setErrorMessage("Please authenticate your 11-digit NIN with the National Identity Registry.");
       return;
     }
 
+    // Strict Gate 4: Live Photo
     if (!photoFile) {
-      toast.error("Live Selfie Photo Required", { description: "Please upload or capture a live selfie photo for AI screening." });
-      setErrorMessage("Please select or capture a live selfie photo before submitting.");
+      toast.error("Live Selfie Photo Required", { description: "Please upload or capture a live selfie photo for AI facial screening." });
+      setErrorMessage("Please upload your live selfie photo to complete biometric screening.");
+      return;
+    }
+
+    // Strict Gate 5: Trade Skill
+    if (!primarySkill) {
+      toast.error("Select Trade Skill", { description: "Please select your primary trade skill." });
+      setErrorMessage("Please select your primary trade skill.");
       return;
     }
 
@@ -397,7 +492,7 @@ function WorkerRegisterContent() {
         experience_years: parseInt(experience || "0", 10),
         areas: [activeArea],
         bio: bio.trim(),
-        is_verified: true, // Marked verified upon payment + NIMC validation
+        is_verified: true,
         ai_verified: aiVerified || true,
         ai_verification_reason: aiVerifyReason || "NIMC & Biometric Authenticated with ₦3,500 Accreditation",
         avatar_url: avatarUrl,
@@ -417,7 +512,7 @@ function WorkerRegisterContent() {
       toast.success("Accreditation & Registration Complete!", {
         description: "Welcome to HomeCare Pro Network. Redirecting to your dashboard...",
       });
-      setSuccessMessage("Your professional credentials have been authenticated and accredited. Redirecting to your Pro Portal...");
+      setSuccessMessage("Your professional credentials and payment have been authenticated. Redirecting to your Pro Portal...");
 
       setTimeout(() => {
         router.push("/worker/dashboard");
@@ -453,17 +548,44 @@ function WorkerRegisterContent() {
               Professional Verification &amp; Accreditation Portal
             </h1>
             <p className="mt-2 text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
-              Customer safety is our absolute priority. Complete your accreditation and identity verification below to join our elite approved professional network.
+              Complete each required stage sequentially. All steps connect and authenticate together for guaranteed platform accreditation.
             </p>
+
+            {/* Modern Progressive Flow Audit Tracker */}
+            <div className="mt-6 p-4 rounded-2xl bg-slate-50 border border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] font-bold uppercase tracking-wider">
+              <div className={`p-2 rounded-xl flex items-center gap-1.5 ${isPaymentValid ? "bg-emerald-50 text-emerald-800 border border-emerald-200" : "bg-white text-slate-500 border border-slate-200"}`}>
+                {isPaymentValid ? <Check size={13} className="text-emerald-600 shrink-0" /> : <span className="w-3.5 h-3.5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[8px]">1</span>}
+                <span className="truncate">₦3.5k Fee {isPaymentValid ? "Paid" : "Pending"}</span>
+              </div>
+              <div className={`p-2 rounded-xl flex items-center gap-1.5 ${isPersonalValid ? "bg-emerald-50 text-emerald-800 border border-emerald-200" : "bg-white text-slate-500 border border-slate-200"}`}>
+                {isPersonalValid ? <Check size={13} className="text-emerald-600 shrink-0" /> : <span className="w-3.5 h-3.5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[8px]">2</span>}
+                <span className="truncate">Legal Name</span>
+              </div>
+              <div className={`p-2 rounded-xl flex items-center gap-1.5 ${isNinValid ? "bg-emerald-50 text-emerald-800 border border-emerald-200" : "bg-white text-slate-500 border border-slate-200"}`}>
+                {isNinValid ? <Check size={13} className="text-emerald-600 shrink-0" /> : <span className="w-3.5 h-3.5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[8px]">3</span>}
+                <span className="truncate">NIMC Checked</span>
+              </div>
+              <div className={`p-2 rounded-xl flex items-center gap-1.5 ${isPhotoValid ? "bg-emerald-50 text-emerald-800 border border-emerald-200" : "bg-white text-slate-500 border border-slate-200"}`}>
+                {isPhotoValid ? <Check size={13} className="text-emerald-600 shrink-0" /> : <span className="w-3.5 h-3.5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[8px]">4</span>}
+                <span className="truncate">Selfie Photo</span>
+              </div>
+            </div>
           </div>
 
           <form onSubmit={handleSubmit} noValidate className="space-y-10">
 
             {/* STEP 1: Professional Accreditation Package (BEFORE Security & ID) */}
             <div className="space-y-5">
-              <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-800 border-b border-slate-200 pb-2.5">
-                <Award size={17} className="text-sky-600" /> 1. Professional Accreditation Package &amp; Vetting Fee
-              </h2>
+              <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
+                <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-800">
+                  <Award size={17} className="text-sky-600" /> 1. Professional Accreditation Package &amp; Vetting Fee
+                </h2>
+                {isPaymentValid && (
+                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+                    <CheckCircle2 size={12} className="text-emerald-600" /> Gate 1 Verified
+                  </span>
+                )}
+              </div>
 
               <div className="p-6 rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-md space-y-5 relative overflow-hidden">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -518,7 +640,7 @@ function WorkerRegisterContent() {
                     <div className="flex items-center gap-3">
                       <CheckCircle2 size={20} className="text-emerald-400 shrink-0" />
                       <div>
-                        <p className="text-xs font-black uppercase text-emerald-200">Accreditation Fee Paid</p>
+                        <p className="text-xs font-black uppercase text-emerald-200">Flutterwave Payment Confirmed</p>
                         <p className="text-[11px] text-emerald-300/80 font-mono">Ref: {paymentRef || "FLW-VERIFIED"}</p>
                       </div>
                     </div>
@@ -541,7 +663,7 @@ function WorkerRegisterContent() {
                       ) : (
                         <>
                           <CreditCard size={17} />
-                          <span>Pay ₦3,500 via Flutterwave Gateway (Instant Card / USSD / Bank)</span>
+                          <span>Pay ₦3,500 via Flutterwave Gateway (Primary No. 1)</span>
                         </>
                       )}
                     </button>
@@ -609,9 +731,16 @@ function WorkerRegisterContent() {
 
             {/* STEP 2: Personal Details & NIMC Registered Full Legal Name */}
             <div className="space-y-5">
-              <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-800 border-b border-slate-200 pb-2.5">
-                <UserCircle size={17} className="text-sky-600" /> 2. Personal Details
-              </h2>
+              <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
+                <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-800">
+                  <UserCircle size={17} className="text-sky-600" /> 2. Personal Details
+                </h2>
+                {isPersonalValid && (
+                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+                    <CheckCircle2 size={12} className="text-emerald-600" /> Gate 2 Filled
+                  </span>
+                )}
+              </div>
 
               <div className="grid gap-5 sm:grid-cols-2">
                 {/* Full Legal Name (Must be entered first before NIN verification) */}
@@ -633,7 +762,7 @@ function WorkerRegisterContent() {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="e.g. Olawale Babatunde Ibrahim"
-                    className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 outline-none transition focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-100 placeholder:text-slate-400"
+                    className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 outline-none transition focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-100 placeholder:text-slate-400 shadow-2xs"
                   />
                   <p className="text-[11px] text-slate-500 font-medium">
                     Enter your exact legal name registered with NIMC. This name is required to authenticate your 11-digit NIN.
@@ -646,13 +775,14 @@ function WorkerRegisterContent() {
                     Email Address <span className="text-rose-500">*</span>
                   </label>
                   <input
+                    id="pro-email-input"
                     required
                     type="email"
                     name="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
-                    className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 outline-none transition focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-100 placeholder:text-slate-400"
+                    className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 outline-none transition focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-100 placeholder:text-slate-400 shadow-2xs"
                   />
                 </div>
 
@@ -668,7 +798,7 @@ function WorkerRegisterContent() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="+234 812 345 6789"
-                    className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 outline-none transition focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-100 placeholder:text-slate-400 font-mono"
+                    className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 outline-none transition focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-100 placeholder:text-slate-400 font-mono shadow-2xs"
                   />
                 </div>
 
@@ -687,7 +817,7 @@ function WorkerRegisterContent() {
                       value={pin}
                       onChange={(e) => setPin(e.target.value)}
                       placeholder="e.g. 123456"
-                      className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-900 outline-none transition focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-100 pr-12 placeholder:text-slate-400"
+                      className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-900 outline-none transition focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-100 pr-12 placeholder:text-slate-400 shadow-2xs"
                     />
                     <button
                       type="button"
@@ -711,7 +841,7 @@ function WorkerRegisterContent() {
                     value={homeAddress}
                     onChange={(e) => setHomeAddress(e.target.value)}
                     placeholder="e.g. 14 Ogui Road, New Haven, Enugu"
-                    className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 outline-none transition focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-100 placeholder:text-slate-400"
+                    className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 outline-none transition focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-100 placeholder:text-slate-400 shadow-2xs"
                   />
                 </div>
               </div>
@@ -719,9 +849,16 @@ function WorkerRegisterContent() {
 
             {/* STEP 3: Security & Identity Verification (NIN & Live NIMC Validation) */}
             <div className="space-y-5">
-              <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-800 border-b border-slate-200 pb-2.5">
-                <ShieldCheck size={17} className="text-sky-600" /> 3. Security &amp; Identity Verification
-              </h2>
+              <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
+                <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-800">
+                  <ShieldCheck size={17} className="text-sky-600" /> 3. Security &amp; Identity Verification
+                </h2>
+                {isNinValid && (
+                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+                    <CheckCircle2 size={12} className="text-emerald-600" /> Gate 3 NIMC Confirmed
+                  </span>
+                )}
+              </div>
 
               <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-6 space-y-6">
                 {/* NIN Input with Pre-Name Check */}
@@ -801,61 +938,99 @@ function WorkerRegisterContent() {
                   />
                 </div>
 
-                {/* Upload Clear Photo / Live Selfie */}
-                <div className="pt-2">
-                  <label className="block text-xs font-black text-slate-900 uppercase tracking-wider mb-2">
-                    Upload Live Photo (Selfie) <span className="text-rose-500">*</span>
-                  </label>
+                {/* Upload Clear Photo / Live Selfie (LOCKED until Name + NIN verified) */}
+                <div className="pt-2 border-t border-slate-200/80">
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-xs font-black text-slate-900 uppercase tracking-wider">
+                      Upload Live Photo (Selfie) <span className="text-rose-500">*</span>
+                    </label>
+                    {isNinValid ? (
+                      <span className="text-[10px] font-black text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+                        <Check size={11} /> Unlocked
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-black text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 flex items-center gap-1">
+                        <Lock size={11} /> Locked (Verify NIN First)
+                      </span>
+                    )}
+                  </div>
                   <p className="text-xs text-slate-500 font-medium mb-3">
-                    Clear face photo for customer dispatch match and AI biometric screening.
+                    Clear face photo for customer dispatch match and AI biometric screening. File upload unlocks automatically once your NIN is authenticated.
                   </p>
                   
                   <div className="space-y-3">
-                    <input
-                      required
-                      type="file"
-                      name="photo"
-                      accept="image/*"
-                      className="w-full text-xs text-slate-500 font-medium file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-xs file:font-black file:uppercase file:tracking-wider file:bg-sky-600 file:text-white hover:file:bg-sky-500 file:cursor-pointer cursor-pointer border border-slate-300 rounded-2xl bg-white p-3 shadow-2xs transition-all"
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        setPhotoFile(file ?? null);
-                        if (!file) return;
-                        setVerifyStatus("checking");
-                        setVerifyReason(undefined);
-                        try {
-                          const reader = new FileReader();
-                          reader.onload = async (ev) => {
-                            try {
-                              const imageBase64 = ev.target?.result as string;
-                              const res = await fetch("/api/verify-id", {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({ imageBase64, workerName: fullName || "" }),
-                              });
-                              const data = await res.json() as {
-                                status: VerificationStatus;
-                                confidence?: "high" | "medium" | "low" | null;
-                                reason?: string;
-                              };
-                              setVerifyStatus(data.status);
-                              setVerifyReason(data.reason);
-                              setVerifyConfidence(data.confidence ?? null);
-                              setAiVerified(data.status === "verified");
-                              setAiVerifyReason(data.reason ?? "");
-                            } catch (err) {
-                              console.error("AI verification error:", err);
-                              setVerifyStatus("pending_manual");
-                              setVerifyReason("Verification will be completed manually by our team.");
-                            }
-                          };
-                          reader.readAsDataURL(file);
-                        } catch {
-                          setVerifyStatus("pending_manual");
-                          setVerifyReason("Verification will be completed manually by our team.");
-                        }
-                      }}
-                    />
+                    <div 
+                      onClick={handlePhotoClick}
+                      className={`relative rounded-2xl border-2 transition-all p-4 ${
+                        !isNinValid
+                          ? "border-slate-200 bg-slate-100/80 opacity-75 cursor-not-allowed"
+                          : photoFile
+                          ? "border-emerald-400 bg-emerald-50/40"
+                          : "border-dashed border-slate-300 bg-white hover:border-sky-500 cursor-pointer"
+                      }`}
+                    >
+                      <input
+                        ref={photoInputRef}
+                        type="file"
+                        name="photo"
+                        accept="image/*"
+                        disabled={!isNinValid}
+                        className={`w-full text-xs text-slate-600 font-medium file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-xs file:font-black file:uppercase file:tracking-wider ${
+                          !isNinValid 
+                            ? "file:bg-slate-300 file:text-slate-500 cursor-not-allowed pointer-events-none" 
+                            : "file:bg-sky-600 file:text-white hover:file:bg-sky-500 file:cursor-pointer cursor-pointer"
+                        }`}
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          setPhotoFile(file ?? null);
+                          if (!file) {
+                            setPhotoPreview(null);
+                            return;
+                          }
+                          setPhotoPreview(URL.createObjectURL(file));
+                          setVerifyStatus("checking");
+                          setVerifyReason(undefined);
+                          try {
+                            const reader = new FileReader();
+                            reader.onload = async (ev) => {
+                              try {
+                                const imageBase64 = ev.target?.result as string;
+                                const res = await fetch("/api/verify-id", {
+                                  method: "POST",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ imageBase64, workerName: fullName || "" }),
+                                });
+                                const data = await res.json() as {
+                                  status: VerificationStatus;
+                                  confidence?: "high" | "medium" | "low" | null;
+                                  reason?: string;
+                                };
+                                setVerifyStatus(data.status);
+                                setVerifyReason(data.reason);
+                                setVerifyConfidence(data.confidence ?? null);
+                                setAiVerified(data.status === "verified");
+                                setAiVerifyReason(data.reason ?? "");
+                              } catch (err) {
+                                console.error("AI verification error:", err);
+                                setVerifyStatus("pending_manual");
+                                setVerifyReason("Verification will be completed manually by our team.");
+                              }
+                            };
+                            reader.readAsDataURL(file);
+                          } catch {
+                            setVerifyStatus("pending_manual");
+                            setVerifyReason("Verification will be completed manually by our team.");
+                          }
+                        }}
+                      />
+
+                      {!isNinValid && (
+                        <div className="absolute inset-0 bg-slate-900/10 backdrop-blur-[1px] rounded-2xl flex items-center justify-center gap-2 text-slate-700 font-bold text-xs uppercase tracking-wider">
+                          <Lock size={14} className="text-slate-600" />
+                          <span>Complete Step 1 (₦3,500 Fee) &amp; Step 3 (NIN) to Unlock</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <IdVerificationStatus status={verifyStatus} reason={verifyReason} confidence={verifyConfidence} />
                 </div>
@@ -895,9 +1070,16 @@ function WorkerRegisterContent() {
 
             {/* STEP 4: Professional Skills & Coverage Area */}
             <div className="space-y-5">
-              <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-800 border-b border-slate-200 pb-2.5">
-                <Award size={17} className="text-sky-600" /> 4. Professional Skills &amp; Coverage
-              </h2>
+              <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
+                <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-800">
+                  <Award size={17} className="text-sky-600" /> 4. Professional Skills &amp; Coverage
+                </h2>
+                {isTradeValid && (
+                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+                    <CheckCircle2 size={12} className="text-emerald-600" /> Gate 4 Trade Selected
+                  </span>
+                )}
+              </div>
 
               <div className="grid gap-5 sm:grid-cols-2">
                 {/* Primary Skill */}
@@ -910,7 +1092,7 @@ function WorkerRegisterContent() {
                     name="primarySkill"
                     value={primarySkill}
                     onChange={(e) => setPrimarySkill(e.target.value)}
-                    className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-900 outline-none transition focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-100 cursor-pointer"
+                    className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-900 outline-none transition focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-100 cursor-pointer shadow-2xs"
                   >
                     <option value="">Select your main trade</option>
                     {SKILLS.map((skill) => (
@@ -935,7 +1117,7 @@ function WorkerRegisterContent() {
                     value={experience}
                     onChange={(e) => setExperience(e.target.value)}
                     placeholder="e.g. 5"
-                    className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-900 outline-none transition focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-100 placeholder:text-slate-400"
+                    className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-900 outline-none transition focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-100 placeholder:text-slate-400 shadow-2xs"
                   />
                 </div>
               </div>
@@ -971,18 +1153,32 @@ function WorkerRegisterContent() {
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
                   placeholder="Detail your past projects, specializations, and why customers should choose you."
-                  className="w-full resize-none rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 outline-none transition focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-100 placeholder:text-slate-400"
+                  className="w-full resize-none rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 outline-none transition focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-100 placeholder:text-slate-400 shadow-2xs"
                 />
               </div>
 
-              {/* Trade Certification Upload */}
+              {/* Trade Certification Upload (Guarded by Primary Skill selection) */}
               <div className="space-y-2">
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
-                  Trade Certification / Certificate (Optional)
-                </label>
-                <label className="flex items-center justify-between gap-3 p-4 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 hover:bg-slate-100/70 hover:border-sky-400 transition-all cursor-pointer">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    Trade Certification / Certificate (Optional)
+                  </label>
+                  {!primarySkill && (
+                    <span className="text-[10px] text-slate-400 flex items-center gap-1 font-bold">
+                      <Lock size={10} /> Select Trade Skill First
+                    </span>
+                  )}
+                </div>
+                <div
+                  onClick={handleCertClick}
+                  className={`flex items-center justify-between gap-3 p-4 rounded-2xl border-2 border-dashed transition-all ${
+                    !primarySkill
+                      ? "border-slate-200 bg-slate-100/70 opacity-70 cursor-not-allowed"
+                      : "border-slate-300 bg-slate-50 hover:bg-slate-100/70 hover:border-sky-400 cursor-pointer"
+                  }`}
+                >
                   <div className="flex items-center gap-3">
-                    <UploadCloud size={20} className="text-sky-600" />
+                    <UploadCloud size={20} className={primarySkill ? "text-sky-600" : "text-slate-400"} />
                     <div>
                       <p className="text-xs font-bold text-slate-800">
                         {certFile ? certFile.name : "Upload Trade Certificate (PDF or Image)"}
@@ -994,9 +1190,11 @@ function WorkerRegisterContent() {
                     {certFile ? "Change" : "Browse"}
                   </span>
                   <input
+                    ref={certInputRef}
                     type="file"
                     name="certification"
                     accept=".pdf,image/*"
+                    disabled={!primarySkill}
                     className="sr-only"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
@@ -1008,7 +1206,7 @@ function WorkerRegisterContent() {
                       setCertFile(file ?? null);
                     }}
                   />
-                </label>
+                </div>
               </div>
             </div>
 
@@ -1020,15 +1218,27 @@ function WorkerRegisterContent() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full sm:w-auto min-w-[240px] h-14 inline-flex items-center justify-center rounded-2xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-black uppercase tracking-wider shadow-lg shadow-sky-600/25 transition-all disabled:opacity-50 cursor-pointer"
+                className={`w-full sm:w-auto min-w-[260px] h-14 inline-flex items-center justify-center rounded-2xl text-xs font-black uppercase tracking-wider shadow-lg transition-all cursor-pointer ${
+                  isAllComplete
+                    ? "bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/30 scale-102 ring-2 ring-emerald-400"
+                    : "bg-sky-600 hover:bg-sky-500 text-white shadow-sky-600/25"
+                } disabled:opacity-50`}
               >
                 {submitting ? (
                   <span className="flex items-center gap-2">
                     <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                     <span>Authenticating &amp; Registering...</span>
                   </span>
+                ) : isAllComplete ? (
+                  <span className="flex items-center gap-2">
+                    <CheckCircle2 size={16} />
+                    <span>All Stages Complete — Register Pro</span>
+                  </span>
                 ) : (
-                  <span>Submit Identity &amp; Register Pro</span>
+                  <span className="flex items-center gap-2">
+                    <span>Submit Identity &amp; Register Pro</span>
+                    <ChevronRight size={16} />
+                  </span>
                 )}
               </button>
             </div>
