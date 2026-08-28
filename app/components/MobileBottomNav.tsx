@@ -18,10 +18,10 @@ export default function MobileBottomNav() {
   useEffect(() => {
     const checkUser = async () => {
       try {
-        const { data } = await supabase.auth.getUser();
-        setUser(data.user);
+        const { data: { session } } = await supabase.auth.getSession();
+        setUser(session?.user ?? null);
       } catch (err) {
-        console.error("Mobile nav auth check failed:", err);
+        console.warn("Mobile nav auth check failed:", err);
       }
     };
     checkUser();
