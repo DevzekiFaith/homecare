@@ -569,7 +569,7 @@ function WorkerRegisterContent() {
             <div className="mt-6 p-4 rounded-2xl bg-slate-50 border border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] font-bold uppercase tracking-wider">
               <div className={`p-2 rounded-xl flex items-center gap-1.5 ${isPaymentValid ? "bg-emerald-50 text-emerald-800 border border-emerald-200" : "bg-white text-slate-500 border border-slate-200"}`}>
                 {isPaymentValid ? <Check size={13} className="text-emerald-600 shrink-0" /> : <span className="w-3.5 h-3.5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[8px]">1</span>}
-                <span className="truncate">₦3.5k Fee {isPaymentValid ? "Paid" : "Pending"}</span>
+                <span className="truncate">{selectedTier === 'starter' ? '₦1.5k' : '₦3.5k'} Fee {isPaymentValid ? "Paid" : "Pending"}</span>
               </div>
               <div className={`p-2 rounded-xl flex items-center gap-1.5 ${isPersonalValid ? "bg-emerald-50 text-emerald-800 border border-emerald-200" : "bg-white text-slate-500 border border-slate-200"}`}>
                 {isPersonalValid ? <Check size={13} className="text-emerald-600 shrink-0" /> : <span className="w-3.5 h-3.5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[8px]">2</span>}
