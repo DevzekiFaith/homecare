@@ -161,12 +161,12 @@ export default function WalletEscrowSection() {
         <div 
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
-          className="bg-slate-50 border border-slate-200 rounded-[32px] sm:rounded-[40px] p-6 sm:p-10 shadow-xl relative"
+          className="bg-slate-50 border border-slate-200 rounded-[28px] sm:rounded-[40px] p-4 sm:p-8 lg:p-10 shadow-xl relative"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center">
             
             {/* Left Content Column */}
-            <div className="lg:col-span-6 flex flex-col justify-between space-y-8">
+            <div className="lg:col-span-6 flex flex-col justify-between space-y-6 sm:space-y-8">
               
               <AnimatePresence mode="wait">
                 <motion.div
@@ -175,13 +175,13 @@ export default function WalletEscrowSection() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.35, ease: "easeOut" }}
-                  className="space-y-5"
+                  className="space-y-4 sm:space-y-5"
                 >
                   <span className="text-[10px] font-black uppercase tracking-widest text-emerald-700 bg-emerald-100/80 border border-emerald-200 px-3 py-1 rounded-full inline-block">
                     {current.stepTitle}
                   </span>
 
-                  <h3 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight font-heading">
+                  <h3 className="text-xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight font-heading">
                     {current.heading}
                   </h3>
 
@@ -189,12 +189,12 @@ export default function WalletEscrowSection() {
                     {current.desc}
                   </p>
 
-                  <div className="p-4 rounded-2xl bg-white border border-emerald-100 shadow-2xs space-y-1.5">
+                  <div className="p-3.5 sm:p-4 rounded-2xl bg-white border border-emerald-100 shadow-2xs space-y-1.5">
                     <div className="flex items-center gap-2 text-emerald-700 font-black text-xs uppercase tracking-wider">
-                      <Lock size={15} className="text-emerald-600" />
+                      <Lock size={15} className="text-emerald-600 shrink-0" />
                       <span>HomeCare Escrow Protection Active</span>
                     </div>
-                    <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                    <p className="text-[11px] sm:text-xs text-slate-600 font-medium leading-relaxed">
                       Zero upfront financial risk for homeowners. Funds released exclusively upon client inspection sign-off.
                     </p>
                   </div>
@@ -235,10 +235,10 @@ export default function WalletEscrowSection() {
 
               {/* Big Bold Stat Metric */}
               <div className="pt-4 border-t border-slate-200/80 flex items-baseline gap-4">
-                <span className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight font-heading">
+                <span className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight font-heading">
                   {current.metricValue}
                 </span>
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider max-w-[150px]">
+                <span className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider max-w-[150px]">
                   {current.metricLabel}
                 </span>
               </div>
@@ -254,7 +254,7 @@ export default function WalletEscrowSection() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.96 }}
                   transition={{ duration: 0.4 }}
-                  className="relative rounded-[28px] sm:rounded-[36px] overflow-hidden min-h-[380px] sm:min-h-[440px] flex flex-col justify-between p-6 sm:p-8 shadow-2xl border border-slate-900/10 group"
+                  className="relative rounded-[24px] sm:rounded-[36px] overflow-hidden min-h-[320px] sm:min-h-[440px] flex flex-col justify-between p-4 sm:p-8 shadow-2xl border border-slate-900/10 group"
                 >
                   {/* Background Image */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}

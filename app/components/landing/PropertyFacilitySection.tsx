@@ -106,16 +106,17 @@ export default function PropertyFacilitySection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center max-w-3xl mx-auto mb-12"
+          className="text-center max-w-3xl mx-auto mb-10 sm:mb-12"
         >
-          <span className="text-xs font-black uppercase tracking-widest text-sky-600 bg-sky-50 px-3.5 py-1.5 rounded-full border border-sky-100 inline-block mb-3 shadow-2xs">
-            B2B &amp; Property Maintenance
+          <span className="text-xs font-bold uppercase tracking-wider text-sky-600 bg-sky-50 px-3.5 py-1.5 rounded-full border border-sky-100 mb-3 inline-block shadow-2xs">
+            Facility &amp; Property Protection Plans
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 uppercase font-heading tracking-tight">
-            KEEP YOUR PROPERTY <span className="text-sky-600">RUNNING.</span>
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 uppercase font-heading tracking-tight">
+            TAILORED PROTECTION FOR <br />
+            <span className="text-sky-600">EVERY PROPERTY SCALE</span>
           </h2>
-          <p className="mt-2 text-slate-600 text-sm sm:text-base font-medium">
-            Expand beyond emergency call-outs. HomeCare provides scheduled preventive maintenance, property sweeps, and facility SLAs for single units, shortlets, and estates.
+          <p className="mt-3 text-slate-600 text-xs sm:text-base font-medium max-w-2xl mx-auto leading-relaxed">
+            From single-family residences to 50-unit estates and commercial office suites, HomeCare offers transparent recurring maintenance contracts.
           </p>
         </motion.div>
 
@@ -123,12 +124,12 @@ export default function PropertyFacilitySection() {
         <div 
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
-          className="bg-slate-50 border border-slate-200 rounded-[32px] sm:rounded-[40px] p-6 sm:p-10 shadow-xl relative"
+          className="bg-slate-50 border border-slate-200 rounded-[28px] sm:rounded-[40px] p-4 sm:p-8 lg:p-10 shadow-xl relative"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center">
             
             {/* Left Content Column */}
-            <div className="lg:col-span-6 flex flex-col justify-between space-y-8">
+            <div className="lg:col-span-6 flex flex-col justify-between space-y-6 sm:space-y-8">
               
               <AnimatePresence mode="wait">
                 <motion.div
@@ -137,13 +138,13 @@ export default function PropertyFacilitySection() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.35, ease: "easeOut" }}
-                  className="space-y-5"
+                  className="space-y-4 sm:space-y-5"
                 >
                   <span className="text-[10px] font-black uppercase tracking-widest text-sky-700 bg-sky-100/80 border border-sky-200 px-3 py-1 rounded-full inline-block">
                     {current.subtitle}
                   </span>
 
-                  <h3 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight font-heading">
+                  <h3 className="text-xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight font-heading">
                     {current.title}
                   </h3>
 
@@ -151,7 +152,7 @@ export default function PropertyFacilitySection() {
                     {current.desc}
                   </p>
 
-                  <div className="p-4 rounded-2xl bg-white border border-sky-100 shadow-2xs space-y-2">
+                  <div className="p-3.5 sm:p-4 rounded-2xl bg-white border border-sky-100 shadow-2xs space-y-2">
                     <span className="text-[10px] font-extrabold uppercase text-sky-600 tracking-wider block">Key Included Plan Perks</span>
                     <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                       {current.perks.map((perk, pIdx) => (
@@ -199,10 +200,10 @@ export default function PropertyFacilitySection() {
 
               {/* Big Bold Stat Metric */}
               <div className="pt-4 border-t border-slate-200/80 flex items-baseline gap-4">
-                <span className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight font-heading">
+                <span className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight font-heading">
                   {current.metricValue}
                 </span>
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider max-w-[150px]">
+                <span className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider max-w-[150px]">
                   {current.metricLabel}
                 </span>
               </div>
@@ -218,7 +219,7 @@ export default function PropertyFacilitySection() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.96 }}
                   transition={{ duration: 0.4 }}
-                  className="relative rounded-[28px] sm:rounded-[36px] overflow-hidden min-h-[380px] sm:min-h-[440px] flex flex-col justify-between p-6 sm:p-8 shadow-2xl border border-slate-900/10 group"
+                  className="relative rounded-[24px] sm:rounded-[36px] overflow-hidden min-h-[320px] sm:min-h-[440px] flex flex-col justify-between p-4 sm:p-8 shadow-2xl border border-slate-900/10 group"
                 >
                   {/* Background Image */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}

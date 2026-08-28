@@ -74,17 +74,17 @@ export default function CustomerQrCodeSection() {
               <span>Outdoor Physical QR Code</span>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 uppercase font-heading leading-tight">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 uppercase font-heading leading-tight">
               SCAN TO BOOK <br />
               <span className="text-sky-600">OUTSIDE YOUR DOOR</span>
             </h2>
 
-            <p className="text-sm sm:text-base text-slate-600 font-medium leading-relaxed">
+            <p className="text-xs sm:text-base text-slate-600 font-medium leading-relaxed">
               Place the official HomeCare QR Code outside your house, apartment block, shortlet, clinic, or estate gate. Anyone can scan it with a smartphone camera to request a verified professional instantly at <strong className="text-slate-900 underline">{targetDomain}</strong>.
             </p>
 
             {/* Feature Highlights */}
-            <div className="space-y-3.5 pt-2">
+            <div className="space-y-3 pt-2">
               <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
                 <div className="w-9 h-9 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center shrink-0 border border-sky-200">
                   <Smartphone size={18} />
@@ -107,10 +107,10 @@ export default function CustomerQrCodeSection() {
             </div>
 
             {/* Actions */}
-            <div className="flex flex-wrap items-center gap-3 pt-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-3">
               <button
                 onClick={handlePrint}
-                className="h-13 px-6 rounded-full bg-sky-600 hover:bg-sky-500 text-white font-black text-xs uppercase tracking-widest flex items-center gap-2 transition-all hover:scale-105 shadow-lg shadow-sky-600/25 cursor-pointer"
+                className="h-13 px-6 rounded-full bg-sky-600 hover:bg-sky-500 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all hover:scale-102 shadow-lg shadow-sky-600/25 cursor-pointer"
               >
                 <Printer size={16} />
                 <span>Print Sticker / Poster</span>
@@ -118,7 +118,7 @@ export default function CustomerQrCodeSection() {
 
               <button
                 onClick={() => setShowModal(true)}
-                className="h-13 px-6 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-800 font-extrabold text-xs uppercase tracking-widest flex items-center gap-2 transition-all cursor-pointer"
+                className="h-13 px-6 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-800 font-extrabold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all cursor-pointer"
               >
                 <QrCode size={16} />
                 <span>View Full-Screen QR</span>
@@ -132,7 +132,7 @@ export default function CustomerQrCodeSection() {
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="bg-white text-slate-900 rounded-[32px] sm:rounded-[40px] p-8 sm:p-10 shadow-2xl border-4 border-sky-500/30 max-w-sm w-full text-center relative"
+              className="bg-white text-slate-900 rounded-[28px] sm:rounded-[40px] p-6 sm:p-10 shadow-2xl border-4 border-sky-500/30 max-w-sm w-full text-center relative"
             >
               {/* Top Badge Brand Header */}
               <div className="space-y-1 mb-6">

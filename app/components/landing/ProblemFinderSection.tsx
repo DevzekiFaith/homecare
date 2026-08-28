@@ -141,14 +141,14 @@ export default function ProblemFinderSection() {
       <div className="max-w-7xl mx-auto">
         
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-12">
+        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12">
           <span className="text-xs font-bold uppercase tracking-wider text-sky-600 bg-sky-50 px-3.5 py-1.5 rounded-full border border-sky-200 inline-block mb-3 shadow-2xs">
             Symptom Match Finder
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 uppercase font-heading tracking-tight">
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 uppercase font-heading tracking-tight">
             What&apos;s Wrong With <span className="text-sky-600">Your Home?</span>
           </h2>
-          <p className="mt-2 text-slate-600 text-sm sm:text-base font-medium">
+          <p className="mt-2 text-slate-600 text-xs sm:text-base font-medium">
             Select your symptom below. We will instantly pair you with the exact right accredited professional.
           </p>
         </div>
@@ -157,9 +157,9 @@ export default function ProblemFinderSection() {
         <div 
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
-          className="bg-slate-50 border border-slate-200 rounded-[32px] sm:rounded-[40px] p-6 sm:p-10 shadow-xl relative"
+          className="bg-slate-50 border border-slate-200 rounded-[28px] sm:rounded-[40px] p-4 sm:p-8 lg:p-10 shadow-xl relative"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center">
             
             {/* LEFT COLUMN: Visual Showcase Card (Slide Flipped to Left) */}
             <div className="lg:col-span-6 relative order-1">
@@ -170,7 +170,7 @@ export default function ProblemFinderSection() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.96 }}
                   transition={{ duration: 0.4 }}
-                  className="relative rounded-[28px] sm:rounded-[36px] overflow-hidden min-h-[380px] sm:min-h-[440px] flex flex-col justify-between p-6 sm:p-8 shadow-2xl border border-slate-900/10 group"
+                  className="relative rounded-[24px] sm:rounded-[36px] overflow-hidden min-h-[320px] sm:min-h-[440px] flex flex-col justify-between p-4 sm:p-8 shadow-2xl border border-slate-900/10 group"
                 >
                   {/* Background Image */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -183,7 +183,7 @@ export default function ProblemFinderSection() {
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/40 to-slate-950/30" />
 
                   {/* Top Floating Dark Glass Badge */}
-                  <div className="relative z-10 self-start p-4 rounded-2xl bg-slate-900/80 backdrop-blur-md border border-white/15 max-w-xs shadow-lg">
+                  <div className="relative z-10 self-start p-3.5 sm:p-4 rounded-2xl bg-slate-900/80 backdrop-blur-md border border-white/15 max-w-xs shadow-lg">
                     <h5 className="text-base font-black text-white tracking-tight">
                       {current.badgeTitle}
                     </h5>
@@ -214,7 +214,7 @@ export default function ProblemFinderSection() {
             </div>
 
             {/* RIGHT COLUMN: Write Up / Details (Flipped to Right) */}
-            <div className="lg:col-span-6 flex flex-col justify-between space-y-8 order-2">
+            <div className="lg:col-span-6 flex flex-col justify-between space-y-6 sm:space-y-8 order-2">
               
               <AnimatePresence mode="wait">
                 <motion.div

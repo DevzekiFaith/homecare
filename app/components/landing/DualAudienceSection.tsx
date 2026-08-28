@@ -15,29 +15,29 @@ export default function DualAudienceSection() {
   ];
 
   return (
-    <section className="py-20 px-6 bg-white text-slate-900 relative overflow-hidden border-b border-slate-200">
+    <section className="py-16 sm:py-20 px-4 sm:px-6 bg-white text-slate-900 relative overflow-hidden border-b border-slate-200">
       <div className="max-w-7xl mx-auto">
         
-        <div className="text-center max-w-2xl mx-auto mb-14">
+        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
           <span className="text-xs font-black uppercase tracking-widest text-sky-700 bg-sky-50 px-3.5 py-1.5 rounded-full border border-sky-200 inline-block mb-3">
             Two-Sided Marketplace
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 uppercase font-heading tracking-tight">
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 uppercase font-heading tracking-tight">
             Built For Customers <span className="text-sky-600">&amp; Skilled Professionals</span>
           </h2>
-          <p className="mt-2 text-slate-600 text-sm sm:text-base font-medium">
+          <p className="mt-2 text-slate-600 text-xs sm:text-base font-medium">
             Connecting homeowners who need quality repairs with verified professionals who take pride in their work.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
           
           {/* Customer Conversion Card */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="p-8 sm:p-10 rounded-3xl bg-slate-50 border border-slate-200 flex flex-col justify-between relative overflow-hidden shadow-xs hover:shadow-md hover:border-sky-400 transition-all"
+            className="p-5 sm:p-8 lg:p-10 rounded-3xl bg-slate-50 border border-slate-200 flex flex-col justify-between relative overflow-hidden shadow-xs hover:shadow-md hover:border-sky-400 transition-all"
           >
             <div>
               <div className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-sky-700 bg-sky-100/80 px-3 py-1 rounded-full border border-sky-200 mb-4">
@@ -45,10 +45,10 @@ export default function DualAudienceSection() {
                 <span>For Homeowners &amp; Renters</span>
               </div>
 
-              <h3 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight mb-3">
+              <h3 className="text-xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight mb-3">
                 Need A Professional?
               </h3>
-              <p className="text-sm text-slate-600 font-medium leading-relaxed mb-6">
+              <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed mb-6">
                 Get the right person for the job without the stress of unverified workers, price guessing, or unfinished work.
               </p>
 
@@ -71,7 +71,7 @@ export default function DualAudienceSection() {
             <div>
               <Link
                 href="/request"
-                className="w-full h-14 rounded-full bg-sky-600 hover:bg-sky-500 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-md shadow-sky-600/25 transition-all hover:scale-102 cursor-pointer"
+                className="w-full h-13 sm:h-14 rounded-full bg-sky-600 hover:bg-sky-500 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-md shadow-sky-600/25 transition-all hover:scale-102 cursor-pointer"
               >
                 <span>Book A Service</span>
                 <ArrowRight size={16} />
@@ -84,7 +84,7 @@ export default function DualAudienceSection() {
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="p-8 sm:p-10 rounded-3xl bg-slate-50 border border-slate-200 flex flex-col justify-between relative overflow-hidden shadow-xs hover:shadow-md hover:border-emerald-400 transition-all"
+            className="p-5 sm:p-8 lg:p-10 rounded-3xl bg-slate-50 border border-slate-200 flex flex-col justify-between relative overflow-hidden shadow-xs hover:shadow-md hover:border-emerald-400 transition-all"
           >
             <div>
               <div className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-700 bg-emerald-100/80 px-3 py-1 rounded-full border border-emerald-200 mb-4">
@@ -92,15 +92,15 @@ export default function DualAudienceSection() {
                 <span>For Skilled Professionals</span>
               </div>
 
-              <h3 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight mb-3">
+              <h3 className="text-xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight mb-3">
                 GOOD PROFESSIONALS DESERVE BETTER ACCESS TO CUSTOMERS.
               </h3>
-              <p className="text-sm text-slate-600 font-medium leading-relaxed mb-6">
+              <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed mb-6">
                 Build your reputation, showcase your verified craftsmanship, and receive steady job requests from clients ready to pay for quality work.
               </p>
 
               {/* Professional Journey Steps */}
-              <div className="grid grid-cols-2 gap-2 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-8">
                 {[
                   "Create Your Profile",
                   "Submit NIN Verification",
@@ -123,7 +123,7 @@ export default function DualAudienceSection() {
             <div>
               <Link
                 href="/auth/worker/register"
-                className="w-full h-14 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-md shadow-emerald-600/25 transition-all hover:scale-102 cursor-pointer"
+                className="w-full h-13 sm:h-14 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-md shadow-emerald-600/25 transition-all hover:scale-102 cursor-pointer"
               >
                 <span>Join HomeCare as a Professional</span>
                 <ArrowRight size={16} />

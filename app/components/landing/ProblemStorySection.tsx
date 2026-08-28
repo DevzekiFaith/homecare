@@ -105,18 +105,17 @@ export default function ProblemStorySection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center max-w-3xl mx-auto mb-12"
+          className="text-center max-w-3xl mx-auto mb-10 sm:mb-12"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-50 border border-rose-200 text-[11px] font-black uppercase tracking-widest text-rose-700 mb-4 shadow-2xs">
-            <HelpCircle size={14} className="animate-pulse" />
-            <span>The Reality of Home Repairs</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 uppercase font-heading leading-tight">
-            Finding Someone To Fix Your Home <br />
-            <span className="text-sky-600">Shouldn&apos;t Feel Like A Gamble.</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-sky-600 bg-sky-50 px-3.5 py-1.5 rounded-full border border-sky-100 mb-3 inline-block shadow-2xs">
+            Why HomeCare Exists
+          </span>
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 uppercase font-heading tracking-tight">
+            THE 3 BIGGEST FRUSTRATIONS <br />
+            <span className="text-sky-600">WITH TRADITIONAL REPAIRS</span>
           </h2>
-          <p className="mt-4 text-slate-600 text-sm sm:text-base font-medium max-w-2xl mx-auto">
-            Traditional home repairs are full of uncertainty. HomeCare replaces guesswork with structured trust, transparent quotes, and payment protection.
+          <p className="mt-3 text-slate-600 text-xs sm:text-base font-medium max-w-2xl mx-auto leading-relaxed">
+            Finding reliable repair professionals shouldn&apos;t feel like a gamble. See how HomeCare completely re-engineers every pain point.
           </p>
         </motion.div>
 
@@ -124,12 +123,12 @@ export default function ProblemStorySection() {
         <div 
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
-          className="bg-slate-50 border border-slate-200 rounded-[32px] sm:rounded-[40px] p-6 sm:p-10 shadow-xl relative"
+          className="bg-slate-50 border border-slate-200 rounded-[28px] sm:rounded-[40px] p-4 sm:p-8 lg:p-10 shadow-xl relative"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center">
             
             {/* Left Content Column */}
-            <div className="lg:col-span-6 flex flex-col justify-between space-y-8">
+            <div className="lg:col-span-6 flex flex-col justify-between space-y-6 sm:space-y-8">
               
               <AnimatePresence mode="wait">
                 <motion.div
@@ -138,13 +137,13 @@ export default function ProblemStorySection() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.35, ease: "easeOut" }}
-                  className="space-y-5"
+                  className="space-y-4 sm:space-y-5"
                 >
                   <span className="text-[10px] font-black uppercase tracking-widest text-rose-600 bg-rose-100/70 border border-rose-200 px-3 py-1 rounded-full inline-block">
                     {current.problemTag}
                   </span>
 
-                  <h3 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight font-heading">
+                  <h3 className="text-xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight font-heading">
                     {current.question}
                   </h3>
 
@@ -152,12 +151,12 @@ export default function ProblemStorySection() {
                     {current.problemDesc}
                   </p>
 
-                  <div className="p-4 rounded-2xl bg-white border border-sky-100 shadow-2xs space-y-2">
+                  <div className="p-3.5 sm:p-4 rounded-2xl bg-white border border-sky-100 shadow-2xs space-y-2">
                     <div className="flex items-center gap-2 text-sky-700 font-black text-xs uppercase tracking-wider">
                       <ShieldCheck size={16} className="text-sky-600" />
                       <span>{current.solutionTag}</span>
                     </div>
-                    <h4 className="text-base font-extrabold text-slate-900">
+                    <h4 className="text-sm sm:text-base font-extrabold text-slate-900">
                       {current.solutionTitle}
                     </h4>
                     <p className="text-xs text-slate-600 font-medium leading-relaxed">
@@ -167,7 +166,7 @@ export default function ProblemStorySection() {
                 </motion.div>
               </AnimatePresence>
 
-              {/* Minimalist Pill Slider Progress Indicators (Inspired by Image 1) */}
+              {/* Minimalist Pill Slider Progress Indicators */}
               <div className="flex items-center gap-4 pt-2">
                 <div className="flex items-center gap-1.5 bg-slate-200/80 p-1.5 rounded-full border border-slate-300">
                   {SLIDES.map((slide, idx) => (
@@ -199,19 +198,19 @@ export default function ProblemStorySection() {
                 </div>
               </div>
 
-              {/* Big Bold Stat Metric (Inspired by Image 1) */}
+              {/* Big Bold Stat Metric */}
               <div className="pt-4 border-t border-slate-200/80 flex items-baseline gap-4">
-                <span className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight font-heading">
+                <span className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight font-heading">
                   {current.metricValue}
                 </span>
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider max-w-[140px]">
+                <span className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider max-w-[140px]">
                   {current.metricLabel}
                 </span>
               </div>
 
             </div>
 
-            {/* Right Card Column: Visual Showcase (Inspired by Image 1 & Image 2) */}
+            {/* Right Card Column: Visual Showcase */}
             <div className="lg:col-span-6 relative">
               <AnimatePresence mode="wait">
                 <motion.div
@@ -220,7 +219,7 @@ export default function ProblemStorySection() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.96 }}
                   transition={{ duration: 0.4 }}
-                  className="relative rounded-[28px] sm:rounded-[36px] overflow-hidden min-h-[380px] sm:min-h-[440px] flex flex-col justify-between p-6 sm:p-8 shadow-2xl border border-slate-900/10 group"
+                  className="relative rounded-[24px] sm:rounded-[36px] overflow-hidden min-h-[320px] sm:min-h-[440px] flex flex-col justify-between p-4 sm:p-8 shadow-2xl border border-slate-900/10 group"
                 >
                   {/* Background Image */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
