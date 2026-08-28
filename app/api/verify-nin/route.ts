@@ -22,6 +22,14 @@ export async function POST(request: NextRequest): Promise<NextResponse<VerifyNin
   try {
     const { nin, fullNameInput } = await request.json() as { nin?: string; fullNameInput?: string };
 
+    // Validate that Full Legal Name is provided before NIN authentication
+    if (!fullNameInput || fullNameInput.trim().length < 3) {
+      return NextResponse.json({
+        status: 'error',
+        reason: 'Full Legal Name is required. Please enter your full legal name as registered with NIMC before verifying your NIN.',
+      }, { status: 400 });
+    }
+
     if (!nin || nin.length !== 11 || !/^\d{11}$/.test(nin)) {
       return NextResponse.json({
         status: 'error',

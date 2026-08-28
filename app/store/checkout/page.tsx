@@ -315,31 +315,31 @@ export default function CheckoutPage() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                  {/* Flutterwave Card / USSD */}
+                  {/* Flutterwave Card / USSD (Primary No. 1) */}
                   <button
                     type="button"
                     onClick={() => setPaymentMethod("flutterwave")}
                     className={`p-4 rounded-2xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between gap-3 ${
                       paymentMethod === "flutterwave"
-                        ? "border-sky-600 bg-sky-50/70 shadow-sm"
+                        ? "border-sky-600 bg-sky-50/80 shadow-md ring-2 ring-sky-500/20"
                         : "border-slate-200 hover:border-slate-300 bg-white"
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <CreditCard size={18} className={paymentMethod === "flutterwave" ? "text-sky-600" : "text-slate-400"} />
-                        <span className="font-extrabold text-xs text-slate-900">Online Checkout</span>
+                        <span className="font-extrabold text-xs text-slate-900">Flutterwave Gateway</span>
                       </div>
                       <span className="text-[9px] font-black uppercase tracking-wider bg-sky-600 text-white px-2 py-0.5 rounded-full">
-                        Instant
+                        Primary (No. 1)
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-500 leading-relaxed">
-                      Cards (Mastercard, Visa, Verve), USSD, Apple Pay & Bank Transfer.
+                    <p className="text-[11px] text-slate-600 leading-relaxed">
+                      Instant payment with Cards (Mastercard, Visa, Verve), Bank USSD, &amp; Online Transfer.
                     </p>
                   </button>
 
-                  {/* Direct Bank Transfer */}
+                  {/* Direct Bank Transfer (Alternative / Backup) */}
                   <button
                     type="button"
                     onClick={() => setPaymentMethod("transfer")}
@@ -351,15 +351,15 @@ export default function CheckoutPage() {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Banknote size={18} className={paymentMethod === "transfer" ? "text-sky-600" : "text-slate-400"} />
-                        <span className="font-extrabold text-xs text-slate-900">Direct Bank Transfer</span>
+                        <Building2 size={18} className={paymentMethod === "transfer" ? "text-sky-600" : "text-slate-400"} />
+                        <span className="font-extrabold text-xs text-slate-900">Bank Transfer (Globus)</span>
                       </div>
-                      <span className="text-[9px] font-black uppercase tracking-wider bg-emerald-600 text-white px-2 py-0.5 rounded-full">
-                        Escrow
+                      <span className="text-[9px] font-black uppercase tracking-wider bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full">
+                        Alternative
                       </span>
                     </div>
                     <p className="text-[11px] text-slate-500 leading-relaxed">
-                      Pay via bank app transfer with instant reference receipt.
+                      Manual bank transfer to Mindvest Global Resources Ltd (Globus Bank 1000501179).
                     </p>
                   </button>
                 </div>

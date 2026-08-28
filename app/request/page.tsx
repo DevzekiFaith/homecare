@@ -801,19 +801,48 @@ function RequestContent() {
                             </div>
                         </div>
 
-                        <div className="bg-sky-50/70 rounded-2xl p-5 border border-sky-100 space-y-3 mb-4">
-                            <div className="flex justify-between items-center text-xs">
-                              <span className="text-slate-500 font-bold uppercase tracking-wider">Bank Name</span>
-                              <span className="text-slate-900 font-bold">{PAYMENT_ACCOUNT.bankName}</span>
-                            </div>
-                            <div className="flex justify-between items-center text-xs">
-                              <span className="text-slate-500 font-bold uppercase tracking-wider">Account Number</span>
-                              <span className="text-slate-900 font-extrabold font-mono text-sm">{PAYMENT_ACCOUNT.accountNumber}</span>
-                            </div>
-                            <div className="flex justify-between items-center text-xs">
-                              <span className="text-slate-500 font-bold uppercase tracking-wider">Account Name</span>
-                              <span className="text-slate-900 font-bold">{PAYMENT_ACCOUNT.accountName}</span>
-                            </div>
+                        {/* Primary Payment: Flutterwave */}
+                        <div className="space-y-3 mb-6">
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              try {
+                                toast.loading("Opening Flutterwave Escrow...", { id: "req-flw" });
+                                const controller = new AbortController();
+                                const flwTimeout = setTimeout(() => controller.abort(), 6000);
+
+                                const res = await fetch("/api/payment/flutterwave/initialize", {
+                                  method: "POST",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({
+                                    orderRef: paymentDetails.txRef || `REQ-${Date.now().toString(36).toUpperCase()}`,
+                                    amount: paymentDetails.amount,
+                                    email: paymentDetails.email || "customer@homecare.com.ng",
+                                    name: paymentDetails.name || "HomeCare Customer",
+                                    phone: paymentDetails.phone || "08000000000",
+                                    title: "HomeCare Professional Escrow Deposit",
+                                    description: `Escrow payment for ${selectedService || "Service Booking"}`,
+                                    type: "service_request",
+                                    userId: user?.id || null,
+                                  }),
+                                  signal: controller.signal,
+                                });
+                                clearTimeout(flwTimeout);
+                                const data = await res.json();
+                                if (data.success && data.paymentUrl) {
+                                  window.location.href = data.paymentUrl;
+                                } else {
+                                  toast.info("Online gateway busy. Please complete payment using the alternative bank transfer details below.", { id: "req-flw" });
+                                }
+                              } catch {
+                                toast.info("Connection timed out. Please pay via alternative bank transfer below.", { id: "req-flw" });
+                              }
+                            }}
+                            className="w-full h-14 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-sky-600/30 transition-all hover:scale-101 cursor-pointer"
+                          >
+                            <Zap size={16} className="text-amber-300 fill-amber-300" />
+                            <span>Pay ₦{paymentDetails.amount.toLocaleString()} with Flutterwave (Primary No. 1)</span>
+                          </button>
                         </div>
 
                         {/* Escrow Guarantee Trust Breakdown */}
@@ -827,69 +856,43 @@ function RequestContent() {
                           </p>
                         </div>
 
-                        <div className="flex flex-col gap-3">
-                            <button
-                              type="button"
-                              onClick={async () => {
-                                try {
-                                  toast.loading("Opening Flutterwave Escrow...", { id: "req-flw" });
-                                  const controller = new AbortController();
-                                  const flwTimeout = setTimeout(() => controller.abort(), 6000);
-
-                                  const res = await fetch("/api/payment/flutterwave/initialize", {
-                                    method: "POST",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({
-                                      orderRef: paymentDetails.txRef || `REQ-${Date.now().toString(36).toUpperCase()}`,
-                                      amount: paymentDetails.amount,
-                                      email: paymentDetails.email || "customer@homecare.com.ng",
-                                      name: paymentDetails.name || "HomeCare Customer",
-                                      phone: paymentDetails.phone || "08000000000",
-                                      title: "HomeCare Professional Escrow Deposit",
-                                      description: `Escrow payment for ${selectedService || "Service Booking"}`,
-                                      type: "service_request",
-                                      userId: user?.id || null,
-                                    }),
-                                    signal: controller.signal,
-                                  });
-                                  clearTimeout(flwTimeout);
-                                  const data = await res.json();
-                                  if (data.success && data.paymentUrl) {
-                                    window.location.href = data.paymentUrl;
-                                  } else {
-                                    toast.info("Online gateway busy. Please complete payment using the verified bank transfer details shown above.", { id: "req-flw" });
-                                  }
-                                } catch (err: unknown) {
-                                  toast.info("Connection timed out. Please pay via direct bank transfer to the account above.", { id: "req-flw" });
-                                }
-                              }}
-                              className="h-13 rounded-full bg-sky-600 hover:bg-sky-700 text-white font-extrabold text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-sky-600/30 transition-all hover:scale-102 cursor-pointer"
-                            >
-                              <Zap size={16} className="text-amber-300 fill-amber-300" />
-                              <span>Pay ₦{paymentDetails.amount.toLocaleString()} with Flutterwave</span>
-                            </button>
-
-                            <div className="flex gap-3">
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  navigator.clipboard.writeText(PAYMENT_ACCOUNT.accountNumber);
-                                  setCopied(true);
-                                  toast.success("Account number copied!");
-                                  setTimeout(() => setCopied(false), 2000);
-                                }}
-                                className="h-11 rounded-full px-6 bg-white border border-slate-200 text-slate-700 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider shadow-2xs hover:border-sky-400 hover:text-sky-600 transition-all flex-1"
-                              >
-                                {copied ? <Check size={16} className="text-emerald-600" /> : <Copy size={16} />}
-                                <span>{copied ? "Copied!" : "Manual Transfer (Globus)"}</span>
-                              </button>
-                              <Link
-                                href="/customer/dashboard"
-                                className="h-11 rounded-full px-6 bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center text-xs font-extrabold uppercase tracking-wider transition-all"
-                              >
-                                Dashboard
-                              </Link>
+                        {/* Alternative: Globus Bank Transfer */}
+                        <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-3 mb-4">
+                            <div className="flex justify-between items-center text-xs pb-1 border-b border-slate-200">
+                              <span className="text-slate-400 font-extrabold uppercase text-[10px]">Alternative Bank Transfer (Backup)</span>
+                              <span className="text-sky-700 font-black text-[10px] uppercase">{PAYMENT_ACCOUNT.bankName}</span>
                             </div>
+                            <div className="flex justify-between items-center text-xs">
+                              <span className="text-slate-500 font-bold uppercase tracking-wider">Account Number</span>
+                              <div className="flex items-center gap-2">
+                                <span className="text-slate-900 font-extrabold font-mono text-sm">{PAYMENT_ACCOUNT.accountNumber}</span>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    navigator.clipboard.writeText(PAYMENT_ACCOUNT.accountNumber);
+                                    setCopied(true);
+                                    toast.success("Account number copied!");
+                                    setTimeout(() => setCopied(false), 2000);
+                                  }}
+                                  className="text-[10px] font-bold bg-white border border-slate-300 px-2 py-0.5 rounded text-sky-700 hover:bg-slate-100 cursor-pointer"
+                                >
+                                  {copied ? "Copied!" : "Copy"}
+                                </button>
+                              </div>
+                            </div>
+                            <div className="flex justify-between items-center text-xs">
+                              <span className="text-slate-500 font-bold uppercase tracking-wider">Account Name</span>
+                              <span className="text-slate-900 font-bold text-[11px]">{PAYMENT_ACCOUNT.accountName}</span>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-3">
+                          <Link
+                            href="/customer/dashboard"
+                            className="h-11 rounded-full px-6 bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center text-xs font-extrabold uppercase tracking-wider transition-all w-full"
+                          >
+                            Go To Customer Dashboard
+                          </Link>
                         </div>
                       </>
                     ) : (

@@ -128,6 +128,12 @@ export async function GET(req: Request) {
       return NextResponse.redirect(`${origin}/customer/dashboard?payment=success&service=${encodeURIComponent(resolvedOrderRef)}`);
     }
 
+    if (paymentType === "pro_accreditation") {
+      return NextResponse.redirect(
+        `${origin}/auth/worker/register?paid=true&ref=${encodeURIComponent(transactionId || resolvedOrderRef || "")}&amount=${verifiedAmount}`
+      );
+    }
+
     if (paymentType === "inspection" && resolvedOrderRef) {
       await supabase
         .from("store_orders")

@@ -93,18 +93,47 @@ export default function VerificationPage() {
             </p>
           </div>
 
+          <div className="p-8 rounded-3xl bg-slate-900 text-white border border-slate-800 space-y-4">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-emerald-500 text-slate-950 flex items-center justify-center font-black">
+                  <ShieldCheck size={22} />
+                </div>
+                <div>
+                  <h2 className="text-xl font-black text-white uppercase">Professional Accreditation Package (₦3,500)</h2>
+                  <p className="text-xs text-emerald-400 font-bold uppercase tracking-wider">Automated Verification &amp; Vetting Portal</p>
+                </div>
+              </div>
+              <span className="text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-3 py-1 rounded-full uppercase">
+                One-Time Vetting
+              </span>
+            </div>
+            <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">
+              Every applicant pays a ₦3,500 accreditation and vetting fee routed directly through Flutterwave payment gateway before identity authentication is completed. This covers live NIMC database cross-referencing, biometric facial matching, background checks, and active badge accreditation.
+            </p>
+          </div>
+
         </div>
 
-        {/* CTA */}
-        <div className="p-8 rounded-3xl bg-slate-900 text-white text-center space-y-6">
-          <h3 className="text-2xl font-black uppercase font-heading">Ready to get your job done without guesswork?</h3>
-          <Link
-            href="/request"
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-sky-500 hover:bg-sky-400 text-white font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-sky-500/25"
-          >
-            <span>REQUEST A SERVICE NOW</span>
-            <ArrowRight size={16} />
-          </Link>
+        {/* CTA Dual Buttons */}
+        <div className="p-8 rounded-3xl bg-slate-100 border border-slate-200 text-slate-900 text-center space-y-6">
+          <h3 className="text-2xl font-black uppercase font-heading">Get Started on HomeCare</h3>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link
+              href="/request"
+              className="w-full sm:w-auto px-8 h-13 rounded-full bg-sky-600 hover:bg-sky-500 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-md shadow-sky-600/25 cursor-pointer"
+            >
+              <span>Book A Verified Professional</span>
+              <ArrowRight size={16} />
+            </Link>
+            <Link
+              href="/auth/worker/register"
+              className="w-full sm:w-auto px-8 h-13 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all cursor-pointer"
+            >
+              <span>Join as a Professional (₦3,500)</span>
+              <ShieldCheck size={16} />
+            </Link>
+          </div>
         </div>
 
       </div>
