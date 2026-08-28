@@ -55,6 +55,8 @@ interface Worker {
   is_verified: boolean;
   ai_verified: boolean | null;
   avatar_url?: string | null;
+  tier?: 'starter' | 'elite' | string;
+  is_elite?: boolean;
   created_at: string;
 }
 
@@ -70,6 +72,7 @@ export default function AdminDashboard() {
   const [orderStatusFilter, setOrderStatusFilter] = useState("all");
   const [reqStatusFilter, setReqStatusFilter] = useState("all");
   const [workerFilter, setWorkerFilter] = useState("all");
+  const [workerTierFilter, setWorkerTierFilter] = useState("all");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   const supabase = useMemo(() => createClient(), []);
@@ -89,15 +92,15 @@ export default function AdminDashboard() {
         .select('*')
         .order('created_at', { ascending: false });
 
-      // 3. Fetch Professionals (Workers)
+      // 3. Fetch Professionals (Workers) with Tier details
       const { data: workerData } = await supabase
         .from('professionals')
-        .select('id, full_name, phone, primary_skill, nin, is_verified, ai_verified, avatar_url, created_at')
+        .select('id, full_name, phone, primary_skill, nin, is_verified, ai_verified, avatar_url, tier, is_elite, created_at')
         .order('created_at', { ascending: false });
 
       if (orderData) setOrders(orderData);
       if (reqData) setRequests(reqData);
-      if (workerData) setWorkers(workerData);
+      if (workerData) setWorkers(workerData as Worker[]);
     } catch (err: unknown) {
       console.error(err);
       toast.error("Failed to load dashboard data: " + (err instanceof Error ? err.message : "Unknown error"));
@@ -108,7 +111,36 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
+
+    // Live Real-Time sync for registrations, requests, and store orders
+    const channel = supabase
+      .channel('admin-dashboard-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'professionals' }, (payload: any) => {
+        if (payload.eventType === 'INSERT') {
+          const newWorker = payload.new as Worker;
+          setWorkers(prev => [newWorker, ...prev.filter(w => w.id !== newWorker.id)]);
+          toast.success("New Pro Registered Live!", {
+            description: `${newWorker.full_name || "New Professional"} registered on ${newWorker.tier === 'elite' ? 'Elite (₦3,500)' : 'Starter (₦1,500)'} tier.`,
+          });
+        } else if (payload.eventType === 'UPDATE') {
+          const updatedWorker = payload.new as Worker;
+          setWorkers(prev => prev.map(w => w.id === updatedWorker.id ? { ...w, ...updatedWorker } : w));
+        } else if (payload.eventType === 'DELETE') {
+          setWorkers(prev => prev.filter(w => w.id !== payload.old.id));
+        }
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'service_requests' }, () => {
+        fetchData();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'store_orders' }, () => {
+        fetchData();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [fetchData, supabase]);
 
   const updateWorkerApproval = async (id: string, approve: boolean) => {
     setUpdatingId(id);
@@ -125,6 +157,33 @@ export default function AdminDashboard() {
 
       setWorkers(prev => prev.map(w => w.id === id ? { ...w, is_verified: approve } : w));
       toast.success(approve ? "Worker Approved & Verified!" : "Worker Verification Revoked");
+    } catch (err: unknown) {
+      toast.error("Action error: " + (err instanceof Error ? err.message : "Error"));
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const updateWorkerTier = async (id: string, currentTier?: string) => {
+    setUpdatingId(id);
+    const newTier = currentTier === 'elite' ? 'starter' : 'elite';
+    const isElite = newTier === 'elite';
+
+    try {
+      const { error } = await supabase
+        .from('professionals')
+        .update({ tier: newTier, is_elite: isElite })
+        .eq('id', id);
+
+      if (error) {
+        toast.error("Failed to update worker tier: " + error.message);
+        return;
+      }
+
+      setWorkers(prev => prev.map(w => w.id === id ? { ...w, tier: newTier, is_elite: isElite } : w));
+      toast.success(`Worker Tier updated to ${newTier.toUpperCase()}`, {
+        description: isElite ? "★ Promoted to Elite Pro (₦3,500)." : "Set to Starter Pro (₦1,500).",
+      });
     } catch (err: unknown) {
       toast.error("Action error: " + (err instanceof Error ? err.message : "Error"));
     } finally {
@@ -211,6 +270,8 @@ export default function AdminDashboard() {
     return workers.filter(w => {
       if (workerFilter === "verified" && !w.is_verified) return false;
       if (workerFilter === "unverified" && w.is_verified) return false;
+      if (workerTierFilter === "elite" && !(w.tier === 'elite' || w.is_elite)) return false;
+      if (workerTierFilter === "starter" && (w.tier === 'elite' || w.is_elite)) return false;
       if (searchTerm.trim() !== "") {
         const q = searchTerm.toLowerCase();
         const matchesName = (w.full_name || "").toLowerCase().includes(q);
@@ -220,14 +281,17 @@ export default function AdminDashboard() {
       }
       return true;
     });
-  }, [workers, workerFilter, searchTerm]);
+  }, [workers, workerFilter, workerTierFilter, searchTerm]);
 
   const stats = useMemo(() => {
     const estEscrowGMV = requests.length * 25000;
     const platformCommission = Math.round(estEscrowGMV * 0.15);
     const proNetDisbursals = Math.round(estEscrowGMV * 0.85);
     const storeRevenue = orders.reduce((acc, curr) => acc + (Number(curr.total) || 0), 0);
-    const totalPlatformGross = platformCommission + storeRevenue;
+    const eliteWorkers = workers.filter(w => w.tier === 'elite' || w.is_elite).length;
+    const starterWorkers = workers.length - eliteWorkers;
+    const accreditationRevenue = (starterWorkers * 1500) + (eliteWorkers * 3500);
+    const totalPlatformGross = platformCommission + storeRevenue + accreditationRevenue;
 
     return {
       totalRevenue: totalPlatformGross,
@@ -236,6 +300,9 @@ export default function AdminDashboard() {
       platformCommission,
       proNetDisbursals,
       totalPlatformGross,
+      accreditationRevenue,
+      eliteWorkers,
+      starterWorkers,
       activeOrders: orders.filter(o => o.status !== 'delivered' && o.status !== 'cancelled').length,
       pendingRequests: requests.filter(r => r.status === 'pending').length,
       pendingWorkers: workers.filter(w => !w.is_verified).length,
@@ -691,13 +758,25 @@ export default function AdminDashboard() {
                     <p className="text-xs text-slate-500 mt-0.5 font-medium">Review registered professionals, verify NIN records, and toggle live job deployment access.</p>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                    {/* Tier Filter */}
+                    <select
+                      value={workerTierFilter}
+                      onChange={(e) => setWorkerTierFilter(e.target.value)}
+                      className="bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-bold text-slate-800 outline-none cursor-pointer shadow-2xs"
+                    >
+                      <option value="all">All Tiers ({workers.length})</option>
+                      <option value="starter">Starter Pro (₦1,500) ({stats.starterWorkers})</option>
+                      <option value="elite">★ Elite Pro (₦3,500) ({stats.eliteWorkers})</option>
+                    </select>
+
+                    {/* Status Filter */}
                     <select
                       value={workerFilter}
                       onChange={(e) => setWorkerFilter(e.target.value)}
                       className="bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-bold text-slate-800 outline-none cursor-pointer shadow-2xs"
                     >
-                      <option value="all">All Workers ({workers.length})</option>
+                      <option value="all">All Statuses ({workers.length})</option>
                       <option value="unverified">Pending Approvals ({workers.filter(w => !w.is_verified).length})</option>
                       <option value="verified">Verified Only ({workers.filter(w => w.is_verified).length})</option>
                     </select>
@@ -706,93 +785,119 @@ export default function AdminDashboard() {
 
                 <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
+                    <table className="w-full text-left border-collapse min-w-[850px]">
                       <thead>
                         <tr className="bg-slate-900 text-white text-[10px] font-black uppercase tracking-wider">
                           <th className="p-4">Professional</th>
-                          <th className="p-4">Skill & Phone</th>
+                          <th className="p-4">Skill &amp; Phone</th>
+                          <th className="p-4">Accreditation Tier</th>
                           <th className="p-4">NIN Identity</th>
                           <th className="p-4">AI Screening</th>
                           <th className="p-4">Status</th>
-                          <th className="p-4 text-right">Approval Action</th>
+                          <th className="p-4 text-right">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 text-xs font-semibold">
                         {filteredWorkers.length === 0 ? (
                           <tr>
-                            <td colSpan={6} className="p-8 text-center text-slate-400 font-bold uppercase tracking-wider">
+                            <td colSpan={7} className="p-8 text-center text-slate-400 font-bold uppercase tracking-wider">
                               No matching worker profiles found.
                             </td>
                           </tr>
                         ) : (
-                          filteredWorkers.map((w) => (
-                            <tr key={w.id} className="hover:bg-sky-50/50 transition-colors">
-                              <td className="p-4">
-                                <div className="flex items-center gap-3">
-                                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                                  <img
-                                    src={w.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(w.full_name || "worker")}`}
-                                    alt={w.full_name}
-                                    className="w-9 h-9 rounded-xl bg-sky-50 border border-sky-200 object-cover shrink-0"
-                                  />
-                                  <div>
-                                    <p className="font-extrabold text-slate-900">{w.full_name}</p>
-                                    <span className="text-[10px] text-slate-400 font-mono">{w.id.substring(0, 8)}...</span>
+                          filteredWorkers.map((w) => {
+                            const isElite = w.tier === 'elite' || w.is_elite;
+                            return (
+                              <tr key={w.id} className="hover:bg-sky-50/50 transition-colors">
+                                <td className="p-4">
+                                  <div className="flex items-center gap-3">
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img
+                                      src={w.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(w.full_name || "worker")}`}
+                                      alt={w.full_name}
+                                      className="w-9 h-9 rounded-xl bg-sky-50 border border-sky-200 object-cover shrink-0"
+                                    />
+                                    <div>
+                                      <p className="font-extrabold text-slate-900">{w.full_name}</p>
+                                      <span className="text-[10px] text-slate-400 font-mono">{w.id.substring(0, 8)}...</span>
+                                    </div>
                                   </div>
-                                </div>
-                              </td>
-                              <td className="p-4">
-                                <span className="inline-block px-2.5 py-0.5 rounded-md bg-sky-50 text-sky-700 font-extrabold text-[10px] uppercase tracking-wider border border-sky-200 mb-0.5">
-                                  {w.primary_skill}
-                                </span>
-                                <p className="text-[11px] font-mono text-slate-500">{w.phone}</p>
-                              </td>
-                              <td className="p-4 font-mono text-slate-700">
-                                {w.nin ? w.nin : <span className="text-slate-400 italic">Not Provided</span>}
-                              </td>
-                              <td className="p-4">
-                                {w.ai_verified ? (
-                                  <span className="inline-flex items-center gap-1 text-[10px] font-black text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                                    <ShieldCheck size={12} className="text-emerald-600" /> Passed AI
+                                </td>
+                                <td className="p-4">
+                                  <span className="inline-block px-2.5 py-0.5 rounded-md bg-sky-50 text-sky-700 font-extrabold text-[10px] uppercase tracking-wider border border-sky-200 mb-0.5">
+                                    {w.primary_skill}
                                   </span>
-                                ) : (
-                                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
-                                    Pending AI
-                                  </span>
-                                )}
-                              </td>
-                              <td className="p-4">
-                                {w.is_verified ? (
-                                  <span className="inline-flex items-center gap-1 text-[10px] font-black text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                                    <CheckCircle2 size={12} className="text-emerald-600" fill="currentColor" /> Approved
-                                  </span>
-                                ) : (
-                                  <span className="inline-flex items-center gap-1 text-[10px] font-black text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
-                                    <Clock size={12} className="text-amber-600" /> Pending Admin
-                                  </span>
-                                )}
-                              </td>
-                              <td className="p-4 text-right">
-                                {updatingId === w.id ? (
-                                  <span className="text-[10px] font-bold text-sky-600 uppercase tracking-widest animate-pulse">Updating...</span>
-                                ) : w.is_verified ? (
-                                  <button
-                                    onClick={() => updateWorkerApproval(w.id, false)}
-                                    className="px-3 py-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-[10px] font-bold uppercase tracking-wider transition-colors cursor-pointer"
-                                  >
-                                    Revoke
-                                  </button>
-                                ) : (
-                                  <button
-                                    onClick={() => updateWorkerApproval(w.id, true)}
-                                    className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-black uppercase tracking-wider shadow-xs transition-colors cursor-pointer"
-                                  >
-                                    Approve & Verify
-                                  </button>
-                                )}
-                              </td>
-                            </tr>
-                          ))
+                                  <p className="text-[11px] font-mono text-slate-500">{w.phone}</p>
+                                </td>
+                                <td className="p-4">
+                                  {isElite ? (
+                                    <span className="inline-flex items-center gap-1 text-[10px] font-black text-amber-900 bg-amber-400/20 px-2.5 py-1 rounded-full border border-amber-400/50">
+                                      <Sparkles size={11} className="text-amber-600" /> ★ Elite (₦3.5k)
+                                    </span>
+                                  ) : (
+                                    <span className="inline-flex items-center gap-1 text-[10px] font-black text-sky-800 bg-sky-50 px-2.5 py-1 rounded-full border border-sky-200">
+                                      Starter (₦1.5k)
+                                    </span>
+                                  )}
+                                </td>
+                                <td className="p-4 font-mono text-slate-700">
+                                  {w.nin ? w.nin : <span className="text-slate-400 italic">Not Provided</span>}
+                                </td>
+                                <td className="p-4">
+                                  {w.ai_verified ? (
+                                    <span className="inline-flex items-center gap-1 text-[10px] font-black text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                                      <ShieldCheck size={12} className="text-emerald-600" /> Passed AI
+                                    </span>
+                                  ) : (
+                                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
+                                      Pending AI
+                                    </span>
+                                  )}
+                                </td>
+                                <td className="p-4">
+                                  {w.is_verified ? (
+                                    <span className="inline-flex items-center gap-1 text-[10px] font-black text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                                      <CheckCircle2 size={12} className="text-emerald-600" fill="currentColor" /> Approved
+                                    </span>
+                                  ) : (
+                                    <span className="inline-flex items-center gap-1 text-[10px] font-black text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
+                                      <Clock size={12} className="text-amber-600" /> Pending Admin
+                                    </span>
+                                  )}
+                                </td>
+                                <td className="p-4 text-right">
+                                  <div className="flex items-center justify-end gap-1.5">
+                                    <button
+                                      onClick={() => updateWorkerTier(w.id, w.tier)}
+                                      disabled={updatingId === w.id}
+                                      title={isElite ? "Demote to Starter Pro" : "Promote to Elite Pro"}
+                                      className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold border border-slate-200 transition-colors cursor-pointer"
+                                    >
+                                      {isElite ? "Demote" : "★ Elite"}
+                                    </button>
+
+                                    {updatingId === w.id ? (
+                                      <span className="text-[10px] font-bold text-sky-600 uppercase tracking-widest animate-pulse">...</span>
+                                    ) : w.is_verified ? (
+                                      <button
+                                        onClick={() => updateWorkerApproval(w.id, false)}
+                                        className="px-3 py-1 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-[10px] font-bold uppercase tracking-wider transition-colors cursor-pointer"
+                                      >
+                                        Revoke
+                                      </button>
+                                    ) : (
+                                      <button
+                                        onClick={() => updateWorkerApproval(w.id, true)}
+                                        className="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-black uppercase tracking-wider shadow-xs transition-colors cursor-pointer"
+                                      >
+                                        Approve
+                                      </button>
+                                    )}
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          })
                         )}
                       </tbody>
                     </table>

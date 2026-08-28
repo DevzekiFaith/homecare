@@ -8,7 +8,7 @@ export default async function AdminWorkersPage() {
   
   const { data: workers, error } = await supabase
     .from("professionals")
-    .select("id, full_name, phone, primary_skill, nin, is_verified, ai_verified, avatar_url, created_at")
+    .select("id, full_name, phone, primary_skill, nin, is_verified, ai_verified, avatar_url, tier, is_elite, created_at")
     .order("created_at", { ascending: false })
     .limit(100);
 
