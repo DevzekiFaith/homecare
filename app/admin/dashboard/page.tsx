@@ -58,12 +58,14 @@ interface Worker {
   created_at: string;
 }
 
+type AdminTab = 'overview' | 'orders' | 'requests' | 'workers' | 'monetization';
+
 export default function AdminDashboard() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [requests, setRequests] = useState<ServiceRequest[]>([]);
   const [workers, setWorkers] = useState<Worker[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'orders' | 'requests' | 'workers'>('overview');
+  const [activeTab, setActiveTab] = useState<AdminTab>('overview');
   const [searchTerm, setSearchTerm] = useState("");
   const [orderStatusFilter, setOrderStatusFilter] = useState("all");
   const [reqStatusFilter, setReqStatusFilter] = useState("all");
@@ -228,6 +230,7 @@ export default function AdminDashboard() {
     const totalPlatformGross = platformCommission + storeRevenue;
 
     return {
+      totalRevenue: totalPlatformGross,
       storeRevenue,
       estEscrowGMV,
       platformCommission,

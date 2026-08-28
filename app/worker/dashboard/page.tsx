@@ -61,6 +61,7 @@ export default function WorkerDashboardPage() {
   const watchIdRef = useRef<number | null>(null);
   const supabase = useMemo(() => createClient(), []);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [origin, setOrigin] = useState("");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -794,7 +795,7 @@ export default function WorkerDashboardPage() {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
-                    `https://www.homecare.com.ng/review?request_id=${qrCodeJob.id}`
+                    `${origin || 'https://www.homecare.com.ng'}/review?request_id=${qrCodeJob.id}`
                   )}`}
                   alt="Review QR Code"
                   className="w-48 h-48 mx-auto"
