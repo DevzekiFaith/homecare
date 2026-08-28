@@ -566,19 +566,22 @@ function WorkerRegisterContent() {
           className="w-full lg:w-2/3 bg-white border border-slate-200 rounded-3xl shadow-sm p-6 sm:p-10"
         >
           {/* Header */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
+          <div className="mb-8 space-y-3">
+            <div className="flex flex-wrap items-center gap-3">
               <Logo size="md" />
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs font-black text-sky-700 uppercase tracking-wider">
                 <Sparkles size={13} /> Pro Onboarding
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-heading font-black tracking-tight text-slate-900 uppercase">
-              Professional Verification &amp; Accreditation Portal
-            </h1>
-            <p className="mt-2 text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
-              Complete each required stage sequentially. All steps connect and authenticate together for guaranteed platform accreditation.
-            </p>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-heading font-black tracking-tight text-slate-900 uppercase leading-tight">
+                Professional Verification &amp; Accreditation Portal
+              </h1>
+              <p className="mt-2 text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
+                Complete each required stage sequentially. All steps connect and authenticate together for guaranteed platform accreditation.
+              </p>
+            </div>
+          </div>
 
             {/* Modern Progressive Flow Audit Tracker */}
             <div className="mt-6 p-4 rounded-2xl bg-slate-50 border border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] font-bold uppercase tracking-wider">
@@ -599,7 +602,6 @@ function WorkerRegisterContent() {
                 <span className="truncate">Selfie Photo</span>
               </div>
             </div>
-          </div>
 
           <form onSubmit={handleSubmit} noValidate className="space-y-10">
 
