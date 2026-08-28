@@ -9,7 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 import SurgeBadge from "@/app/components/SurgeBadge";
 import type { SurgeResult } from "@/lib/surge";
 
-import { Wrench, Zap, Hammer, Armchair, Snowflake, Paintbrush, PenTool, Camera, X, Loader2, ShoppingBag, Copy, Check, ArrowLeft, UserCheck, Star, ShieldCheck, Phone, MessageSquare, CheckCircle2 } from "lucide-react";
+import { Wrench, Zap, Hammer, Armchair, Snowflake, Paintbrush, PenTool, Camera, X, Loader2, ShoppingBag, Copy, Check, ArrowLeft, UserCheck, Star, ShieldCheck, Phone, MessageSquare, CheckCircle2, Users, Navigation, MapPin, Clock, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import ErrorAlert from "@/app/components/ErrorAlert";
 import ModernDatePicker from "@/app/components/ModernDatePicker";
@@ -18,7 +18,7 @@ import ProductCard from "@/app/components/ProductCard";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { User } from "@supabase/supabase-js";
-import { matchWorkerForRequest, MatchedWorker } from "@/lib/matching";
+import { getMatchingCandidates, matchWorkerForRequest, MatchedWorker } from "@/lib/matching";
 
 const REQUEST_HERO_IMAGE = "/su4.jpg";
 
@@ -45,6 +45,8 @@ function RequestContent() {
   const [paymentDetails, setPaymentDetails] = useState({ amount: 0, email: "", phone: "", name: "", txRef: "" });
   const [address, setAddress] = useState("");
   const [matchedWorker, setMatchedWorker] = useState<MatchedWorker | null>(null);
+  const [candidates, setCandidates] = useState<MatchedWorker[]>([]);
+  const [matchMode, setMatchMode] = useState<'indrive' | 'auto'>('indrive');
   const [isMatching, setIsMatching] = useState(false);
   const mapRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
@@ -383,15 +385,16 @@ function RequestContent() {
         txRef: `REQ-${Date.now().toString(36).toUpperCase()}`
       });
 
-      // Execute Smart Matching Engine
+      // Execute inDrive & Uber Smart Matching Engine
       setIsMatching(true);
-      const matched = await matchWorkerForRequest(serviceType, "Lagos", "plus");
+      const candidateList = await getMatchingCandidates(serviceType, "Lagos", "plus", calculatedAmount);
       
       setTimeout(() => {
-        setMatchedWorker(matched);
+        setCandidates(candidateList);
+        setMatchedWorker(candidateList[0] || null);
         setIsMatching(false);
         setSubmitted(true);
-      }, 1500);
+      }, 1400);
     } catch (err: unknown) {
       console.error("Booking error:", err);
       const msg = err instanceof Error ? err.message : "An unexpected error occurred while submitting your booking. Please try again.";
@@ -918,75 +921,173 @@ function RequestContent() {
                             <>
                               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-black uppercase tracking-widest mb-3">
                                 <CheckCircle2 size={13} />
-                                <span>Booking Confirmed &amp; Professional Assigned</span>
+                                <span>Verified Professionals Found &amp; Available</span>
                               </div>
                               <h3 className="text-2xl font-heading font-black text-slate-900 uppercase tracking-tight">
-                                Professional <span className="text-sky-600">Matched!</span>
+                                Choose Your <span className="text-sky-600">Professional</span>
                               </h3>
                               <p className="mt-1 text-xs text-slate-500 font-medium">
-                                Funds held safely in HomeCare Escrow until job completion.
+                                Compare nearby candidate quotes, ratings, and live arrival times before locking escrow.
                               </p>
 
-                              {/* Live Matched Worker Card */}
-                              {matchedWorker && (
-                                <motion.div 
-                                  initial={{ opacity: 0, scale: 0.95 }}
-                                  animate={{ opacity: 1, scale: 1 }}
-                                  className="mt-6 p-6 rounded-3xl bg-slate-50 border-2 border-sky-200 text-left relative overflow-hidden shadow-md"
+                              {/* inDrive vs Auto Mode Switcher */}
+                              <div className="mt-5 flex items-center justify-center p-1 rounded-2xl bg-slate-100 border border-slate-200 max-w-md mx-auto text-xs font-bold">
+                                <button
+                                  type="button"
+                                  onClick={() => setMatchMode('indrive')}
+                                  className={`flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                                    matchMode === 'indrive'
+                                      ? "bg-white text-sky-700 shadow-xs font-black"
+                                      : "text-slate-500 hover:text-slate-800"
+                                  }`}
                                 >
-                                  <div className="flex items-center gap-4 mb-4">
-                                    <div className="relative w-16 h-16 rounded-2xl overflow-hidden bg-slate-200 border-2 border-sky-400 shrink-0 shadow-sm">
-                                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                                      <img
-                                        src={matchedWorker.avatar_url || "/tech-working.jpg"}
-                                        alt={matchedWorker.full_name}
-                                        className="w-full h-full object-cover"
-                                      />
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                      <div className="flex items-center gap-2 mb-1">
-                                        <h4 className="text-base font-black text-slate-900 truncate">
-                                          {matchedWorker.full_name}
-                                        </h4>
-                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[9px] font-extrabold uppercase">
-                                          <ShieldCheck size={11} /> NIN Verified
-                                        </span>
-                                      </div>
-                                      <p className="text-xs text-sky-700 font-bold uppercase tracking-wider">
-                                        {matchedWorker.service_type} · {matchedWorker.city}
-                                      </p>
-                                      <div className="flex items-center gap-3 mt-1 text-[11px] font-semibold text-slate-600">
-                                        <span className="flex items-center gap-1 text-amber-600">
-                                          <Star size={13} fill="currentColor" /> {matchedWorker.rating || 4.9}
-                                        </span>
-                                        <span>•</span>
-                                        <span>{matchedWorker.completed_jobs_count || 42} Completed Jobs</span>
-                                      </div>
-                                    </div>
-                                  </div>
+                                  <Users size={14} />
+                                  <span>inDrive Comparison ({candidates.length} Pros)</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setMatchMode('auto');
+                                    if (candidates[0]) setMatchedWorker(candidates[0]);
+                                  }}
+                                  className={`flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                                    matchMode === 'auto'
+                                      ? "bg-white text-sky-700 shadow-xs font-black"
+                                      : "text-slate-500 hover:text-slate-800"
+                                  }`}
+                                >
+                                  <Zap size={14} />
+                                  <span>Auto-Assign #1 Pro</span>
+                                </button>
+                              </div>
 
-                                  <div className="p-3 rounded-xl bg-white border border-sky-100 mb-4 text-xs font-semibold text-slate-700 flex items-center justify-between">
-                                    <span className="text-slate-500">Match Rank Reason:</span>
-                                    <span className="font-extrabold text-sky-700">{matchedWorker.match_reason}</span>
-                                  </div>
+                              {/* Multi-Candidate inDrive Card Grid */}
+                              <div className="mt-6 space-y-3 text-left">
+                                {(matchMode === 'indrive' ? candidates : [matchedWorker || candidates[0]]).filter(Boolean).map((cand) => {
+                                  if (!cand) return null;
+                                  const isSelected = matchedWorker?.id === cand.id;
+                                  return (
+                                    <motion.div
+                                      key={cand.id}
+                                      onClick={() => {
+                                        setMatchedWorker(cand);
+                                        if (cand.price_estimate) {
+                                          setPaymentDetails(prev => ({ ...prev, amount: cand.price_estimate || prev.amount }));
+                                        }
+                                        toast.success(`${cand.full_name} Selected!`, {
+                                          description: `Rate: ₦${(cand.price_estimate || paymentDetails.amount).toLocaleString()} · ETA: ${cand.eta_mins || 8} mins.`
+                                        });
+                                      }}
+                                      className={`p-4 sm:p-5 rounded-3xl border-2 transition-all cursor-pointer relative overflow-hidden ${
+                                        isSelected
+                                          ? "border-sky-500 bg-sky-50/70 shadow-md ring-2 ring-sky-500/20"
+                                          : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/80"
+                                      }`}
+                                    >
+                                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                        <div className="flex items-center gap-3.5">
+                                          <div className="relative w-14 h-14 rounded-2xl overflow-hidden bg-slate-200 border-2 border-sky-400 shrink-0 shadow-xs">
+                                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                                            <img
+                                              src={cand.avatar_url || "/tech-working.jpg"}
+                                              alt={cand.full_name}
+                                              className="w-full h-full object-cover"
+                                            />
+                                            <span className="absolute bottom-1 right-1 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white" />
+                                          </div>
+                                          
+                                          <div className="min-w-0">
+                                            <div className="flex items-center gap-2 flex-wrap">
+                                              <h4 className="text-sm font-black text-slate-900 truncate">
+                                                {cand.full_name}
+                                              </h4>
+                                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[8px] font-extrabold uppercase">
+                                                <ShieldCheck size={10} /> NIMC Verified
+                                              </span>
+                                            </div>
 
-                                  <div className="grid grid-cols-2 gap-3">
+                                            <p className="text-[11px] text-sky-700 font-bold uppercase tracking-wider mt-0.5">
+                                              {cand.service_type} · {cand.area || cand.city}
+                                            </p>
+
+                                            <div className="flex items-center gap-2.5 mt-1 text-[10px] font-semibold text-slate-600">
+                                              <span className="flex items-center gap-0.5 text-amber-600 font-bold">
+                                                <Star size={11} fill="currentColor" /> {cand.rating || 4.9}
+                                              </span>
+                                              <span>•</span>
+                                              <span>{cand.completed_jobs_count || 45} Jobs</span>
+                                              <span>•</span>
+                                              <span className="flex items-center gap-0.5 text-sky-700 font-bold">
+                                                <Clock size={10} /> {cand.eta_mins || 8} mins away ({cand.distance_km || 1.2} km)
+                                              </span>
+                                            </div>
+                                          </div>
+                                        </div>
+
+                                        {/* Price & Selection Button */}
+                                        <div className="flex sm:flex-col items-center sm:items-end justify-between gap-2 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100">
+                                          <div className="text-left sm:text-right">
+                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Quote Estimate</span>
+                                            <span className="text-base font-black text-slate-900">
+                                              ₦{(cand.price_estimate || paymentDetails.amount).toLocaleString()}
+                                            </span>
+                                          </div>
+
+                                          <button
+                                            type="button"
+                                            className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all flex items-center gap-1 cursor-pointer ${
+                                              isSelected
+                                                ? "bg-emerald-600 text-white shadow-xs"
+                                                : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                                            }`}
+                                          >
+                                            {isSelected ? (
+                                              <>
+                                                <Check size={12} /> Selected
+                                              </>
+                                            ) : (
+                                              <span>Choose Pro</span>
+                                            )}
+                                          </button>
+                                        </div>
+                                      </div>
+
+                                      {/* Match Reason snippet */}
+                                      {cand.specialization && (
+                                        <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-500 font-medium">
+                                          <span className="truncate">{cand.specialization}</span>
+                                          <span className="font-bold text-sky-700 shrink-0 ml-2">{cand.match_reason}</span>
+                                        </div>
+                                      )}
+                                    </motion.div>
+                                  );
+                                })}
+                              </div>
+
+                              {/* Selected Candidate Quick Contacts */}
+                              {matchedWorker && (
+                                <div className="mt-5 p-4 rounded-2xl bg-white border border-sky-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+                                  <div className="text-left">
+                                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Assigned Pro Contact</span>
+                                    <p className="text-xs font-black text-slate-900">{matchedWorker.full_name} ({matchedWorker.phone})</p>
+                                  </div>
+                                  <div className="flex items-center gap-2 w-full sm:w-auto">
                                     <a
                                       href={`tel:${matchedWorker.phone}`}
-                                      className="h-11 rounded-full bg-sky-600 hover:bg-sky-500 text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs transition-all"
+                                      className="flex-1 sm:flex-initial h-9 px-4 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-2xs transition-all"
                                     >
-                                      <Phone size={14} /> Call Pro
+                                      <Phone size={13} /> Call
                                     </a>
                                     <a
                                       href={`https://wa.me/${matchedWorker.phone?.replace(/[^0-9]/g, "")}`}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="h-11 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs transition-all"
+                                      className="flex-1 sm:flex-initial h-9 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-2xs transition-all"
                                     >
-                                      <MessageSquare size={14} /> WhatsApp
+                                      <MessageSquare size={13} /> WhatsApp
                                     </a>
                                   </div>
-                                </motion.div>
+                                </div>
                               )}
 
                               <div className="mt-6 flex flex-col sm:flex-row gap-3">
