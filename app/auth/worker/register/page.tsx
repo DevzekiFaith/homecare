@@ -26,9 +26,13 @@ import {
   Camera,
   Check,
   ChevronRight,
-  BookOpen
+  BookOpen,
+  Trash2,
+  RefreshCw,
+  Zap
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { optimizeProfilePhoto } from "@/lib/imageOptimizer";
 import LocationMapPicker from "@/app/components/LocationMapPicker";
 import IdVerificationStatus, { type VerificationStatus } from "@/app/components/IdVerificationStatus";
 import Logo from "@/app/components/Logo";
@@ -64,6 +68,12 @@ function WorkerRegisterContent() {
   const [certFile, setCertFile] = useState<File | null>(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [isOptimizingPhoto, setIsOptimizingPhoto] = useState(false);
+  const [photoOptimizationStats, setPhotoOptimizationStats] = useState<{
+    original: string;
+    compressed: string;
+    ratio: number;
+  } | null>(null);
   const [verifyStatus, setVerifyStatus] = useState<VerificationStatus>("idle");
   const [verifyReason, setVerifyReason] = useState<string | undefined>(undefined);
   const [verifyConfidence, setVerifyConfidence] = useState<"high" | "medium" | "low" | null>(null);
@@ -1048,93 +1058,203 @@ function WorkerRegisterContent() {
                 {/* Upload Clear Photo / Live Selfie (LOCKED until Name + NIN verified) */}
                 <div className="pt-2 border-t border-slate-200/80">
                   <div className="flex items-center justify-between mb-1">
-                    <label className="block text-xs font-black text-slate-900 uppercase tracking-wider">
-                      Upload Live Photo (Selfie) <span className="text-rose-500">*</span>
+                    <label className="block text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                      <Camera size={14} className="text-sky-600" />
+                      Live Professional Profile Photo <span className="text-rose-500">*</span>
                     </label>
                     {isNinValid ? (
-                      <span className="text-[10px] font-black text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+                      <span className="text-[10px] font-black text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
                         <Check size={11} /> Unlocked
                       </span>
                     ) : (
-                      <span className="text-[10px] font-black text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 flex items-center gap-1">
+                      <span className="text-[10px] font-black text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200 flex items-center gap-1">
                         <Lock size={11} /> Locked (Verify NIN First)
                       </span>
                     )}
                   </div>
                   <p className="text-xs text-slate-500 font-medium mb-3">
-                    Clear face photo for customer dispatch match and AI biometric screening. File upload unlocks automatically once your NIN is authenticated.
+                    Clear face photo for customer dispatch match and AI biometric screening. High-resolution phone camera photos are automatically compressed seamlessly without loss of facial detail.
                   </p>
                   
                   <div className="space-y-3">
                     <div 
-                      onClick={handlePhotoClick}
-                      className={`relative rounded-2xl border-2 transition-all p-4 ${
+                      onClick={!photoPreview ? handlePhotoClick : undefined}
+                      className={`relative rounded-2xl border-2 transition-all overflow-hidden ${
                         !isNinValid
-                          ? "border-slate-200 bg-slate-100/80 opacity-75 cursor-not-allowed"
-                          : photoFile
-                          ? "border-emerald-400 bg-emerald-50/40"
-                          : "border-dashed border-slate-300 bg-white hover:border-sky-500 cursor-pointer"
+                          ? "border-slate-200 bg-slate-100/80 opacity-75 cursor-not-allowed p-5"
+                          : photoPreview
+                          ? "border-emerald-300 bg-white p-4 shadow-sm"
+                          : "border-dashed border-slate-300 bg-white hover:border-sky-500 p-6 cursor-pointer"
                       }`}
                     >
+                      {/* Hidden File Input */}
                       <input
                         ref={photoInputRef}
                         type="file"
                         name="photo"
                         accept="image/*"
                         disabled={!isNinValid}
-                        className={`w-full text-xs text-slate-600 font-medium file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-xs file:font-black file:uppercase file:tracking-wider ${
-                          !isNinValid 
-                            ? "file:bg-slate-300 file:text-slate-500 cursor-not-allowed pointer-events-none" 
-                            : "file:bg-sky-600 file:text-white hover:file:bg-sky-500 file:cursor-pointer cursor-pointer"
-                        }`}
+                        className="sr-only"
                         onChange={async (e) => {
-                          const file = e.target.files?.[0];
-                          setPhotoFile(file ?? null);
-                          if (!file) {
-                            setPhotoPreview(null);
-                            return;
-                          }
-                          setPhotoPreview(URL.createObjectURL(file));
+                          const rawFile = e.target.files?.[0];
+                          if (!rawFile) return;
+
+                          setIsOptimizingPhoto(true);
                           setVerifyStatus("checking");
-                          setVerifyReason(undefined);
+                          setVerifyReason("Compressing image & running AI biometric analysis...");
+
                           try {
-                            const reader = new FileReader();
-                            reader.onload = async (ev) => {
-                              try {
-                                const imageBase64 = ev.target?.result as string;
-                                const res = await fetch("/api/verify-id", {
-                                  method: "POST",
-                                  headers: { "Content-Type": "application/json" },
-                                  body: JSON.stringify({ imageBase64, workerName: fullName || "" }),
-                                });
-                                const data = await res.json() as {
-                                  status: VerificationStatus;
-                                  confidence?: "high" | "medium" | "low" | null;
-                                  reason?: string;
-                                };
-                                setVerifyStatus(data.status);
-                                setVerifyReason(data.reason);
-                                setVerifyConfidence(data.confidence ?? null);
-                                setAiVerified(data.status === "verified");
-                                setAiVerifyReason(data.reason ?? "");
-                              } catch (err) {
-                                console.error("AI verification error:", err);
-                                setVerifyStatus("pending_manual");
-                                setVerifyReason("Verification will be completed manually by our team.");
-                              }
-                            };
-                            reader.readAsDataURL(file);
-                          } catch {
+                            // Seamless client-side compression: 10MB down to ~150KB
+                            const opt = await optimizeProfilePhoto(rawFile, {
+                              maxWidth: 1024,
+                              maxHeight: 1024,
+                              quality: 0.82,
+                              mimeType: "image/jpeg",
+                            });
+
+                            setPhotoFile(opt.file);
+                            setPhotoPreview(opt.previewUrl);
+                            setPhotoOptimizationStats({
+                              original: opt.formattedOriginal,
+                              compressed: opt.formattedCompressed,
+                              ratio: opt.compressionRatio,
+                            });
+
+                            toast.success("Photo Optimized Seamlessly!", {
+                              description: `Compressed ${opt.formattedOriginal} → ${opt.formattedCompressed} (${opt.compressionRatio}% lighter) for fast verification.`,
+                            });
+
+                            // Fast AI Screening with lightweight Base64
+                            try {
+                              const res = await fetch("/api/verify-id", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ imageBase64: opt.base64, workerName: fullName || "" }),
+                              });
+                              const data = await res.json() as {
+                                status: VerificationStatus;
+                                confidence?: "high" | "medium" | "low" | null;
+                                reason?: string;
+                              };
+                              setVerifyStatus(data.status);
+                              setVerifyReason(data.reason);
+                              setVerifyConfidence(data.confidence ?? null);
+                              setAiVerified(data.status === "verified");
+                              setAiVerifyReason(data.reason ?? "");
+                            } catch (err) {
+                              console.error("AI verification error:", err);
+                              setVerifyStatus("pending_manual");
+                              setVerifyReason("Verification will be completed manually by our team.");
+                            }
+                          } catch (err) {
+                            console.error("Compression error:", err);
+                            toast.error("Could not process image file. Please try another photo.");
                             setVerifyStatus("pending_manual");
-                            setVerifyReason("Verification will be completed manually by our team.");
+                          } finally {
+                            setIsOptimizingPhoto(false);
                           }
                         }}
                       />
 
+                      {/* LOCKED STATE */}
                       {!isNinValid && (
-                        <div className="absolute inset-0 bg-slate-900/10 backdrop-blur-[1px] rounded-2xl flex items-center justify-center gap-2 text-slate-700 font-bold text-xs uppercase tracking-wider">
-                          <Lock size={14} className="text-slate-600" />
-                          <span>Complete Step 1 (₦3,500 Fee) &amp; Step 3 (NIN) to Unlock</span>
+                        <div className="flex flex-col items-center justify-center text-center gap-2 py-4 text-slate-500">
+                          <div className="h-10 w-10 rounded-xl bg-slate-200 flex items-center justify-center text-slate-600">
+                            <Lock size={18} />
+                          </div>
+                          <p className="text-xs font-bold text-slate-700">Photo Upload Locked</p>
+                          <p className="text-[11px] text-slate-500">Complete Step 1 (Accreditation Fee) &amp; Step 3 (NIN Check) to activate.</p>
+                        </div>
+                      )}
+
+                      {/* UNLOCKED: NO PHOTO SELECTED YET */}
+                      {isNinValid && !photoPreview && (
+                        <div 
+                          onClick={() => photoInputRef.current?.click()} 
+                          className="flex flex-col items-center justify-center text-center gap-2.5 py-4 cursor-pointer group"
+                        >
+                          <div className="h-14 w-14 rounded-2xl bg-sky-50 group-hover:bg-sky-100 border border-sky-200 flex items-center justify-center text-sky-600 transition-colors shadow-2xs">
+                            <Camera size={26} />
+                          </div>
+                          <div>
+                            <p className="text-xs font-black text-slate-900 uppercase tracking-wider">
+                              Tap to Take Live Selfie or Select from Gallery
+                            </p>
+                            <p className="text-[11px] text-slate-500 font-medium mt-0.5">
+                              JPEG, PNG, WebP supported · Automatic compression &amp; biometric enhancement
+                            </p>
+                          </div>
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold">
+                            <Zap size={11} className="text-amber-500" /> Auto-resized to &lt; 250 KB
+                          </span>
+                        </div>
+                      )}
+
+                      {/* UNLOCKED: PHOTO PREVIEW WITH STATS & CONTROLS */}
+                      {isNinValid && photoPreview && (
+                        <div className="flex flex-col sm:flex-row items-center gap-4">
+                          {/* Avatar Display */}
+                          <div className="relative h-24 w-24 rounded-2xl overflow-hidden border-2 border-emerald-400 bg-slate-100 shrink-0 shadow-md">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={photoPreview}
+                              alt="Pro Face Preview"
+                              className="h-full w-full object-cover"
+                            />
+                            {isOptimizingPhoto && (
+                              <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center">
+                                <span className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                              </div>
+                            )}
+                            <div className="absolute bottom-1 right-1 h-5 w-5 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-xs">
+                              <Check size={11} strokeWidth={3} />
+                            </div>
+                          </div>
+
+                          {/* Info & Compression Pill */}
+                          <div className="flex-1 text-center sm:text-left space-y-1.5 min-w-0">
+                            <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
+                              <p className="text-xs font-black text-slate-900">
+                                {photoFile ? photoFile.name : "Profile Photo Ready"}
+                              </p>
+                              {photoOptimizationStats && (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-black">
+                                  <Zap size={10} className="text-emerald-600" />
+                                  Optimized: {photoOptimizationStats.original} → {photoOptimizationStats.compressed} ({photoOptimizationStats.ratio}% lighter)
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-[11px] text-slate-500 font-medium">
+                              Fast client candidate matching profile photo active.
+                            </p>
+
+                            {/* Buttons */}
+                            <div className="flex items-center justify-center sm:justify-start gap-2 pt-1">
+                              <button
+                                type="button"
+                                onClick={() => photoInputRef.current?.click()}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all cursor-pointer shadow-2xs"
+                              >
+                                <RefreshCw size={12} />
+                                Change Photo
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setPhotoFile(null);
+                                  setPhotoPreview(null);
+                                  setPhotoOptimizationStats(null);
+                                  setVerifyStatus("idle");
+                                  setVerifyReason(undefined);
+                                  setAiVerified(false);
+                                }}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold transition-all cursor-pointer"
+                              >
+                                <Trash2 size={12} />
+                                Remove
+                              </button>
+                            </div>
+                          </div>
                         </div>
                       )}
                     </div>

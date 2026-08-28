@@ -51,6 +51,28 @@ const CLIENT_OUTCOMES = [
   },
   {
     id: "03",
+    tabLabel: "Praise Chidubem (Epe Tech Hub)",
+    tag: "Creative Studio & Tech Hub Electrical Outcome",
+    heading: "Inverter Backup & Surge Panel Configured",
+    desc: "Studio workstation power fluctuating during grid drops. Verified electrical engineering team installed dual-inverter surge protection and dedicated power distribution rails.",
+    problem: "Power fluctuation risking workstation computing hardware",
+    outcome: "Dual-inverter surge panel & isolated power rails installed",
+    metricValue: "99.9%",
+    metricLabel: "Studio Uptime & Protection",
+    customerName: "Praise Chidubem",
+    customerRole: "Creative Director & Tech Lead · Epe, Lagos",
+    customerAvatar: "/testimonials/praise_chidubem.png",
+    customerAttire: "Executive Blazer · Modern Tailored Charcoal Jacket",
+    image: "/testimonials/praise_chidubem.png",
+    badges: [
+      { label: "Studio Fit", icon: ThumbsUp, color: "bg-white/90 text-slate-900 border-white/40" },
+      { label: "Electrical Pro", icon: ShieldCheck, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
+      { label: "Surge Protected", icon: CheckCircle2, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
+      { label: "Rated ★ 5.0", icon: Star, color: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
+    ],
+  },
+  {
+    id: "04",
     tabLabel: "Dr. Abiola (VI Medical Clinic)",
     tag: "Clinic & Business HVAC Outcome",
     heading: "Clinic Consultation Room Cooling Restored",
@@ -72,7 +94,7 @@ const CLIENT_OUTCOMES = [
     ],
   },
   {
-    id: "04",
+    id: "05",
     tabLabel: "Engr. Babatunde (Bodija Ibadan)",
     tag: "Residential Compound Electrical Outcome",
     heading: "Borehole Surge Control Box Rewired Same-Day",
@@ -94,7 +116,7 @@ const CLIENT_OUTCOMES = [
     ],
   },
   {
-    id: "05",
+    id: "06",
     tabLabel: "Toluwanimi & Ayo (Abeokuta)",
     tag: "New Home Entrance & Carpentry Outcome",
     heading: "Front Door Security Mortise Lock Fully Aligned",
@@ -325,8 +347,8 @@ export default function TestimonialsSection() {
 
           </div>
 
-          {/* Bottom Step Tabs (01 - 05) */}
-          <div className="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 pt-6 border-t border-slate-200">
+          {/* Bottom Step Tabs (01 - 06) */}
+          <div className="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-6 border-t border-slate-200">
             {CLIENT_OUTCOMES.map((item, idx) => {
               const active = activeIndex === idx;
               return (
