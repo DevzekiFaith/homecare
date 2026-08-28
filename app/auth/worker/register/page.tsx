@@ -240,8 +240,8 @@ function WorkerRegisterContent() {
     
     // 1. Validate payment first
     if (!isPaymentValid) {
-      toast.error("Accreditation Fee Required", {
-        description: "Please pay or confirm your ₦3,500 accreditation fee in Step 1 first before verifying with NIMC.",
+      toast.error("Accreditation Payment Required First", {
+        description: `Please complete your ${selectedTier === 'starter' ? '₦1,500 Starter Pro' : '₦3,500 Elite Pro'} accreditation fee in Step 1 before verifying your NIN with NIMC.`,
       });
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
@@ -316,7 +316,7 @@ function WorkerRegisterContent() {
     if (!isPaymentValid) {
       e.preventDefault();
       toast.error("Step 1 Incomplete", {
-        description: "Please pay or confirm the ₦3,500 accreditation fee before uploading your face photo.",
+        description: `Please pay or confirm your ${selectedTier === 'starter' ? '₦1,500 Starter' : '₦3,500 Elite'} accreditation fee before uploading your face photo.`,
       });
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
@@ -367,10 +367,10 @@ function WorkerRegisterContent() {
 
     // Strict Gate 1: Flutterwave / Accreditation Payment
     if (!isPaymentValid) {
-      toast.error("₦3,500 Accreditation Payment Required", {
-        description: "Flutterwave accreditation payment must be completed before your profile can be submitted.",
+      toast.error(`${selectedTier === 'starter' ? '₦1,500' : '₦3,500'} Accreditation Payment Required`, {
+        description: `Flutterwave accreditation payment for ${selectedTier === 'starter' ? 'Starter Pro (₦1,500)' : 'Elite Pro (₦3,500)'} must be completed before your profile can be submitted.`,
       });
-      setErrorMessage("Accreditation fee of ₦3,500 is required to authenticate your profile against national databases.");
+      setErrorMessage(`Accreditation fee of ${selectedTier === 'starter' ? '₦1,500' : '₦3,500'} is required to authenticate your profile against national databases.`);
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
