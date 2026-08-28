@@ -87,43 +87,43 @@ export default function Nav() {
           className="transition-opacity hover:opacity-80"
           aria-label="HomeCare home"
         />
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           {user ? (
             <>
               {pathname !== "/" && (
                 <Link
                   href="/customer/wallet"
-                  className="hidden md:flex items-center gap-1.5 rounded-full px-3 py-2 text-[11px] uppercase tracking-widest font-bold text-slate-600 hover:text-sky-600 hover:bg-sky-50 transition-colors"
+                  className="hidden md:flex items-center gap-1 rounded-full px-2.5 py-1.5 text-[10px] uppercase tracking-wider font-extrabold text-slate-600 hover:text-sky-600 hover:bg-sky-50 transition-colors"
                   title="Your Wallet"
                 >
-                  <Wallet size={14} />
+                  <Wallet size={13} />
                   <span>Wallet</span>
                 </Link>
               )}
               <Link
                 href="/customer/dashboard"
-                className="flex items-center gap-2 rounded-full px-3 py-1.5 bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-700 text-xs font-bold transition-all shadow-2xs"
+                className="flex items-center gap-1.5 rounded-full px-2.5 py-1 bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-700 text-[10px] font-extrabold transition-all shadow-2xs"
                 title="Your Dashboard"
               >
-                <div className="w-6 h-6 rounded-full bg-sky-600 text-white flex items-center justify-center text-[10px] font-black uppercase">
+                <div className="w-5 h-5 rounded-full bg-sky-600 text-white flex items-center justify-center text-[9px] font-black uppercase">
                   {user.email ? user.email[0] : 'U'}
                 </div>
-                <span className="hidden sm:inline font-extrabold uppercase tracking-wider text-[11px]">Dashboard</span>
+                <span className="hidden sm:inline uppercase tracking-wider text-[10px]">Dashboard</span>
               </Link>
               <Link
                 href="/customer/subscription"
-                className="hidden lg:flex items-center gap-1.5 rounded-full px-3 py-2 text-[11px] uppercase tracking-widest font-bold text-slate-600 hover:text-sky-600 hover:bg-sky-50 transition-colors"
+                className="hidden lg:flex items-center gap-1 rounded-full px-2.5 py-1.5 text-[10px] uppercase tracking-wider font-extrabold text-slate-600 hover:text-sky-600 hover:bg-sky-50 transition-colors"
                 title="Manage Tiers"
               >
-                <ShieldCheck size={14} />
+                <ShieldCheck size={13} />
                 <span className="hidden sm:inline">Subscription</span>
               </Link>
               {role === 'admin' && (
                 <Link
                   href="/admin"
-                  className="flex items-center gap-2 rounded-full px-4 py-2 text-[10px] sm:text-[11px] uppercase tracking-widest font-black text-white bg-sky-600 hover:bg-sky-500 transition-all shadow-md shadow-sky-500/20"
+                  className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] uppercase tracking-wider font-black text-white bg-sky-600 hover:bg-sky-500 transition-all shadow-xs"
                 >
-                  <Shield size={14} className="fill-white" />
+                  <Shield size={12} className="fill-white" />
                   <span>Admin</span>
                 </Link>
               )}
@@ -134,57 +134,59 @@ export default function Nav() {
           ) : (
             <Link
               href="/auth/customer/login"
-              className="flex items-center gap-2 rounded-full px-4 py-2 text-xs font-extrabold uppercase tracking-wider text-slate-700 hover:text-sky-600 bg-white hover:bg-sky-50 border border-slate-200 transition-all shadow-2xs"
+              className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-700 hover:text-sky-600 bg-white hover:bg-sky-50 border border-slate-200 transition-all shadow-2xs"
             >
-              <UserIcon size={14} className="text-sky-600" />
+              <UserIcon size={13} className="text-sky-600" />
               <span>Login</span>
             </Link>
           )}
 
           <Link
             href="/qr"
-            className="hidden md:flex items-center gap-1.5 rounded-full px-3 py-2 text-[11px] uppercase tracking-widest font-bold text-slate-600 hover:text-sky-600 hover:bg-sky-50 transition-colors mr-1"
+            className="hidden md:flex items-center gap-1 rounded-full px-2.5 py-1.5 text-[10px] uppercase tracking-wider font-extrabold text-slate-600 hover:text-sky-600 hover:bg-sky-50 transition-colors"
             title="Outdoor Customer QR Code"
           >
-            <QrCode size={14} className="text-sky-600" />
+            <QrCode size={13} className="text-sky-600" />
             <span>Outdoor QR</span>
           </Link>
 
           <Link
             href="/reviews"
-            className="hidden md:flex items-center gap-1.5 rounded-full px-3 py-2 text-[11px] uppercase tracking-widest font-bold text-slate-600 hover:text-sky-600 hover:bg-sky-50 transition-colors mr-1"
+            className="hidden md:flex items-center gap-1 rounded-full px-2.5 py-1.5 text-[10px] uppercase tracking-wider font-extrabold text-slate-600 hover:text-sky-600 hover:bg-sky-50 transition-colors"
           >
-            <Star size={14} className="text-sky-600" />
+            <Star size={13} className="text-sky-600" />
             <span>Reviews</span>
           </Link>
 
           <Link
             href="/store"
-            className="hidden md:flex items-center gap-1.5 rounded-full px-3 py-2 text-[11px] uppercase tracking-widest font-bold text-slate-600 hover:text-sky-600 hover:bg-sky-50 transition-colors mr-1"
+            className="hidden md:flex items-center gap-1 rounded-full px-2.5 py-1.5 text-[10px] uppercase tracking-wider font-extrabold text-slate-600 hover:text-sky-600 hover:bg-sky-50 transition-colors"
           >
-            <Zap size={14} className="text-sky-600" />
+            <Zap size={13} className="text-sky-600" />
             <span>Store</span>
           </Link>
 
-          {/* Admin Portal Button */}
-          <Link
-            href="/admin"
-            className="hidden sm:flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-extrabold uppercase tracking-wider text-slate-700 hover:text-sky-700 bg-slate-100/90 hover:bg-sky-50 border border-slate-200/80 transition-all shadow-2xs"
-            title="Admin Dashboard"
-          >
-            <Shield size={13} className="text-sky-600" />
-            <span>Admin</span>
-          </Link>
+          {/* Admin Portal Link for non-logged-in/regular users */}
+          {role !== 'admin' && (
+            <Link
+              href="/admin"
+              className="hidden sm:flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-700 hover:text-sky-700 bg-slate-100/90 hover:bg-sky-50 border border-slate-200/80 transition-all shadow-2xs"
+              title="Admin Dashboard"
+            >
+              <Shield size={12} className="text-sky-600" />
+              <span>Admin</span>
+            </Link>
+          )}
 
           {/* Cart Icon */}
           <button
             onClick={() => setIsCartOpen(true)}
-            className="relative flex items-center justify-center h-10 w-10 rounded-full border border-sky-100 bg-sky-50/60 text-slate-600 hover:text-sky-600 hover:border-sky-300 hover:bg-sky-100/60 transition-all mr-1"
+            className="relative flex items-center justify-center h-8.5 w-8.5 rounded-full border border-sky-100 bg-sky-50/60 text-slate-600 hover:text-sky-600 hover:border-sky-300 hover:bg-sky-100/60 transition-all"
             title="Shopping Cart"
           >
-            <ShoppingCart size={16} />
+            <ShoppingCart size={15} />
             {cartCount > 0 && (
-              <span suppressHydrationWarning className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-sky-600 text-white text-[9px] font-extrabold ring-2 ring-white animate-in zoom-in duration-200 shadow-xs">
+              <span suppressHydrationWarning className="absolute -top-1 -right-1 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-sky-600 text-white text-[8.5px] font-extrabold ring-2 ring-white animate-in zoom-in duration-200 shadow-xs">
                 {cartCount > 9 ? "9+" : cartCount}
               </span>
             )}
@@ -192,7 +194,7 @@ export default function Nav() {
 
           <Link
             href="/request"
-            className="flex items-center rounded-full px-4 sm:px-6 py-2.5 text-xs font-bold uppercase tracking-widest bg-sky-600 hover:bg-sky-700 text-white shadow-md shadow-sky-600/30 transition-all hover:scale-105"
+            className="flex items-center rounded-full px-3.5 sm:px-5 py-2 text-[10.5px] font-black uppercase tracking-wider bg-sky-600 hover:bg-sky-700 text-white shadow-md shadow-sky-600/30 transition-all hover:scale-105"
           >
             {user ? "New Request" : "Book Now"}
           </Link>
