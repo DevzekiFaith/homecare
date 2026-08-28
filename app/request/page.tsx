@@ -1079,7 +1079,12 @@ function RequestContent() {
                                       <Phone size={13} /> Call
                                     </a>
                                     <a
-                                      href={`https://wa.me/${matchedWorker.phone?.replace(/[^0-9]/g, "")}`}
+                                      href={(() => {
+                                        const raw = matchedWorker.phone ? matchedWorker.phone.replace(/[^0-9]/g, "") : "2349119059859";
+                                        const clean = raw.startsWith("0") ? `234${raw.slice(1)}` : raw.startsWith("234") ? raw : `234${raw}`;
+                                        const msg = encodeURIComponent(`Hello ${matchedWorker.full_name}, I just booked your service on HomeCare!`);
+                                        return `https://wa.me/${clean}?text=${msg}`;
+                                      })()}
                                       target="_blank"
                                       rel="noopener noreferrer"
                                       className="flex-1 sm:flex-initial h-9 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-2xs transition-all"

@@ -788,18 +788,24 @@ function WorkerRegisterContent() {
 
                 {/* Phone */}
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
-                    WhatsApp Phone Number <span className="text-rose-500">*</span>
-                  </label>
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                      WhatsApp Phone Number <span className="text-rose-500">*</span>
+                    </label>
+                    <span className="text-[10px] font-bold text-emerald-700 uppercase">Active WhatsApp</span>
+                  </div>
                   <input
                     required
                     type="tel"
                     name="phone"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+234 812 345 6789"
+                    placeholder="e.g. 08123456789 or +234..."
                     className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 outline-none transition focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-100 placeholder:text-slate-400 font-mono shadow-2xs"
                   />
+                  <p className="text-[10px] text-slate-500 font-medium">
+                    Must be your active WhatsApp number so clients can message you immediately upon booking.
+                  </p>
                 </div>
 
                 {/* 6-Digit PIN */}
