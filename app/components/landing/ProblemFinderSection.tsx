@@ -25,7 +25,7 @@ const PROBLEMS = [
     desc: "Low gas, compressor issues, or dirty filters.",
     tagline: "HVAC & Cooling System Diagnostics",
     metricValue: "15 Mins",
-    metricLabel: "Technician Dispatch Time",
+    metricLabel: "Professional Dispatch Time",
     href: "/request?service=AC+%26+Fridge+Repair",
     image: "/slide_ac_cooling.jpg",
     badgeTitle: "Cooling System Diagnostic",
@@ -149,7 +149,7 @@ export default function ProblemFinderSection() {
             What&apos;s Wrong With <span className="text-sky-600">Your Home?</span>
           </h2>
           <p className="mt-2 text-slate-600 text-sm sm:text-base font-medium">
-            Select your symptom below. We will instantly pair you with the exact right accredited technician.
+            Select your symptom below. We will instantly pair you with the exact right accredited professional.
           </p>
         </div>
 
@@ -251,7 +251,7 @@ export default function ProblemFinderSection() {
                       href={current.href}
                       className="h-11 px-5 rounded-full bg-sky-600 hover:bg-sky-500 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md shadow-sky-600/20 transition-all hover:scale-102 cursor-pointer"
                     >
-                      <span>Book Technician Now</span>
+                      <span>Book Professional Now</span>
                       <ArrowRight size={14} />
                     </Link>
                   </div>

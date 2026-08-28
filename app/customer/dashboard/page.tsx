@@ -534,7 +534,10 @@ export default function CustomerDashboardPage() {
                  <LiveMap 
                     address={trackingJob.address}
                     trackingJobId={trackingJob.id}
-                    height="60vh"
+                    workerName={`${trackingJob.service_type} Specialist`}
+                    workerRole="Verified Professional En Route"
+                    clientName="You"
+                    height="65vh"
                     interactive={false}
                  />
               </div>

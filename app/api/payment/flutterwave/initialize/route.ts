@@ -10,7 +10,7 @@ export async function POST(req: Request) {
       name, 
       phone, 
       title = "HomeCare Technologies", 
-      description = "Smart Home & Artisan Service Payment",
+      description = "Smart Home & Professional Service Payment",
       type = "store_order",
       userId
     } = body;

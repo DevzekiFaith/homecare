@@ -3,12 +3,14 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { X, ExternalLink, AlertCircle, CheckCircle2, Navigation, ClipboardList, Check, MessageCircle, Camera, Trash2 } from "lucide-react";
+import { X, AlertCircle, CheckCircle2, Navigation, ClipboardList, Camera, Trash2, Wallet, ArrowDownToLine, Clock, Sparkles, ExternalLink, Check, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import Logo from "@/app/components/Logo";
 import dynamic from "next/dynamic";
+import { calculatePayoutBreakdown } from "@/lib/monetization";
 
 const ChatModal = dynamic(() => import("@/app/components/ChatModal"), { ssr: false });
+const LiveMap = dynamic(() => import("@/app/components/LiveMap"), { ssr: false });
 
 import { User } from "@supabase/supabase-js";
 
@@ -48,10 +50,16 @@ export default function WorkerDashboardPage() {
   const [balance, setBalance] = useState<number>(0);
   const [trackingJobId, setTrackingJobId] = useState<string | null>(null);
   const [chatJob, setChatJob] = useState<ServiceRequest | null>(null);
+  const [mapJob, setMapJob] = useState<ServiceRequest | null>(null);
   const [qrCodeJob, setQrCodeJob] = useState<ServiceRequest | null>(null);
+  const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
+  const [withdrawAmount, setWithdrawAmount] = useState<number>(0);
+  const [isInstantPayout, setIsInstantPayout] = useState(true);
+  const [bankName, setBankName] = useState("Access Bank");
+  const [accountNumber, setAccountNumber] = useState("");
+  const [isWithdrawing, setIsWithdrawing] = useState(false);
   const watchIdRef = useRef<number | null>(null);
   const supabase = useMemo(() => createClient(), []);
-  const [origin, setOrigin] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -251,8 +259,8 @@ export default function WorkerDashboardPage() {
               description: "This booking has been declined and removed from your radar.",
               duration: 4000,
             });
-          } catch (err: any) {
-            toast.error("Remove job error: " + err.message);
+          } catch (err: unknown) {
+            toast.error("Remove job error: " + (err instanceof Error ? err.message : "Error"));
           }
         },
       },
@@ -356,9 +364,9 @@ export default function WorkerDashboardPage() {
       // 5. Update state
       setAvatarUrl(publicUrl);
       toast.success("Profile photo updated successfully!", { id: toastId });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Avatar upload error:", err);
-      toast.error("Upload failed", { description: err.message, id: toastId });
+      toast.error("Upload failed", { description: err instanceof Error ? err.message : "Error", id: toastId });
     }
   };
 
@@ -369,7 +377,52 @@ export default function WorkerDashboardPage() {
         navigator.geolocation.clearWatch(watchIdRef.current);
       }
     };
-  }, []);  const radarJobs = requests.filter(r => r.status === 'pending' || r.status === 'new' || !r.assigned_worker_id);
+  }, []);
+
+  const handleProcessPayout = async () => {
+    if (!withdrawAmount || withdrawAmount <= 0) {
+      toast.error("Please enter a valid withdrawal amount");
+      return;
+    }
+    if (withdrawAmount > balance) {
+      toast.error("Insufficient wallet balance", {
+        description: `Your available balance is ₦${balance.toLocaleString()}`,
+      });
+      return;
+    }
+    if (!accountNumber || accountNumber.length < 10) {
+      toast.error("Please enter a valid 10-digit NUBAN account number");
+      return;
+    }
+
+    setIsWithdrawing(true);
+    const breakdown = calculatePayoutBreakdown(withdrawAmount, isInstantPayout);
+
+    try {
+      const newBalance = balance - withdrawAmount;
+      if (user?.id) {
+        await supabase
+          .from("wallets")
+          .update({ balance: newBalance })
+          .eq("user_id", user.id);
+      }
+      setBalance(newBalance);
+      setIsWithdrawOpen(false);
+      setWithdrawAmount(0);
+
+      toast.success(isInstantPayout ? "Instant Payout Dispatched!" : "Payout Request Queued!", {
+        description: `${breakdown.formattedNet} transferred to ${accountNumber} (${bankName}). Arriving ${breakdown.estimatedArrival}.`,
+      });
+    } catch (err: unknown) {
+      toast.error("Payout failed", {
+        description: err instanceof Error ? err.message : "Error processing withdrawal",
+      });
+    } finally {
+      setIsWithdrawing(false);
+    }
+  };
+
+  const radarJobs = requests.filter(r => r.status === 'pending' || r.status === 'new' || !r.assigned_worker_id);
   const myActiveJobs = requests.filter(r => r.assigned_worker_id === user?.id && r.status === 'in_progress');
   const myCompletedJobs = requests.filter(r => r.assigned_worker_id === user?.id && r.status === 'completed');
   const displayJobs = activeTab === 'radar' ? radarJobs : activeTab === 'my-jobs' ? myActiveJobs : myCompletedJobs;
@@ -427,22 +480,45 @@ export default function WorkerDashboardPage() {
           animate="show"
           className="space-y-6"
         >
-          {/* Earnings stats */}
+          {/* Earnings stats with Net Disbursal & Withdraw Modal */}
           <div className="grid gap-4 sm:grid-cols-3">
-             {/* ... same stats as before ... */}
-            <motion.div variants={itemVariants} className="glass-panel p-6 shadow-premium border-brand-primary/20">
-              <p className="text-[10px] uppercase tracking-widest font-bold text-brand-primary">Wallet Balance</p>
-              <p className="mt-2 text-3xl font-heading font-extrabold text-foreground">₦{balance.toLocaleString()}</p>
+            <motion.div variants={itemVariants} className="glass-panel p-6 shadow-premium border-brand-primary/20 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between">
+                  <p className="text-[10px] uppercase tracking-widest font-bold text-brand-primary">Wallet Balance</p>
+                  <span className="text-[9px] font-extrabold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                    85% Net Disbursed
+                  </span>
+                </div>
+                <p className="mt-2 text-3xl font-heading font-extrabold text-foreground">₦{balance.toLocaleString()}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setWithdrawAmount(balance > 0 ? balance : 10000);
+                  setIsWithdrawOpen(true);
+                }}
+                className="mt-4 w-full h-9 rounded-xl bg-brand-primary text-background hover:bg-sky-400 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md shadow-sky-500/20"
+              >
+                <ArrowDownToLine size={14} />
+                <span>Withdraw Funds</span>
+              </button>
             </motion.div>
-            <motion.div variants={itemVariants} className="glass-panel p-6 shadow-premium">
-              <p className="text-[10px] uppercase tracking-widest font-bold text-zinc-500">Jobs completed</p>
-              <p className="mt-2 text-3xl font-heading font-extrabold text-foreground">
-                {requests.filter(r => r.status === 'completed' && r.assigned_worker_id === user?.id).length}
-              </p>
+            <motion.div variants={itemVariants} className="glass-panel p-6 shadow-premium flex flex-col justify-between">
+              <div>
+                <p className="text-[10px] uppercase tracking-widest font-bold text-zinc-500">Jobs completed</p>
+                <p className="mt-2 text-3xl font-heading font-extrabold text-foreground">
+                  {requests.filter(r => r.status === 'completed' && r.assigned_worker_id === user?.id).length}
+                </p>
+              </div>
+              <p className="text-[10px] text-zinc-400 font-medium">100% Escrow Guaranteed</p>
             </motion.div>
-            <motion.div variants={itemVariants} className="glass-panel p-6 shadow-premium">
-              <p className="text-[10px] uppercase tracking-widest font-bold text-zinc-500">Rating</p>
-              <p className="mt-2 text-3xl font-heading font-extrabold text-foreground tracking-tighter">4.9<span className="text-brand-primary ml-1 text-2xl">★</span></p>
+            <motion.div variants={itemVariants} className="glass-panel p-6 shadow-premium flex flex-col justify-between">
+              <div>
+                <p className="text-[10px] uppercase tracking-widest font-bold text-zinc-500">Rating</p>
+                <p className="mt-2 text-3xl font-heading font-extrabold text-foreground tracking-tighter">4.9<span className="text-brand-primary ml-1 text-2xl">★</span></p>
+              </div>
+              <span className="text-[10px] font-bold text-sky-400">Top 5% Verified Tier</span>
             </motion.div>
           </div>
 
@@ -601,20 +677,26 @@ export default function WorkerDashboardPage() {
                                   <Check size={14} /> Complete
                                 </button>
                                 <button 
+                                  onClick={() => setMapJob(job)}
+                                  className="flex items-center gap-2 h-9 px-5 bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] hover:bg-sky-500/20 transition-all cursor-pointer"
+                                >
+                                  <Navigation size={13} /> Live Map
+                                </button>
+                                <button 
                                   onClick={() => setChatJob(job)}
-                                  className="flex items-center gap-2 h-9 px-6 bg-white/5 text-zinc-400 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] border border-white/10 hover:bg-white/10 transition-all cursor-pointer"
+                                  className="flex items-center gap-2 h-9 px-5 bg-white/5 text-zinc-400 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] border border-white/10 hover:bg-white/10 transition-all cursor-pointer"
                                 >
                                   <MessageCircle size={14} /> Chat
                                 </button>
                                 <button
                                   onClick={() => toggleTracking(job.id)}
-                                  className={`flex items-center gap-2 h-9 px-6 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] shadow-premium transition-all cursor-pointer ${
+                                  className={`flex items-center gap-2 h-9 px-5 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] shadow-premium transition-all cursor-pointer ${
                                     trackingJobId === job.id 
                                       ? 'bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500/20' 
-                                      : 'bg-blue-500/10 border border-blue-500/30 text-blue-500 hover:bg-blue-500/20'
+                                      : 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20'
                                   }`}
                                 >
-                                  <Navigation size={14} className={trackingJobId === job.id ? 'animate-pulse' : ''} /> 
+                                  <Navigation size={13} className={trackingJobId === job.id ? 'animate-pulse' : ''} /> 
                                   {trackingJobId === job.id ? 'Stop GPS' : 'Share GPS'}
                                 </button>
                               </div>
@@ -725,7 +807,7 @@ export default function WorkerDashboardPage() {
                   <span className="font-bold text-white uppercase">{qrCodeJob.service_type}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Artisan Pro:</span>
+                  <span>Professional:</span>
                   <span className="font-bold text-white">{user?.user_metadata?.full_name || "Verified Pro"}</span>
                 </div>
                 <div className="flex justify-between">
@@ -733,6 +815,213 @@ export default function WorkerDashboardPage() {
                   <span className="font-bold text-white truncate max-w-[150px]">{qrCodeJob.address.split(',')[0]}</span>
                 </div>
               </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Worker Live Map Modal */}
+      <AnimatePresence>
+        {mapJob && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-xl p-4 sm:p-10" 
+            onClick={() => setMapJob(null)}
+          >
+            <button 
+              className="absolute top-6 right-6 sm:top-8 sm:right-8 h-12 w-12 flex items-center justify-center rounded-full bg-white/10 text-white hover:bg-brand-primary hover:text-white transition-colors shadow-premium backdrop-blur-md cursor-pointer"
+              onClick={() => setMapJob(null)}
+            >
+              <X size={20} strokeWidth={2.5} />
+            </button>
+            <motion.div 
+               initial={{ scale: 0.95, opacity: 0, y: 20 }}
+               animate={{ scale: 1, opacity: 1, y: 0 }}
+               exit={{ scale: 0.95, opacity: 0 }}
+               transition={{ type: "spring", stiffness: 300, damping: 25 }}
+               className="relative w-full max-w-4xl rounded-3xl overflow-hidden shadow-[0_0_60px_rgba(2,132,199,0.2)] border border-white/10 bg-background"
+               onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-5 border-b border-white/10 flex justify-between items-center bg-white/5">
+                 <div>
+                    <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                      <span>Live Client Navigation & In-Map Chat</span>
+                      <span className="text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded">
+                        Esri ArcGIS Live
+                      </span>
+                    </h3>
+                    <p className="text-xs text-zinc-400 mt-1">{mapJob.service_type} • {mapJob.address}</p>
+                 </div>
+                 <span className="animate-pulse flex h-3 w-3 rounded-full bg-sky-500"></span>
+              </div>
+              <div className="w-full bg-black">
+                 <LiveMap 
+                    address={mapJob.address}
+                    trackingJobId={mapJob.id}
+                    workerName={user?.user_metadata?.full_name || "You (Pro)"}
+                    workerRole="Verified Pro En Route"
+                    clientName="Client"
+                    height="65vh"
+                    interactive={false}
+                 />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Worker Payout & Withdrawal Modal */}
+      <AnimatePresence>
+        {isWithdrawOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4"
+            onClick={() => setIsWithdrawOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-zinc-950 border border-white/10 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative text-left"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className="absolute top-4 right-4 text-zinc-500 hover:text-white transition-colors cursor-pointer"
+                onClick={() => setIsWithdrawOpen(false)}
+              >
+                <X size={18} />
+              </button>
+
+              <div className="flex items-center gap-2 text-brand-primary font-black text-xs uppercase tracking-widest mb-1">
+                <Wallet size={16} />
+                <span>Wallet Withdrawal</span>
+              </div>
+              <h3 className="text-xl font-heading font-black text-white uppercase tracking-tight">
+                Disburse Earnings to Bank
+              </h3>
+              <p className="text-xs text-zinc-400 mt-1 mb-6">
+                Available Wallet Balance: <strong className="text-emerald-400">₦{balance.toLocaleString()}</strong>
+              </p>
+
+              {/* Amount Input */}
+              <div className="mb-4">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1.5">
+                  Withdrawal Amount (₦)
+                </label>
+                <input
+                  type="number"
+                  min={1000}
+                  max={balance}
+                  value={withdrawAmount || ""}
+                  onChange={(e) => setWithdrawAmount(Number(e.target.value))}
+                  placeholder="e.g. 25000"
+                  className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-white font-bold text-base focus:border-brand-primary outline-none"
+                />
+              </div>
+
+              {/* Speed Mode Selector */}
+              <div className="mb-4 grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsInstantPayout(true)}
+                  className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
+                    isInstantPayout
+                      ? "bg-brand-primary/10 border-brand-primary text-white"
+                      : "bg-white/5 border-white/10 text-zinc-400 hover:text-white"
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 font-bold text-xs">
+                    <Sparkles size={14} className="text-amber-400" />
+                    <span>Instant NIBSS</span>
+                  </div>
+                  <p className="text-[10px] text-zinc-400 mt-1">Under 3 mins (1.5% fee)</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsInstantPayout(false)}
+                  className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
+                    !isInstantPayout
+                      ? "bg-brand-primary/10 border-brand-primary text-white"
+                      : "bg-white/5 border-white/10 text-zinc-400 hover:text-white"
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 font-bold text-xs">
+                    <Clock size={14} className="text-sky-400" />
+                    <span>Standard Payout</span>
+                  </div>
+                  <p className="text-[10px] text-zinc-400 mt-1">Free (within 24 hours)</p>
+                </button>
+              </div>
+
+              {/* Bank Details Inputs */}
+              <div className="space-y-3 mb-6">
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">
+                    Bank Name
+                  </label>
+                  <select
+                    value={bankName}
+                    onChange={(e) => setBankName(e.target.value)}
+                    className="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-3 text-white text-xs font-semibold focus:border-brand-primary outline-none"
+                  >
+                    <option value="Access Bank" className="bg-zinc-900 text-white">Access Bank</option>
+                    <option value="GTBank" className="bg-zinc-900 text-white">Guaranty Trust Bank (GTBank)</option>
+                    <option value="Zenith Bank" className="bg-zinc-900 text-white">Zenith Bank</option>
+                    <option value="First Bank" className="bg-zinc-900 text-white">First Bank of Nigeria</option>
+                    <option value="UBA" className="bg-zinc-900 text-white">United Bank for Africa (UBA)</option>
+                    <option value="Kuda Bank" className="bg-zinc-900 text-white">Kuda Microfinance Bank</option>
+                    <option value="Opay" className="bg-zinc-900 text-white">OPay Digital Services</option>
+                    <option value="Palmpay" className="bg-zinc-900 text-white">PalmPay</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">
+                    10-Digit NUBAN Account Number
+                  </label>
+                  <input
+                    type="text"
+                    maxLength={10}
+                    value={accountNumber}
+                    onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, ""))}
+                    placeholder="0123456789"
+                    className="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-3 text-white font-mono text-xs focus:border-brand-primary outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* Financial Calculation Breakdown */}
+              {(() => {
+                const calc = calculatePayoutBreakdown(withdrawAmount || 0, isInstantPayout);
+                return (
+                  <div className="p-3.5 rounded-2xl bg-white/5 border border-white/5 space-y-1.5 text-xs text-zinc-400 mb-6">
+                    <div className="flex justify-between">
+                      <span>Requested Disbursal:</span>
+                      <span className="font-bold text-white">{calc.formattedRequested}</span>
+                    </div>
+                    <div className="flex justify-between text-amber-400/90">
+                      <span>Convenience Fee:</span>
+                      <span className="font-bold">{calc.formattedFee}</span>
+                    </div>
+                    <div className="flex justify-between text-emerald-400 font-bold border-t border-white/5 pt-1.5 text-sm">
+                      <span>Net Sent to Bank:</span>
+                      <span>{calc.formattedNet}</span>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              <button
+                type="button"
+                disabled={isWithdrawing || !withdrawAmount || withdrawAmount > balance}
+                onClick={handleProcessPayout}
+                className="w-full h-12 rounded-full bg-brand-primary hover:bg-sky-400 text-background font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50 shadow-lg shadow-sky-500/25"
+              >
+                {isWithdrawing ? "Processing Disbursal..." : "Confirm Bank Disbursal"}
+              </button>
             </motion.div>
           </motion.div>
         )}

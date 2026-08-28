@@ -23,7 +23,7 @@ export default function DualAudienceSection() {
             Two-Sided Marketplace
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 uppercase font-heading tracking-tight">
-            Built For Customers <span className="text-sky-600">&amp; Skilled Artisans</span>
+            Built For Customers <span className="text-sky-600">&amp; Skilled Professionals</span>
           </h2>
           <p className="mt-2 text-slate-600 text-sm sm:text-base font-medium">
             Connecting homeowners who need quality repairs with verified professionals who take pride in their work.
@@ -49,13 +49,13 @@ export default function DualAudienceSection() {
                 Need A Professional?
               </h3>
               <p className="text-sm text-slate-600 font-medium leading-relaxed mb-6">
-                Get the right person for the job without the stress of random artisans, price guessing, or unfinished work.
+                Get the right person for the job without the stress of unverified workers, price guessing, or unfinished work.
               </p>
 
               <ul className="space-y-3 mb-8 text-xs font-semibold text-slate-700">
                 <li className="flex items-center gap-2.5">
                   <CheckCircle2 size={16} className="text-sky-600 shrink-0" />
-                  <span>Government NIN &amp; background verified technicians</span>
+                  <span>Government NIN &amp; background verified professionals</span>
                 </li>
                 <li className="flex items-center gap-2.5">
                   <CheckCircle2 size={16} className="text-sky-600 shrink-0" />
@@ -89,7 +89,7 @@ export default function DualAudienceSection() {
             <div>
               <div className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-700 bg-emerald-100/80 px-3 py-1 rounded-full border border-emerald-200 mb-4">
                 <Briefcase size={14} />
-                <span>For Skilled Artisans</span>
+                <span>For Skilled Professionals</span>
               </div>
 
               <h3 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight mb-3">

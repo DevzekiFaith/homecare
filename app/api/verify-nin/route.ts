@@ -141,7 +141,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<VerifyNin
     // -------------------------------------------------------------
     // DUAL SMART FALLBACK RESOLUTION
     // If live API calls return unconfigured sandbox responses,
-    // we use the technician's actual typed Full Legal Name
+    // we use the professional's actual typed Full Legal Name
     // with dual active gateway badges.
     // -------------------------------------------------------------
     await new Promise(resolve => setTimeout(resolve, 400));
@@ -155,7 +155,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<VerifyNin
 
     const resolvedName = (fullNameInput && fullNameInput.trim().length > 3)
       ? fullNameInput.trim()
-      : "Verified Technician";
+      : "Verified Professional";
 
     const verificationRef = `NIMC-${nin.slice(0, 3)}-${Date.now().toString(36).toUpperCase()}`;
 

@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     default: `${SiteConfig.SITE_NAME} — #1 Vetted Home Repairs, Handymen & Appliances in Nigeria`,
     template: `%s | ${SiteConfig.SITE_NAME}`,
   },
-  description: `Book accredited plumbers, electricians, carpenters, AC repair & painting technicians in Lagos, Abuja, Port Harcourt, Enugu & Ogun. 100% verified artisans, fast escrow payment & 2-minute booking.`,
+  description: `Book accredited plumbers, electricians, carpenters, AC repair & painting professionals in Lagos, Abuja, Port Harcourt, Enugu & Ogun. 100% verified professionals, fast escrow payment & 2-minute booking.`,
   keywords: [
     "home repairs Nigeria",
     "hire plumber Lagos",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     "handyman Enugu",
     "AC repair Port Harcourt",
     "carpenter Abeokuta",
-    "artisan jobs Nigeria",
+    "professional repair jobs Nigeria",
     "home maintenance services",
     "HomeCare Nigeria",
     "generator repair",
@@ -67,8 +67,8 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: SiteConfig.SITE_NAME,
-    title: `${SiteConfig.SITE_NAME} — #1 Vetted Home Repairs & Artisans in Nigeria`,
-    description: `Book accredited plumbers, electricians, carpenters & AC technicians across Nigeria. Book in 2 mins with 100% money-back escrow guarantee.`,
+    title: `${SiteConfig.SITE_NAME} — #1 Vetted Home Repairs & Professionals in Nigeria`,
+    description: `Book accredited plumbers, electricians, carpenters & AC professionals across Nigeria. Book in 2 mins with 100% money-back escrow guarantee.`,
     locale: "en_NG",
     url: "/",
     images: [
@@ -82,8 +82,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SiteConfig.SITE_NAME} — #1 Vetted Home Repairs & Artisans in Nigeria`,
-    description: `Book accredited plumbers, electricians & technicians across Nigeria in 2 minutes.`,
+    title: `${SiteConfig.SITE_NAME} — #1 Vetted Home Repairs & Professionals in Nigeria`,
+    description: `Book accredited plumbers, electricians & professionals across Nigeria in 2 minutes.`,
     images: ["/hclogo.png"],
   },
   manifest: "/manifest.json",

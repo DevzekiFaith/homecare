@@ -412,7 +412,7 @@ export default function LocationMapPicker({
         </div>
       )}
 
-      {/* ── Leaflet / Carto Map ─────────────────────────────────── */}
+      {/* ── Leaflet / Esri ArcGIS Map ─────────────────────────── */}
       {(cityData || customPin) && (
         <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm" style={{ height: 300 }}>
           <LeafletMap

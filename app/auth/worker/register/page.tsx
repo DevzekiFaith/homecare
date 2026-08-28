@@ -11,16 +11,12 @@ import {
   UploadCloud, 
   Eye, 
   EyeOff, 
-  Camera, 
   CheckCircle2, 
   ArrowLeft, 
-  Phone, 
-  Mail, 
-  Lock, 
   MapPin, 
-  Award,
-  Sparkles,
-  FileCheck
+  Award, 
+  Sparkles, 
+  FileCheck 
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import LocationMapPicker from "@/app/components/LocationMapPicker";
@@ -44,13 +40,10 @@ const SKILLS = [
   "General Handyman",
 ];
 
-
-
 export default function WorkerRegisterPage() {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [ninError, setNinError] = useState<string | null>(null);
@@ -157,7 +150,7 @@ export default function WorkerRegisterPage() {
             description: "An account with this email already exists. Please log in to your Pro Portal or use a different email."
           });
         } else {
-          const parsed = handleAuthError(authError, "artisan registration");
+          const parsed = handleAuthError(authError, "professional registration");
           toast.error(parsed.title, { description: parsed.description });
           setErrorMessage(`${parsed.title}: ${parsed.description}`);
         }
@@ -167,7 +160,7 @@ export default function WorkerRegisterPage() {
       const userId = authData?.user?.id;
 
       if (!userId) {
-        setErrorMessage("Could not generate technician account ID. Please try another email.");
+        setErrorMessage("Could not generate professional account ID. Please try another email.");
         return;
       }
 
@@ -236,8 +229,8 @@ export default function WorkerRegisterPage() {
       setTimeout(() => {
         router.push("/worker/dashboard");
       }, 1500);
-    } catch (err: any) {
-      const parsed = handleAuthError(err, "artisan registration");
+    } catch (err: unknown) {
+      const parsed = handleAuthError(err, "professional registration");
       setErrorMessage(`${parsed.title}: ${parsed.description}`);
     } finally {
       setSubmitting(false);
@@ -267,7 +260,7 @@ export default function WorkerRegisterPage() {
       
       if (data.status === 'verified' && data.details) {
         setNinDetails(data.details);
-        if (!fullName && data.details.fullName && data.details.fullName !== "Verified Technician") {
+        if (!fullName && data.details.fullName && data.details.fullName !== "Verified Professional") {
           setFullName(data.details.fullName);
         }
         toast.success("NIN Authenticated with NIMC Registry!");
@@ -299,10 +292,10 @@ export default function WorkerRegisterPage() {
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-heading font-black tracking-tight text-slate-900">
-              Technician Verification Portal
+              Professional Verification &amp; Accreditation Portal
             </h1>
             <p className="mt-2 text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
-              Customer safety is our absolute priority. Provide your verified identity and professional credentials to join our approved technician network.
+              Customer safety is our absolute priority. Provide your verified identity and professional credentials to join our approved professional network.
             </p>
           </div>
 
@@ -697,17 +690,87 @@ export default function WorkerRegisterPage() {
               </div>
             </div>
 
+            {/* Sec 4: Professional Accreditation & Verification Fee (₦3,500 One-Off) */}
+            <div className="space-y-5">
+              <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-800 border-b border-slate-200 pb-2.5">
+                <Award size={17} className="text-sky-600" /> 4. Professional Accreditation &amp; Background Vetting
+              </h2>
+
+              <div className="p-6 rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-md space-y-5">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">Accreditation Package</span>
+                    <h3 className="text-lg font-heading font-black text-white">₦3,500 One-Time Vetting Fee</h3>
+                  </div>
+                  <span className="inline-flex items-center gap-1 text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-full uppercase tracking-wider self-start sm:self-auto">
+                    <ShieldCheck size={13} /> Verified Pro Status
+                  </span>
+                </div>
+
+                <p className="text-xs text-slate-300 font-medium leading-relaxed">
+                  To protect homeowners and maintain elite service quality, all professionals undergo live government NIMC identity cross-referencing and criminal registry vetting upon registration.
+                </p>
+
+                <div className="grid gap-3 sm:grid-cols-3 text-xs">
+                  <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-1">
+                    <div className="flex items-center gap-1.5 text-emerald-400 font-bold text-[11px]">
+                      <CheckCircle2 size={13} /> NIMC Registry
+                    </div>
+                    <p className="text-[10px] text-slate-400">Direct biometric and NIN validation with national databases.</p>
+                  </div>
+                  <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-1">
+                    <div className="flex items-center gap-1.5 text-sky-400 font-bold text-[11px]">
+                      <Sparkles size={13} /> Verified Pro Badge
+                    </div>
+                    <p className="text-[10px] text-slate-400">Guarantees priority matching and instant high-paying jobs.</p>
+                  </div>
+                  <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-1">
+                    <div className="flex items-center gap-1.5 text-amber-400 font-bold text-[11px]">
+                      <FileCheck size={13} /> 100% Escrow Access
+                    </div>
+                    <p className="text-[10px] text-slate-400">Guaranteed neutral escrow disbursals directly to your wallet.</p>
+                  </div>
+                </div>
+
+                {/* Bank Transfer Details for Accreditation */}
+                <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-2 text-xs">
+                  <div className="flex justify-between items-center text-slate-300">
+                    <span className="font-bold text-[10px] uppercase tracking-wider text-slate-400">Bank Transfer Details</span>
+                    <span className="text-[10px] text-emerald-400 font-extrabold uppercase">Globus Bank Direct</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-400">Account Number:</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText("1000501179");
+                        toast.success("Account Number Copied: 1000501179");
+                      }}
+                      className="font-mono font-black text-white hover:text-sky-300 transition-colors flex items-center gap-1 cursor-pointer"
+                    >
+                      <span>1000501179</span>
+                      <span className="text-[10px] bg-white/10 px-1.5 py-0.5 rounded text-sky-300">Copy</span>
+                    </button>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-400">Account Name:</span>
+                    <span className="font-bold text-white text-[11px]">Mindvest Global Resources Ltd LLC</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Submission Actions */}
             <div className="pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
               <p className="text-xs text-slate-500 font-medium leading-relaxed">
-                By submitting your application, you agree to our technician safety and performance standards.
+                By submitting your application, you agree to our professional safety and performance standards.
               </p>
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full sm:w-auto min-w-[200px] h-13 inline-flex items-center justify-center rounded-2xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-black uppercase tracking-wider shadow-md transition-all disabled:opacity-50 cursor-pointer"
+                className="w-full sm:w-auto min-w-[220px] h-13 inline-flex items-center justify-center rounded-2xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-black uppercase tracking-wider shadow-md transition-all disabled:opacity-50 cursor-pointer"
               >
-                {submitting ? "Submitting Application..." : "Submit Identity & Register"}
+                {submitting ? "Submitting Application..." : "Submit Identity & Register (₦3,500)"}
               </button>
             </div>
 
@@ -766,7 +829,7 @@ export default function WorkerRegisterPage() {
             </div>
 
             <div className="pt-4 border-t border-slate-100 space-y-2">
-              <p className="text-xs font-bold text-slate-500">Already registered as a technician?</p>
+              <p className="text-xs font-bold text-slate-500">Already registered as a professional?</p>
               <Link
                 href="/auth/worker/login"
                 className="block text-center py-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white text-xs font-bold text-sky-700 transition-colors"

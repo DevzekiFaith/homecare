@@ -11,7 +11,7 @@ export default function FooterSection() {
         <div className="md:col-span-2">
           <Logo size="md" className="mb-6" variant="white" />
           <p className="text-sky-200/80 text-sm max-w-sm leading-relaxed mb-6">
-            Connecting you to verified home repair professionals, plumbers, electricians, and artisans in minutes. Fast & Reliable.
+            Connecting you to verified home repair professionals, plumbers, electricians, and carpenters in minutes. Fast &amp; Reliable.
           </p>
 
           <div className="space-y-2.5 text-sm text-sky-100/90 font-medium">
@@ -49,7 +49,7 @@ export default function FooterSection() {
             <li><Link href="/auth/customer/register" className="hover:text-white transition-colors">Create Account</Link></li>
             <li><Link href="/auth/worker/register" className="hover:text-white transition-colors">Join as a Pro</Link></li>
             <li><Link href="/auth/customer/login" className="hover:text-white transition-colors">Customer Login</Link></li>
-            <li><Link href="/auth/worker/login" className="hover:text-white transition-colors">Artisan Portal</Link></li>
+            <li><Link href="/auth/worker/login" className="hover:text-white transition-colors">Professional Portal</Link></li>
             <li><Link href="/admin" className="text-cyan-300 hover:text-white font-bold transition-colors">🔒 Admin Dashboard</Link></li>
           </ul>
         </div>

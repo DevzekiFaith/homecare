@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -131,9 +130,9 @@ export function OrderTrackingContent() {
 
       <div className="mx-auto max-w-4xl relative z-10">
         <header className="mb-12 text-center">
-          <Link href="/store" className="inline-block mb-8">
-            <Logo size="md" />
-          </Link>
+          <div className="inline-block mb-8">
+            <Logo size="md" href="/store" />
+          </div>
           <motion.h1 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}

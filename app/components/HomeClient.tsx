@@ -11,7 +11,7 @@ import { Wrench, Zap, Hammer, Armchair, Snowflake, Paintbrush, PenTool } from "l
 const PRO_IMAGES = [
   { src: "/su10.jpg", alt: "Electrician at work" },
   { src: "/su11.jpg", alt: "Handyman with tools" },
-  { src: "/su12.jpg", alt: "Technician repairing" },
+  { src: "/su12.jpg", alt: "Professional repairing" },
 ];
 
 const SERVICES = [

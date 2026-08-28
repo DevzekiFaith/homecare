@@ -337,7 +337,7 @@ export default function ProductDetailPage({ params }: PageProps) {
                   </div>
                   <div>
                     <p className="text-xs font-extrabold text-slate-900">Need Professional Installation?</p>
-                    <p className="text-[11px] text-slate-500 font-medium">Add a verified HomeCare technician during checkout.</p>
+                    <p className="text-[11px] text-slate-500 font-medium">Add a verified HomeCare professional during checkout.</p>
                   </div>
                 </div>
                 <Link

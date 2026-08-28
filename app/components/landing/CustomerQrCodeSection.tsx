@@ -48,7 +48,7 @@ export default function CustomerQrCodeSection() {
               <img src="${qrImageUrl}" class="qr-image" alt="HomeCare Customer QR Code" />
             </div>
             <div class="instruction">SCAN TO BOOK REPAIR</div>
-            <div class="sub-instruction">Point smartphone camera to request verified plumbers, electricians & technicians</div>
+            <div class="sub-instruction">Point smartphone camera to request verified plumbers, electricians & professionals</div>
             <div class="footer-pill">100% Escrow Protected • NIN Verified</div>
           </div>
           <script>
@@ -101,7 +101,7 @@ export default function CustomerQrCodeSection() {
                 </div>
                 <div>
                   <span className="text-xs font-black text-slate-900 block uppercase">Instant Location Recognition</span>
-                  <span className="text-[11px] text-slate-500 font-medium">Auto-pairs request with nearest NIN-verified technician</span>
+                  <span className="text-[11px] text-slate-500 font-medium">Auto-pairs request with nearest NIN-verified professional</span>
                 </div>
               </div>
             </div>
@@ -161,7 +161,7 @@ export default function CustomerQrCodeSection() {
                   <span>SCAN TO BOOK A REPAIR</span>
                 </h4>
                 <p className="text-[11px] font-medium text-slate-500 leading-tight">
-                  Point smartphone camera to request plumbers, electricians &amp; technicians
+                  Point smartphone camera to request plumbers, electricians &amp; professionals
                 </p>
               </div>
 

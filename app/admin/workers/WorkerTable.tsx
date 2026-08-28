@@ -78,7 +78,7 @@ export default function WorkerTable({ initialWorkers }: { initialWorkers: Worker
 
   const handleDeleteWorker = (id: string, name: string) => {
     toast(`Delete Worker "${name}"?`, {
-      description: "Permanently delete this technician profile record from the system database.",
+      description: "Permanently delete this professional profile record from the system database.",
       action: {
         label: "Confirm Delete",
         onClick: async () => {
@@ -278,13 +278,13 @@ export default function WorkerTable({ initialWorkers }: { initialWorkers: Worker
                   <>
                     <p className="text-sm font-black text-slate-900">No Service Professionals Registered Yet</p>
                     <p className="text-xs text-slate-500 max-w-md mx-auto">
-                      Technicians who register via the technician onboarding portal will appear here live in real-time for verification and background screening.
+                      Professionals who register via the professional onboarding portal will appear here live in real-time for verification and background screening.
                     </p>
                     <Link
                       href="/auth/worker/register"
                       className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-sky-600 text-white text-xs font-bold uppercase tracking-wider shadow-md hover:bg-sky-500 transition-colors cursor-pointer"
                     >
-                      <UserCheck size={14} /> Open Technician Onboarding
+                      <UserCheck size={14} /> Open Professional Onboarding
                     </Link>
                   </>
                 ) : (

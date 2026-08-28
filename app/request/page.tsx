@@ -88,11 +88,10 @@ function RequestContent() {
         const map = L.map("booking-map").setView([initLat, initLng], 13);
         mapRef.current = map;
 
-        // Add CARTO Voyager Tiles
-        L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-          subdomains: "abcd",
-          maxZoom: 20
+        // Add Esri ArcGIS World Street Map Tiles
+        L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
+          attribution: 'Tiles &copy; <a href="https://www.esri.com/">Esri</a> &mdash; Esri, DeLorme, NAVTEQ, TomTom, USGS, METI',
+          maxZoom: 19
         }).addTo(map);
 
         // Create draggable marker
@@ -421,7 +420,7 @@ function RequestContent() {
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
             <div>
               <span className="text-[11px] font-bold uppercase tracking-widest text-sky-200 bg-white/10 px-3.5 py-1.5 rounded-full border border-white/20 inline-block mb-3">
-                Verified Artisan Dispatch
+                Verified Professional Dispatch
               </span>
               <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white uppercase">
                 Book a <span className="text-cyan-200">Professional</span>
@@ -802,7 +801,7 @@ function RequestContent() {
                             </div>
                         </div>
 
-                        <div className="bg-sky-50/70 rounded-2xl p-5 border border-sky-100 space-y-3 mb-6">
+                        <div className="bg-sky-50/70 rounded-2xl p-5 border border-sky-100 space-y-3 mb-4">
                             <div className="flex justify-between items-center text-xs">
                               <span className="text-slate-500 font-bold uppercase tracking-wider">Bank Name</span>
                               <span className="text-slate-900 font-bold">{PAYMENT_ACCOUNT.bankName}</span>
@@ -815,6 +814,17 @@ function RequestContent() {
                               <span className="text-slate-500 font-bold uppercase tracking-wider">Account Name</span>
                               <span className="text-slate-900 font-bold">{PAYMENT_ACCOUNT.accountName}</span>
                             </div>
+                        </div>
+
+                        {/* Escrow Guarantee Trust Breakdown */}
+                        <div className="p-3.5 rounded-2xl bg-emerald-50/60 border border-emerald-200/80 mb-6 space-y-1.5 text-[11px] text-emerald-800">
+                          <div className="flex items-center gap-1.5 font-extrabold text-emerald-900 uppercase tracking-wider text-[10px]">
+                            <ShieldCheck size={14} className="text-emerald-600" />
+                            <span>100% Neutral Escrow Vault Protection Active</span>
+                          </div>
+                          <p className="leading-relaxed font-medium">
+                            Your payment is safely locked in HomeCare Escrow. The professional is only disbursed funds when you test, inspect, and approve the completed repair.
+                          </p>
                         </div>
 
                         <div className="flex flex-col gap-3">
@@ -835,7 +845,7 @@ function RequestContent() {
                                       email: paymentDetails.email || "customer@homecare.com.ng",
                                       name: paymentDetails.name || "HomeCare Customer",
                                       phone: paymentDetails.phone || "08000000000",
-                                      title: "HomeCare Artisan Escrow Deposit",
+                                      title: "HomeCare Professional Escrow Deposit",
                                       description: `Escrow payment for ${selectedService || "Service Booking"}`,
                                       type: "service_request",
                                       userId: user?.id || null,
@@ -898,14 +908,14 @@ function RequestContent() {
                                 Smart Matching Engine Active...
                               </h3>
                               <p className="text-xs text-sky-600 font-bold uppercase tracking-widest animate-pulse">
-                                Searching top verified artisans in Lagos...
+                                Searching top verified professionals in Lagos...
                               </p>
                             </div>
                           ) : (
                             <>
                               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-black uppercase tracking-widest mb-3">
                                 <CheckCircle2 size={13} />
-                                <span>Booking Confirmed &amp; Artisan Assigned</span>
+                                <span>Booking Confirmed &amp; Professional Assigned</span>
                               </div>
                               <h3 className="text-2xl font-heading font-black text-slate-900 uppercase tracking-tight">
                                 Professional <span className="text-sky-600">Matched!</span>

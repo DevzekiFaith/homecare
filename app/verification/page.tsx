@@ -77,7 +77,7 @@ export default function VerificationPage() {
               <h2 className="text-xl font-black text-slate-900 uppercase">3. Trade Skill &amp; Work Evaluation</h2>
             </div>
             <p className="text-sm text-slate-600 font-medium leading-relaxed">
-              Technicians submit proof of prior trade work, apprenticeships, or certifications (e.g. electrical wiring standards, HVAC gas safety, plumbing pressure seals).
+              Professionals submit proof of prior trade work, apprenticeships, or certifications (e.g. electrical wiring standards, HVAC gas safety, plumbing pressure seals).
             </p>
           </div>
 

@@ -156,7 +156,7 @@ export default function AdminSurgePage() {
         <p className="text-xs font-black uppercase tracking-wider text-sky-600 mb-1">Pricing & Algorithms</p>
         <h1 className="text-2xl font-heading font-black tracking-tight text-slate-900">Dynamic Surge Pricing</h1>
         <p className="mt-1 text-xs text-slate-500 font-medium">
-          Real-time multiplier calculation based on live local demand, technician density, and time of day.
+          Real-time multiplier calculation based on live local demand, professional density, and time of day.
         </p>
       </div>
 
@@ -384,7 +384,7 @@ export default function AdminSurgePage() {
           </div>
           <div className="space-y-1">
             <p className="font-bold text-slate-900">Night Window (40% Premium)</p>
-            <p>Requests after 9 PM or before 6 AM carry a late-night technician dispatch premium.</p>
+            <p>Requests after 9 PM or before 6 AM carry a late-night professional dispatch premium.</p>
           </div>
           <div className="space-y-1">
             <p className="font-bold text-slate-900">Weekend Availability (10–15%)</p>

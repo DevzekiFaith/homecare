@@ -46,7 +46,7 @@ export default function FeaturesSection() {
             className="lg:col-span-7 flex flex-col items-start"
           >
             <span className="text-xs font-bold uppercase tracking-wider text-sky-600 bg-sky-100/70 px-3 py-1 rounded-full border border-sky-200 mb-3">
-              Certified Artisans
+              Certified Professionals
             </span>
 
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 leading-tight uppercase mb-5">
@@ -55,7 +55,7 @@ export default function FeaturesSection() {
             </h2>
 
             <p className="text-base text-slate-600 leading-relaxed font-medium mb-6 max-w-xl">
-              Don&apos;t let leaking pipes, faulty electrical wiring, or broken furniture disrupt your peace. Our verified local artisans arrive equipped with professional diagnostic tools to fix your home immediately.
+              Don&apos;t let leaking pipes, faulty electrical wiring, or broken furniture disrupt your peace. Our verified local professionals arrive equipped with professional diagnostic tools to fix your home immediately.
             </p>
 
             <ul className="space-y-3 mb-8 text-sm font-semibold text-slate-700">
@@ -77,7 +77,7 @@ export default function FeaturesSection() {
               href="/request"
               className="h-13 px-8 rounded-full bg-sky-500 hover:bg-sky-600 text-white font-extrabold uppercase tracking-widest text-xs flex items-center gap-2 shadow-lg shadow-sky-500/25 transition-all hover:scale-105"
             >
-              <span>Book an Artisan Now</span>
+              <span>Book a Professional Now</span>
               <ArrowRight size={16} />
             </Link>
           </motion.div>
@@ -88,7 +88,7 @@ export default function FeaturesSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-10 border-t border-slate-200">
           {[
             { title: "30-Day Guarantee", desc: "Free follow-up if any repair requires additional tuning within 30 days.", icon: ShieldCheck },
-            { title: "Rapid Matching", desc: "Automated geolocation pairs you with the closest qualified artisan in seconds.", icon: Zap },
+            { title: "Rapid Matching", desc: "Automated geolocation pairs you with the closest qualified professional in seconds.", icon: Zap },
             { title: "Escrow Protection", desc: "Funds remain safely in escrow until you inspect and approve the completed job.", icon: CheckCircle2 },
             { title: "Certified Network", desc: "Background-checked, identity-verified, and vetted for exceptional workmanship.", icon: Award },
           ].map((item, index) => (

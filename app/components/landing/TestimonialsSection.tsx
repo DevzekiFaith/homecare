@@ -71,7 +71,7 @@ const CLIENT_OUTCOMES = [
     tabLabel: "Dr. Biola (VI)",
     tag: "Clinic AC Cooling Outcome",
     heading: "Clinic Consultation Room Cooling Restored",
-    desc: "Two clinic consultation room AC units stopped cooling due to gas leakage. HVAC technician pressure-tested gas lines, refilled R410a coolant, and restored ice-cold airflow for patients.",
+    desc: "Two clinic consultation room AC units stopped cooling due to gas leakage. HVAC professional pressure-tested gas lines, refilled R410a coolant, and restored ice-cold airflow for patients.",
     problem: "Clinic AC units stopped cooling due to gas leak",
     outcome: "Gas lines pressure-tested & R410a refilled",
     metricValue: "30 Days",
@@ -118,7 +118,7 @@ const fallbackReviews = [
     location: "Victoria Island, Lagos",
     service: "Clinic AC Maintenance",
     problem: "Two clinic consultation room AC units stopped cooling due to gas leakage.",
-    outcome: "Technician pressure-tested gas lines, refilled R410a coolant, and restored ice-cold airflow.",
+    outcome: "Professional pressure-tested gas lines, refilled R410a coolant, and restored ice-cold airflow.",
     rating: 5,
   },
 ];

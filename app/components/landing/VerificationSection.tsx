@@ -60,7 +60,7 @@ const VERIFICATION_STEPS = [
     tabLabel: "Trade Evaluation",
     phaseTag: "Phase #3: Trade Skill Assessment",
     heading: "Skill & Experience Evaluated",
-    desc: "Technicians undergo trade history verification, previous project portfolio reviews, and technical skill testing before receiving active dispatch status.",
+    desc: "Professionals undergo trade history verification, previous project portfolio reviews, and technical skill testing before receiving active dispatch status.",
     metricValue: "Accredited",
     metricLabel: "Trade Skill & Quality Standard",
     proName: "David Okon",

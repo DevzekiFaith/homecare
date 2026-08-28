@@ -43,8 +43,8 @@ const PROCESS_STEPS = [
     metricValue: "100%",
     metricLabel: "NIN Identity & Background Checked",
     image: "/slide_verified_pros_unique.jpg",
-    badgeTitle: "Artisan Matched",
-    badgeRole: "Accredited Local Technician",
+    badgeTitle: "Professional Matched",
+    badgeRole: "Accredited Local Professional",
     badges: [
       { label: "Location Verified", icon: UserCheck, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
       { label: "NIN Background Checked", icon: ShieldCheck, color: "bg-purple-500/20 text-purple-300 border-purple-500/30" },
@@ -71,7 +71,7 @@ const PROCESS_STEPS = [
     label: "Pay Securely",
     stepTitle: "Step 04: Escrow Protection",
     heading: "4. PAY SECURELY",
-    desc: "Your payment is deposited safely into HomeCare Escrow and never sent directly to technicians before work starts.",
+    desc: "Your payment is deposited safely into HomeCare Escrow and never sent directly to professionals before work starts.",
     metricValue: "100%",
     metricLabel: "Escrow Deposit Security",
     image: "/slide_escrow_vault_unique.jpg",
@@ -87,7 +87,7 @@ const PROCESS_STEPS = [
     label: "Track Service",
     stepTitle: "Step 05: Dispatch & Transit Tracking",
     heading: "5. TRACK THE SERVICE",
-    desc: "Track the assigned technician's transit, dispatch status, and estimated arrival time directly on your HomeCare screen.",
+    desc: "Track the assigned professional's transit, dispatch status, and estimated arrival time directly on your HomeCare screen.",
     metricValue: "Live",
     metricLabel: "Transit & Dispatch Tracking",
     image: "/slide_plumbing_unique.jpg",
@@ -124,7 +124,7 @@ const PROCESS_STEPS = [
     metricLabel: "Post-Service Follow-Up Support",
     image: "/tech-working.jpg",
     badgeTitle: "Follow-Up Protection Active",
-    badgeRole: "Rebook Favorite Technicians Anytime",
+    badgeRole: "Rebook Favorite Professionals Anytime",
     badges: [
       { label: "30-Day Support", icon: ShieldCheck, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
       { label: "Rebook Favorite Pro", icon: UserCheck, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
@@ -201,7 +201,7 @@ export default function HowItWorksSection() {
                       <span>{current.id === "05" ? "Safest Payment Process Active" : "Guaranteed HomeCare Standard"}</span>
                     </div>
                     <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                      Structured process ensuring full accountability, NIN-verified artisans, and 100% deposit protection.
+                      Structured process ensuring full accountability, NIN-verified professionals, and 100% deposit protection.
                     </p>
                   </div>
                 </motion.div>

@@ -103,7 +103,7 @@ export default function PublicReviewsPage() {
       {/* Main content grid */}
       <div className="mx-auto max-w-5xl px-4 sm:px-6 py-10 relative z-10">
         
-        {/* Artisan Live Review QR Code Simulator card */}
+        {/* Professional Live Review QR Code Simulator card */}
         <div className="bg-gradient-to-br from-slate-900 to-sky-950 border border-slate-800 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center gap-8 mb-10 text-white shadow-xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-sky-500/10 rounded-full blur-2xl pointer-events-none" />
           
@@ -114,7 +114,7 @@ export default function PublicReviewsPage() {
               src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
                 `https://www.homecare.com.ng/review?request_id=${latestRequestId}`
               )}`}
-              alt="Artisan Review QR Code"
+              alt="Professional Review QR Code"
               className="w-36 h-36 mx-auto"
             />
             <span className="text-[9px] font-black uppercase tracking-wider text-slate-500 block mt-2">
@@ -128,7 +128,7 @@ export default function PublicReviewsPage() {
               Interactive UI Simulator
             </span>
             <h2 className="text-xl sm:text-2xl font-black uppercase tracking-wide">
-              Artisan Live Review QR Code
+              Professional Live Review QR Code
             </h2>
             <p className="text-xs text-slate-300 font-medium leading-relaxed max-w-xl">
               This is the QR code presented by professionals (like Electricians or Plumbers) upon completing a job. Scan it with your phone to open the rating page instantly, or click below to open the mobile simulator directly in your browser.

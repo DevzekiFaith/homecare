@@ -16,7 +16,7 @@ export default function Footer() {
               Book it. Fix it. Done.
             </h3>
             <p className="text-sm font-medium text-slate-400 max-w-xs leading-relaxed mb-6">
-              Verified artisans. Rapid matching. Escrow protected payments.
+              Verified professionals. Rapid matching. Escrow protected payments.
             </p>
 
             <div className="flex flex-col gap-3 text-xs font-semibold text-sky-400">

@@ -131,7 +131,7 @@ const RESOURCES: ArticleItem[] = [
       { 
         step: "05", 
         title: "CALL A PRO: High-Voltage Appliance Rewiring", 
-        body: "Connecting 2HP+ air conditioners, water heaters, or pumping machines to dedicated circuit breakers demands proper cable gauge selection and NIN-verified technicians." 
+        body: "Connecting 2HP+ air conditioners, water heaters, or pumping machines to dedicated circuit breakers demands proper cable gauge selection and NIN-verified professionals." 
       },
     ],
   },
@@ -367,7 +367,7 @@ export default function EducationalResourcesSection() {
                     onClick={() => setSelectedResource(null)}
                     className="px-5 py-2.5 rounded-full bg-sky-600 hover:bg-sky-500 text-white text-xs font-extrabold uppercase tracking-wider flex items-center gap-1.5 shadow-md shadow-sky-600/20"
                   >
-                    <span>Book Technician Now</span>
+                    <span>Book Professional Now</span>
                     <ArrowRight size={14} />
                   </Link>
                 </div>

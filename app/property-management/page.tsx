@@ -44,7 +44,7 @@ export default function PropertyManagementPage() {
             </span>
             <h2 className="text-xl font-black text-slate-900">Emergency &amp; On-Demand Call-outs</h2>
             <p className="text-xs text-slate-600 font-medium leading-relaxed">
-              Rapid dispatch of plumbers, electricians, AC technicians, or mechanics to fix urgent leaks, electrical faults, or pump failures.
+              Rapid dispatch of plumbers, electricians, AC professionals, or carpenters to fix urgent leaks, electrical faults, or pump failures.
             </p>
           </div>
 
@@ -74,7 +74,7 @@ export default function PropertyManagementPage() {
             </span>
             <h2 className="text-xl font-black text-slate-900">Estates, Offices &amp; Clinics</h2>
             <p className="text-xs text-slate-600 font-medium leading-relaxed">
-              Dedicated account coordinator and multi-trade technician teams assigned to manage commercial, clinical, or estate facilities.
+              Dedicated account coordinator and multi-trade professional teams assigned to manage commercial, clinical, or estate facilities.
             </p>
           </div>
 
@@ -86,7 +86,7 @@ export default function PropertyManagementPage() {
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-bold text-slate-700">
             <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-emerald-600" /> Multiple property address tracking</li>
             <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-emerald-600" /> Centralized invoices &amp; transparent receipts</li>
-            <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-emerald-600" /> 100% NIN Government Verified Technicians</li>
+            <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-emerald-600" /> 100% NIN Government Verified Professionals</li>
             <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-emerald-600" /> Escrow payment protection on all repairs</li>
           </ul>
         </div>

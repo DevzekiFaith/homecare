@@ -1,21 +1,27 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
-import { ArrowLeft, Check, Shield, Star, Zap, Loader2 } from "lucide-react";
+import { ArrowLeft, Check, Shield, Star, Zap, Loader2, X, Copy, CheckCircle2, ShieldCheck, CreditCard, Building2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import ErrorAlert from "@/app/components/ErrorAlert";
-
+import { PAYMENT_ACCOUNT } from "@/lib/payment-details";
 import { toast } from "sonner";
 
 export default function SubscriptionPage() {
-  const [currentTier, setCurrentTier] = useState<'plus' | 'pro' | 'elite'>('plus');
+  const [currentTier, setCurrentTier] = useState<'plus' | 'pro' | 'elite' | 'basic'>('basic');
   const [loading, setLoading] = useState(true);
   const [upgrading, setUpgrading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selectedState, setSelectedState] = useState<'lagos' | 'abuja' | 'ph' | 'enugu' | 'ogun'>('lagos');
   const [paymentPeriod, setPaymentPeriod] = useState<'monthly' | 'quarterly' | 'annual'>('monthly');
+  const [userProfile, setUserProfile] = useState<{ id: string; email?: string; full_name?: string } | null>(null);
+
+  // Modal checkout state
+  const [checkoutTier, setCheckoutTier] = useState<'plus' | 'pro' | 'elite' | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [isInitializingFlw, setIsInitializingFlw] = useState(false);
 
   const supabase = useMemo(() => createClient(), []);
 
@@ -23,7 +29,6 @@ export default function SubscriptionPage() {
     try {
       setLoading(true);
       
-      // Instant session resolution (< 1ms from client cache)
       const { data: sessionData } = await supabase.auth.getSession();
       let user = sessionData.session?.user;
 
@@ -36,6 +41,12 @@ export default function SubscriptionPage() {
         setLoading(false);
         return;
       }
+
+      setUserProfile({
+        id: user.id,
+        email: user.email,
+        full_name: user.user_metadata?.full_name || "Customer",
+      });
 
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
@@ -57,56 +68,6 @@ export default function SubscriptionPage() {
     fetchProfile();
   }, [fetchProfile]);
 
-  const handleUpgrade = async (tier: 'plus' | 'pro' | 'elite') => {
-    try {
-      setUpgrading(tier);
-      setError(null);
-      const { data } = await supabase.auth.getUser();
-      const user = data.user;
-      if (!user) {
-        setError("Please log in to upgrade.");
-        return;
-      }
-
-      // 1. Update Profile Tier
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({ subscription_tier: tier })
-        .eq('id', user.id);
-
-      if (updateError) throw updateError;
-
-      // 2. Log Subscription (Expires in 30 days)
-      const expiresAt = new Date();
-      expiresAt.setDate(expiresAt.getDate() + 30);
-
-      const { error: subError } = await supabase
-        .from('subscriptions')
-        .insert({
-          user_id: user.id,
-          tier: tier,
-          status: 'active',
-          expires_at: expiresAt.toISOString()
-        });
-
-      if (subError) throw subError;
-
-      setCurrentTier(tier);
-      toast.success(`Welcome to HomeCare ${tier.toUpperCase()}! Your benefits are now active.`, {
-        description: "Your subscription has been activated successfully."
-      });
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Upgrade failed";
-      setError(`Upgrade failed: ${msg}`);
-      toast.error(`Upgrade failed: ${msg}`);
-    } finally {
-      setUpgrading(null);
-    }
-  };
-
-  const containerVariants = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } };
-  const itemVariants = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 300 } } };
-
   // State-specific pricing configuration
   const statePricing = {
     lagos: { plus: 25000, pro: 45000, elite: 200000 },
@@ -126,13 +87,12 @@ export default function SubscriptionPage() {
 
   const currentPricing = statePricing[selectedState];
 
-  // Calculate pricing based on payment period
   const getDiscountedPrice = (basePrice: number) => {
     switch (paymentPeriod) {
       case 'quarterly':
-        return Math.round(basePrice * 3 * 0.9); // 10% discount for quarterly
+        return Math.round(basePrice * 3 * 0.9);
       case 'annual':
-        return Math.round(basePrice * 12 * 0.8); // 20% discount for annual
+        return Math.round(basePrice * 12 * 0.8);
       default:
         return basePrice;
     }
@@ -155,10 +115,109 @@ export default function SubscriptionPage() {
     elite: getDiscountedPrice(currentPricing.elite),
   };
 
+  const handleOpenCheckout = (tier: 'plus' | 'pro' | 'elite') => {
+    if (!userProfile) {
+      toast.error("Please login to subscribe", {
+        description: "You need an active customer account to activate membership."
+      });
+      window.location.href = "/auth/customer/login?redirect=/customer/subscription";
+      return;
+    }
+    setCheckoutTier(tier);
+  };
+
+  const handleActivateSubscription = async (tier: 'plus' | 'pro' | 'elite') => {
+    try {
+      setUpgrading(tier);
+      setError(null);
+      
+      if (!userProfile?.id) {
+        setError("Please log in to upgrade.");
+        return;
+      }
+
+      // 1. Update Profile Tier
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ subscription_tier: tier })
+        .eq('id', userProfile.id);
+
+      if (updateError) throw updateError;
+
+      // 2. Log Subscription (Expires in 30 days)
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + (paymentPeriod === 'annual' ? 365 : paymentPeriod === 'quarterly' ? 90 : 30));
+
+      const { error: subError } = await supabase
+        .from('subscriptions')
+        .insert({
+          user_id: userProfile.id,
+          tier: tier,
+          status: 'active',
+          expires_at: expiresAt.toISOString()
+        });
+
+      if (subError) throw subError;
+
+      setCurrentTier(tier);
+      setCheckoutTier(null);
+      toast.success(`Welcome to HomeCare ${tier.toUpperCase()}!`, {
+        description: "Your membership benefits, zero surge & priority dispatch are now active."
+      });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Upgrade failed";
+      setError(`Upgrade failed: ${msg}`);
+      toast.error(`Upgrade failed: ${msg}`);
+    } finally {
+      setUpgrading(null);
+    }
+  };
+
+  const handlePayWithFlutterwave = async (tier: 'plus' | 'pro' | 'elite') => {
+    setIsInitializingFlw(true);
+    try {
+      const amount = adjustedPricing[tier];
+      const controller = new AbortController();
+      const flwTimeout = setTimeout(() => controller.abort(), 12000);
+
+      const res = await fetch("/api/payment/flutterwave/initialize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderRef: `SUB-${tier.toUpperCase()}-${Date.now().toString(36).toUpperCase()}`,
+          amount,
+          email: userProfile?.email || "customer@homecare.com.ng",
+          name: userProfile?.full_name || "HomeCare Member",
+          title: `HomeCare ${tier.toUpperCase()} Membership`,
+          description: `Subscription for ${tier.toUpperCase()} tier (${paymentPeriod})`,
+          type: "subscription",
+          userId: userProfile?.id || null,
+        }),
+        signal: controller.signal,
+      });
+
+      clearTimeout(flwTimeout);
+      const data = await res.json();
+
+      if (data.success && data.paymentUrl) {
+        window.location.href = data.paymentUrl;
+      } else {
+        toast.info("Online gateway busy. Please complete payment using the verified bank transfer details shown.", { id: "sub-flw" });
+      }
+    } catch {
+      toast.info("Online gateway connection timed out. Please pay via direct bank transfer below.", { id: "sub-flw" });
+    } finally {
+      setIsInitializingFlw(false);
+    }
+  };
+
+  const containerVariants = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } };
+  const itemVariants = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 300 } } };
+
   if (loading && !upgrading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="animate-spin text-brand-primary" size={32} />
+        <Loader2 className="animate-spin text-sky-600" size={32} />
       </div>
     );
   }
@@ -180,13 +239,13 @@ export default function SubscriptionPage() {
 
           <div>
             <span className="text-[11px] font-bold uppercase tracking-widest text-sky-200 bg-white/10 px-3.5 py-1.5 rounded-full border border-white/20 inline-block mb-3">
-              Membership & Protection
+              Membership &amp; Protection Engine
             </span>
             <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white uppercase">
               HomeCare <span className="text-cyan-200">Tiers</span>
             </h1>
             <p className="mt-2 text-sm sm:text-base text-sky-100/90 font-medium max-w-md mx-auto leading-relaxed">
-              Choose your state for customized coverage and unlock unlimited maintenance discounts.
+              Choose your state for customized coverage and unlock unlimited maintenance discounts &amp; 0% surge guarantees.
             </p>
           </div>
 
@@ -212,31 +271,31 @@ export default function SubscriptionPage() {
       {/* Main Subscription Content */}
       <div className="mx-auto max-w-5xl px-3 sm:px-6 lg:px-8 py-8 sm:py-10 pb-36 relative z-10">
 
-          {/* Payment Period Selector */}
-          <div className="mt-2 flex flex-wrap justify-center gap-2.5">
-            {[
-              { value: 'monthly' as const, label: 'Monthly', discount: '' },
-              { value: 'quarterly' as const, label: 'Quarterly', discount: 'Save 10%' },
-              { value: 'annual' as const, label: 'Annual', discount: 'Save 20%' },
-            ].map((period) => (
-              <button
-                key={period.value}
-                onClick={() => setPaymentPeriod(period.value)}
-                className={`px-4 sm:px-5 py-2.5 rounded-full text-xs font-extrabold uppercase tracking-widest transition-all cursor-pointer ${
-                  paymentPeriod === period.value
-                    ? 'bg-sky-600 text-white shadow-md shadow-sky-600/30 scale-105'
-                    : 'bg-white border border-slate-200 text-slate-700 hover:text-slate-950 hover:bg-slate-50 shadow-xs'
-                }`}
-              >
-                {period.label}
-                {period.discount && (
-                  <span className="ml-1.5 text-[9px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-black">
-                    {period.discount}
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
+        {/* Payment Period Selector */}
+        <div className="mt-2 flex flex-wrap justify-center gap-2.5">
+          {[
+            { value: 'monthly' as const, label: 'Monthly', discount: '' },
+            { value: 'quarterly' as const, label: 'Quarterly', discount: 'Save 10%' },
+            { value: 'annual' as const, label: 'Annual', discount: 'Save 20%' },
+          ].map((period) => (
+            <button
+              key={period.value}
+              onClick={() => setPaymentPeriod(period.value)}
+              className={`px-4 sm:px-5 py-2.5 rounded-full text-xs font-extrabold uppercase tracking-widest transition-all cursor-pointer ${
+                paymentPeriod === period.value
+                  ? 'bg-sky-600 text-white shadow-md shadow-sky-600/30 scale-105'
+                  : 'bg-white border border-slate-200 text-slate-700 hover:text-slate-950 hover:bg-slate-50 shadow-xs'
+              }`}
+            >
+              {period.label}
+              {period.discount && (
+                <span className="ml-1.5 text-[9px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-black">
+                  {period.discount}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
 
         <ErrorAlert 
           error={error} 
@@ -271,7 +330,7 @@ export default function SubscriptionPage() {
               ))}
             </ul>
             <button 
-              onClick={() => handleUpgrade('plus')}
+              onClick={() => handleOpenCheckout('plus')}
               disabled={currentTier === 'plus' || currentTier === 'pro' || currentTier === 'elite' || !!upgrading}
               className={`w-full rounded-full border-2 border-slate-300 bg-white hover:bg-slate-100 px-6 h-12 text-xs font-extrabold uppercase tracking-widest text-slate-800 transition-colors disabled:opacity-50 flex items-center justify-center shadow-xs cursor-pointer`}
             >
@@ -310,7 +369,7 @@ export default function SubscriptionPage() {
               ))}
             </ul>
             <button 
-              onClick={() => handleUpgrade('pro')}
+              onClick={() => handleOpenCheckout('pro')}
               disabled={currentTier === 'pro' || currentTier === 'elite' || !!upgrading}
               className={`w-full rounded-full bg-sky-600 hover:bg-sky-500 text-white px-6 h-12 text-xs font-extrabold uppercase tracking-widest flex items-center justify-center disabled:opacity-50 shadow-lg shadow-sky-600/30 transition-all hover:scale-[1.02] cursor-pointer`}
             >
@@ -330,7 +389,7 @@ export default function SubscriptionPage() {
               {[
                 { text: "Zero surge pricing ever", icon: Shield },
                 { text: "Dedicated 24/7 Account Manager", icon: Shield },
-                { text: "Matched with top 5% Artisans only", icon: Star },
+                { text: "Matched with top 5% Professionals only", icon: Star },
                 { text: "4 Free routine sweeps /mo", icon: Shield },
                 { text: "Unlimited emergency calls", icon: Zap },
                 { text: "Preferred vendor pricing", icon: Star },
@@ -344,7 +403,7 @@ export default function SubscriptionPage() {
               ))}
             </ul>
             <button 
-              onClick={() => handleUpgrade('elite')}
+              onClick={() => handleOpenCheckout('elite')}
               disabled={currentTier === 'elite' || !!upgrading}
               className={`w-full rounded-full bg-slate-900 hover:bg-slate-800 text-white px-6 h-12 text-xs font-extrabold uppercase tracking-widest transition-colors disabled:opacity-50 flex items-center justify-center shadow-md cursor-pointer`}
             >
@@ -354,6 +413,115 @@ export default function SubscriptionPage() {
 
         </motion.div>
       </div>
+
+      {/* Subscription Checkout Modal */}
+      <AnimatePresence>
+        {checkoutTier && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white border border-slate-200 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative overflow-hidden"
+            >
+              <button
+                onClick={() => setCheckoutTier(null)}
+                className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 bg-slate-100 rounded-full transition-colors cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+
+              <div className="flex items-center gap-2 text-sky-600 font-black text-xs uppercase tracking-widest mb-1">
+                <ShieldCheck size={16} />
+                <span>Secure Membership Checkout</span>
+              </div>
+
+              <h3 className="text-2xl font-black uppercase tracking-tight text-slate-900 mb-1">
+                HomeCare {checkoutTier.toUpperCase()}
+              </h3>
+              <p className="text-xs text-slate-500 font-medium mb-6">
+                Billed {paymentPeriod} for {stateNames[selectedState]}
+              </p>
+
+              {/* Amount Box */}
+              <div className="p-4 rounded-2xl bg-sky-50/80 border border-sky-100 flex items-center justify-between mb-6">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-600">Total Due Now</span>
+                <span className="text-2xl font-black text-sky-900">
+                  ₦{adjustedPricing[checkoutTier].toLocaleString()}
+                </span>
+              </div>
+
+              {/* Method 1: Instant Online Payment */}
+              <div className="space-y-4 mb-6">
+                <button
+                  type="button"
+                  disabled={isInitializingFlw}
+                  onClick={() => handlePayWithFlutterwave(checkoutTier)}
+                  className="w-full h-13 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-sky-600/25 transition-all hover:scale-[1.02] cursor-pointer disabled:opacity-50"
+                >
+                  {isInitializingFlw ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <>
+                      <CreditCard size={16} />
+                      <span>Pay ₦{adjustedPricing[checkoutTier].toLocaleString()} via Flutterwave</span>
+                    </>
+                  )}
+                </button>
+
+                <div className="flex items-center gap-3 my-3">
+                  <div className="h-px bg-slate-200 flex-1" />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">OR DIRECT BANK TRANSFER</span>
+                  <div className="h-px bg-slate-200 flex-1" />
+                </div>
+
+                {/* Method 2: Globus Bank Transfer */}
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                  <div className="flex items-center gap-2 text-xs font-bold text-slate-800">
+                    <Building2 size={14} className="text-sky-600" />
+                    <span>{PAYMENT_ACCOUNT.bankName}</span>
+                  </div>
+                  <div className="flex items-center justify-between bg-white px-3 py-2 rounded-xl border border-slate-200">
+                    <div>
+                      <span className="text-[10px] uppercase font-bold text-slate-400 block">Account Number</span>
+                      <span className="text-base font-black text-slate-900 tracking-wider">
+                        {PAYMENT_ACCOUNT.accountNumber}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(PAYMENT_ACCOUNT.accountNumber);
+                        setCopied(true);
+                        toast.success("Account number copied!");
+                        setTimeout(() => setCopied(false), 2000);
+                      }}
+                      className="px-3 py-1.5 rounded-lg bg-sky-50 text-sky-700 hover:bg-sky-100 text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors"
+                    >
+                      {copied ? <CheckCircle2 size={14} className="text-emerald-600" /> : <Copy size={14} />}
+                      <span>{copied ? "Copied!" : "Copy"}</span>
+                    </button>
+                  </div>
+                  <p className="text-[10px] text-slate-500 font-medium">
+                    Account Name: <strong className="text-slate-700">{PAYMENT_ACCOUNT.accountName}</strong>
+                  </p>
+                </div>
+              </div>
+
+              {/* Confirm activation button */}
+              <button
+                type="button"
+                onClick={() => handleActivateSubscription(checkoutTier)}
+                disabled={!!upgrading}
+                className="w-full h-12 rounded-full border-2 border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all cursor-pointer"
+              >
+                {upgrading ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle2 size={16} />}
+                <span>I Have Transferred · Activate Plan</span>
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

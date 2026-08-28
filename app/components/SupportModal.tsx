@@ -174,7 +174,7 @@ export default function SupportModal() {
                   >
                     <option value="General Enquiry">General Enquiry</option>
                     <option value="Smart Store Order Issue">Smart Store Order & Tracking</option>
-                    <option value="Technician Dispatch Help">Technician Booking & Dispatch</option>
+                    <option value="Professional Dispatch Help">Professional Booking &amp; Dispatch</option>
                     <option value="Property Inspection Audit">Property Inspection Audit</option>
                     <option value="Billing & Escrow Support">Billing & Escrow Payment</option>
                   </select>

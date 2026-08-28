@@ -62,7 +62,7 @@ export default function WorkerLoginPage() {
 
       setSubmitting(false);
       toast.success("Pro Login Successful!", {
-        description: "Welcome back! Redirecting to Artisan Dashboard..."
+        description: "Welcome back! Redirecting to Professional Dashboard..."
       });
       setMessage("Logged in securely. Redirecting to Pro Center...");
       setTimeout(() => {
@@ -70,7 +70,7 @@ export default function WorkerLoginPage() {
       }, 600);
     } catch (err: unknown) {
       console.error("Worker login error:", err);
-      const parsed = handleAuthError(err, "artisan login");
+      const parsed = handleAuthError(err, "professional login");
       if (parsed.isUnconfirmedEmail) {
         setUnconfirmedEmail(email);
       }

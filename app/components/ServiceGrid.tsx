@@ -40,7 +40,7 @@ export default function ServiceGrid({ services, selectedService, onSelectService
                             Our Verified Services
                         </h2>
                         <p className="text-sm font-medium text-slate-500 mt-1">
-                            Transparent starting rates. Select a service to pair with verified local artisans.
+                            Transparent starting rates. Select a service to pair with verified local professionals.
                         </p>
                     </div>
                     <div className="relative w-full sm:w-80 group">

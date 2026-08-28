@@ -236,7 +236,7 @@ function ReviewForm() {
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
               <h3 className="font-black text-sm text-slate-900 truncate">
-                {workerDetails?.full_name || "Artisan Professional"}
+                {workerDetails?.full_name || "HomeCare Professional"}
               </h3>
               {workerDetails?.is_verified && (
                 <ShieldCheck size={16} className="text-emerald-500 shrink-0" fill="currentColor" />

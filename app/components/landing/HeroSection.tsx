@@ -120,7 +120,7 @@ export default function HeroSection() {
 
         </motion.div>
 
-        {/* Right Column: Hero Visual with Verified Technician */}
+        {/* Right Column: Hero Visual with Verified Professional */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -130,7 +130,7 @@ export default function HeroSection() {
           <div className="relative w-full max-w-md aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 bg-slate-900">
             <Image
               src="/hero-technician-v2.jpg"
-              alt="HomeCare Verified Technician"
+              alt="HomeCare Verified Professional"
               fill
               priority
               className="object-cover object-top"

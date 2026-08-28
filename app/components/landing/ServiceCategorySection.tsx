@@ -52,7 +52,7 @@ const CATEGORY_SLIDES = [
     metricValue: "85+",
     metricLabel: "Cooling System Experts",
     image: "/slide_ac_cooling.jpg",
-    proName: "HVAC & Refrigeration Technicians",
+    proName: "HVAC & Refrigeration Professionals",
     proRole: "R22/R410a Gas Refills & Servicing",
     badges: [
       { label: "Gas Leak Testing", icon: Snowflake, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
@@ -177,7 +177,7 @@ export default function ServiceCategorySection() {
               href="/request"
               className="inline-flex items-center gap-2 text-xs font-bold text-sky-600 hover:text-sky-700 uppercase tracking-widest hover:translate-x-1 transition-transform"
             >
-              <span>Book Any Artisan Now</span>
+              <span>Book Any Professional Now</span>
               <ArrowRight size={14} />
             </Link>
           </div>

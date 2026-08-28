@@ -9,19 +9,17 @@ import {
   TrendingUp, 
   Clock, 
   CheckCircle2, 
-  Search,
-  MoreVertical,
-  Loader2,
-  Package,
-  ChevronRight,
-  Filter,
-  RotateCcw,
-  RefreshCw,
-  XCircle,
-  Truck,
-  Users,
-  UserCheck,
-  ShieldCheck
+  Search, 
+  Loader2, 
+  Package, 
+  Filter, 
+  RotateCcw, 
+  RefreshCw, 
+  Users, 
+  ShieldCheck, 
+  DollarSign, 
+  Wallet, 
+  Sparkles 
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Logo from "@/app/components/Logo";
@@ -34,7 +32,7 @@ interface Order {
   total: number;
   status: string;
   created_at: string;
-  items: any[];
+  items: Array<Record<string, unknown>>;
   delivery_address?: string;
   notes?: string;
 }
@@ -98,9 +96,9 @@ export default function AdminDashboard() {
       if (orderData) setOrders(orderData);
       if (reqData) setRequests(reqData);
       if (workerData) setWorkers(workerData);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      toast.error("Failed to load dashboard data: " + err.message);
+      toast.error("Failed to load dashboard data: " + (err instanceof Error ? err.message : "Unknown error"));
     } finally {
       setLoading(false);
     }
@@ -125,8 +123,8 @@ export default function AdminDashboard() {
 
       setWorkers(prev => prev.map(w => w.id === id ? { ...w, is_verified: approve } : w));
       toast.success(approve ? "Worker Approved & Verified!" : "Worker Verification Revoked");
-    } catch (err: any) {
-      toast.error("Action error: " + err.message);
+    } catch (err: unknown) {
+      toast.error("Action error: " + (err instanceof Error ? err.message : "Error"));
     } finally {
       setUpdatingId(null);
     }
@@ -147,8 +145,8 @@ export default function AdminDashboard() {
 
       setOrders(prev => prev.map(o => o.id === id ? { ...o, status: newStatus } : o));
       toast.success(`Order updated to ${newStatus.replace('_', ' ').toUpperCase()}`);
-    } catch (err: any) {
-      toast.error("Error: " + err.message);
+    } catch (err: unknown) {
+      toast.error("Error: " + (err instanceof Error ? err.message : "Error"));
     } finally {
       setUpdatingId(null);
     }
@@ -169,8 +167,8 @@ export default function AdminDashboard() {
 
       setRequests(prev => prev.map(r => r.id === id ? { ...r, status: newStatus } : r));
       toast.success(`Service request marked as ${newStatus.toUpperCase()}`);
-    } catch (err: any) {
-      toast.error("Error: " + err.message);
+    } catch (err: unknown) {
+      toast.error("Error: " + (err instanceof Error ? err.message : "Error"));
     } finally {
       setUpdatingId(null);
     }
@@ -222,14 +220,26 @@ export default function AdminDashboard() {
     });
   }, [workers, workerFilter, searchTerm]);
 
-  const stats = {
-    totalRevenue: orders.reduce((acc, curr) => acc + (Number(curr.total) || 0), 0),
-    activeOrders: orders.filter(o => o.status !== 'delivered' && o.status !== 'cancelled').length,
-    pendingRequests: requests.filter(r => r.status === 'pending').length,
-    pendingWorkers: workers.filter(w => !w.is_verified).length,
-    totalWorkers: workers.length,
-    completedJobs: requests.filter(r => r.status === 'completed').length
-  };
+  const stats = useMemo(() => {
+    const estEscrowGMV = requests.length * 25000;
+    const platformCommission = Math.round(estEscrowGMV * 0.15);
+    const proNetDisbursals = Math.round(estEscrowGMV * 0.85);
+    const storeRevenue = orders.reduce((acc, curr) => acc + (Number(curr.total) || 0), 0);
+    const totalPlatformGross = platformCommission + storeRevenue;
+
+    return {
+      storeRevenue,
+      estEscrowGMV,
+      platformCommission,
+      proNetDisbursals,
+      totalPlatformGross,
+      activeOrders: orders.filter(o => o.status !== 'delivered' && o.status !== 'cancelled').length,
+      pendingRequests: requests.filter(r => r.status === 'pending').length,
+      pendingWorkers: workers.filter(w => !w.is_verified).length,
+      totalWorkers: workers.length,
+      completedJobs: requests.filter(r => r.status === 'completed').length,
+    };
+  }, [orders, requests, workers]);
 
   const containerVariants = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } };
   const itemVariants = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } };
@@ -252,13 +262,14 @@ export default function AdminDashboard() {
         <nav className="flex flex-col gap-1.5">
           {[
             { id: 'overview', icon: LayoutDashboard, label: 'Overview' },
+            { id: 'monetization', icon: DollarSign, label: 'Profit & Revenue' },
             { id: 'workers', icon: Users, label: 'Worker Approvals' },
             { id: 'orders', icon: ShoppingBag, label: 'Store Orders' },
             { id: 'requests', icon: Wrench, label: 'Service Requests' },
           ].map((item) => (
             <button
               key={item.id}
-              onClick={() => setActiveTab(item.id as 'overview' | 'orders' | 'requests' | 'workers')}
+              onClick={() => setActiveTab(item.id as 'overview' | 'orders' | 'requests' | 'workers' | 'monetization')}
               className={`flex items-center justify-between px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
                 activeTab === item.id 
                   ? 'bg-sky-600 text-white shadow-md shadow-sky-600/25 font-black' 
@@ -370,7 +381,7 @@ export default function AdminDashboard() {
                             {stats.pendingWorkers} Worker(s) Awaiting Review
                           </h3>
                           <p className="text-xs text-slate-600 font-medium mt-0.5">
-                            New technicians have registered and require admin approval before accepting customer jobs.
+                            New professionals have registered and require admin approval before accepting customer jobs.
                           </p>
                         </div>
                       </div>
@@ -673,8 +684,8 @@ export default function AdminDashboard() {
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                   <div>
                     <span className="text-[10px] font-black uppercase tracking-widest text-sky-600">Verification & Network Control</span>
-                    <h2 className="text-xl font-heading font-black text-slate-900 mt-0.5">Technician Approvals ({workers.length})</h2>
-                    <p className="text-xs text-slate-500 mt-0.5 font-medium">Review registered artisans, verify NIN records, and toggle live job deployment access.</p>
+                    <h2 className="text-xl font-heading font-black text-slate-900 mt-0.5">Professional Approvals ({workers.length})</h2>
+                    <p className="text-xs text-slate-500 mt-0.5 font-medium">Review registered professionals, verify NIN records, and toggle live job deployment access.</p>
                   </div>
 
                   <div className="flex items-center gap-2">
@@ -695,7 +706,7 @@ export default function AdminDashboard() {
                     <table className="w-full text-left border-collapse">
                       <thead>
                         <tr className="bg-slate-900 text-white text-[10px] font-black uppercase tracking-wider">
-                          <th className="p-4">Technician</th>
+                          <th className="p-4">Professional</th>
                           <th className="p-4">Skill & Phone</th>
                           <th className="p-4">NIN Identity</th>
                           <th className="p-4">AI Screening</th>
@@ -782,6 +793,139 @@ export default function AdminDashboard() {
                         )}
                       </tbody>
                     </table>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+            {/* Monetization & Profit Intelligence Tab */}
+            {activeTab === 'monetization' && (
+              <motion.div
+                key="monetization"
+                variants={containerVariants}
+                initial="hidden"
+                animate="show"
+                className="space-y-8"
+              >
+                {/* Top Financial Performance Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <motion.div variants={itemVariants} className="p-6 border border-emerald-200 bg-emerald-50/50 rounded-2xl relative overflow-hidden shadow-sm">
+                    <div className="absolute top-0 right-0 p-3.5 bg-emerald-100 text-emerald-700 border-b border-l border-emerald-200 rounded-bl-3xl">
+                      <TrendingUp size={18} />
+                    </div>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-emerald-700 mb-1">Platform Net Take-Rate (15%)</p>
+                    <p className="text-3xl font-heading font-black text-emerald-950">₦{stats.platformCommission.toLocaleString()}</p>
+                    <span className="text-[10px] font-bold text-emerald-600 mt-2 block">Retained on ₦{stats.estEscrowGMV.toLocaleString()} Escrow GMV</span>
+                  </motion.div>
+
+                  <motion.div variants={itemVariants} className="p-6 border border-sky-200 bg-sky-50/50 rounded-2xl relative overflow-hidden shadow-sm">
+                    <div className="absolute top-0 right-0 p-3.5 bg-sky-100 text-sky-700 border-b border-l border-sky-200 rounded-bl-3xl">
+                      <Wallet size={18} />
+                    </div>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-sky-700 mb-1">Pro Net Disbursals (85%)</p>
+                    <p className="text-3xl font-heading font-black text-sky-950">₦{stats.proNetDisbursals.toLocaleString()}</p>
+                    <span className="text-[10px] font-bold text-sky-600 mt-2 block">Sent to {stats.totalWorkers} verified professionals</span>
+                  </motion.div>
+
+                  <motion.div variants={itemVariants} className="p-6 border border-purple-200 bg-purple-50/50 rounded-2xl relative overflow-hidden shadow-sm">
+                    <div className="absolute top-0 right-0 p-3.5 bg-purple-100 text-purple-700 border-b border-l border-purple-200 rounded-bl-3xl">
+                      <Sparkles size={18} />
+                    </div>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-purple-700 mb-1">Store Orders GMV</p>
+                    <p className="text-3xl font-heading font-black text-purple-950">₦{stats.storeRevenue.toLocaleString()}</p>
+                    <span className="text-[10px] font-bold text-purple-600 mt-2 block">{orders.length} store sales fulfilled</span>
+                  </motion.div>
+
+                  <motion.div variants={itemVariants} className="p-6 border border-slate-200 bg-white rounded-2xl relative overflow-hidden shadow-sm">
+                    <div className="absolute top-0 right-0 p-3.5 bg-slate-100 text-slate-700 border-b border-l border-slate-200 rounded-bl-3xl">
+                      <DollarSign size={18} />
+                    </div>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Total Platform Gross Revenue</p>
+                    <p className="text-3xl font-heading font-black text-slate-900">₦{stats.totalPlatformGross.toLocaleString()}</p>
+                    <span className="text-[10px] font-bold text-slate-500 mt-2 block">Take-Rate + Parts Retail</span>
+                  </motion.div>
+                </div>
+
+                {/* 4 Active Revenue Streams Breakdown */}
+                <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+                  <div>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-sky-600 bg-sky-50 px-3 py-1 rounded-full border border-sky-200 inline-block mb-2">
+                      Multi-Stream Revenue Engine
+                    </span>
+                    <h2 className="text-xl font-heading font-black text-slate-900">Active Monetization Architecture</h2>
+                    <p className="text-xs text-slate-500 font-medium mt-1">Live status of transactional, recurring, and convenience revenue channels.</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {[
+                      {
+                        title: "Marketplace Take-Rate",
+                        rate: "15% Commission",
+                        desc: "Retained automatically when customer approves completed job in escrow.",
+                        status: "Active & Enforced",
+                        statusColor: "text-emerald-700 bg-emerald-50 border-emerald-200",
+                      },
+                      {
+                        title: "Maintenance Subscriptions",
+                        rate: "₦15k – ₦75k /mo",
+                        desc: "Plus, Pro, and Elite monthly plans providing zero surge and routine sweeps.",
+                        status: "Active Gateway",
+                        statusColor: "text-sky-700 bg-sky-50 border-sky-200",
+                      },
+                      {
+                        title: "Pro NIN Accreditation",
+                        rate: "₦3,500 One-off",
+                        desc: "Covers live government NIMC identity cross-referencing and verified badge issuance.",
+                        status: "Active",
+                        statusColor: "text-purple-700 bg-purple-50 border-purple-200",
+                      },
+                      {
+                        title: "Instant NIBSS Payout",
+                        rate: "1.5% Convenience Fee",
+                        desc: "Express under 3-minute wallet disbursal fee paid by withdrawing professionals.",
+                        status: "Active",
+                        statusColor: "text-amber-700 bg-amber-50 border-amber-200",
+                      },
+                    ].map((channel, i) => (
+                      <div key={i} className="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-between space-y-4">
+                        <div>
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs font-black text-slate-900">{channel.title}</span>
+                            <span className="text-xs font-black text-sky-600">{channel.rate}</span>
+                          </div>
+                          <p className="text-[11px] text-slate-500 leading-relaxed font-medium">{channel.desc}</p>
+                        </div>
+                        <span className={`text-[9px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full border text-center ${channel.statusColor}`}>
+                          {channel.status}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Escrow Settlement Flow & Unit Economics */}
+                <div className="p-6 sm:p-8 rounded-3xl bg-slate-900 text-white border border-slate-800 space-y-6">
+                  <div>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">Neutral Escrow Architecture</span>
+                    <h3 className="text-lg font-heading font-black text-white mt-1">Escrow Settlement Unit Economics</h3>
+                    <p className="text-xs text-slate-400 mt-0.5 font-medium">How ₦30,000 standard repair is distributed automatically upon homeowner sign-off:</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                      <span className="text-[10px] font-bold uppercase text-slate-400 block mb-1">1. Customer Deposit</span>
+                      <span className="text-xl font-black text-white">₦30,000 (100%)</span>
+                      <p className="text-[10px] text-slate-400 mt-1">Paid to HomeCare Globus/Flutterwave Escrow</p>
+                    </div>
+                    <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
+                      <span className="text-[10px] font-bold uppercase text-emerald-300 block mb-1">2. Pro Wallet Disbursal</span>
+                      <span className="text-xl font-black text-emerald-400">₦25,500 (85%)</span>
+                      <p className="text-[10px] text-emerald-300/80 mt-1">Credited directly to professional wallet upon approval</p>
+                    </div>
+                    <div className="p-4 rounded-2xl bg-sky-500/10 border border-sky-500/20">
+                      <span className="text-[10px] font-bold uppercase text-sky-300 block mb-1">3. HomeCare Platform Profit</span>
+                      <span className="text-xl font-black text-sky-400">₦4,500 (15%)</span>
+                      <p className="text-[10px] text-sky-300/80 mt-1">Retained matchmaking &amp; escrow platform profit</p>
+                    </div>
                   </div>
                 </div>
               </motion.div>

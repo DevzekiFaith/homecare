@@ -52,7 +52,7 @@ const TARGETS = [
     id: "03",
     title: "PROPERTY MANAGERS",
     subtitle: "Estates & Gated Communities",
-    desc: "Dedicated account manager, assigned multi-trade technician teams, and scheduled preventive sweeps across multiple locations.",
+    desc: "Dedicated account manager, assigned multi-trade professional teams, and scheduled preventive sweeps across multiple locations.",
     metricValue: "Dedicated",
     metricLabel: "Account Manager & Multi-Trade SLA",
     image: "/slide_property_estate.jpg",
