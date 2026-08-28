@@ -2,8 +2,9 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { X, AlertCircle, CheckCircle2, Navigation, ClipboardList, Camera, Trash2, Wallet, ArrowDownToLine, Clock, Sparkles, ExternalLink, Check, MessageCircle } from "lucide-react";
+import { X, AlertCircle, CheckCircle2, Navigation, ClipboardList, Camera, Trash2, Wallet, ArrowDownToLine, Clock, Sparkles, ExternalLink, Check, MessageCircle, BookOpen, Award, ShieldCheck, Lock } from "lucide-react";
 import { toast } from "sonner";
 import Logo from "@/app/components/Logo";
 import dynamic from "next/dynamic";
@@ -48,6 +49,8 @@ export default function WorkerDashboardPage() {
   const [activeTab, setActiveTab] = useState<'radar' | 'my-jobs' | 'completed'>('radar');
   const [user, setUser] = useState<User | null>(null);
   const [balance, setBalance] = useState<number>(0);
+  const [proTier, setProTier] = useState<'starter' | 'elite'>('starter');
+  const [isUpgrading, setIsUpgrading] = useState(false);
   const [trackingJobId, setTrackingJobId] = useState<string | null>(null);
   const [chatJob, setChatJob] = useState<ServiceRequest | null>(null);
   const [mapJob, setMapJob] = useState<ServiceRequest | null>(null);
@@ -69,6 +72,44 @@ export default function WorkerDashboardPage() {
     }
   }, []);
 
+  const handleUpgradeToElite = async () => {
+    if (!user) return;
+    try {
+      setIsUpgrading(true);
+      toast.loading("Connecting to Flutterwave Gateway...", { id: "flw-pro-upgrade" });
+
+      const txRef = `PRO-UPG-${Date.now().toString(36).toUpperCase()}`;
+
+      const res = await fetch("/api/payment/flutterwave/initialize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderRef: txRef,
+          amount: 2000,
+          email: user.email || "pro@homecare.ng",
+          name: user.user_metadata?.full_name || "HomeCare Professional",
+          phone: "08000000000",
+          title: "Elite Pro Accelerator Upgrade",
+          description: "₦2,000 Upgrade for Top 1–3 inDrive Placement, Gold Badge & 60s Priority Radar",
+          type: "pro_upgrade",
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success && data.paymentUrl) {
+        toast.success("Redirecting to Flutterwave...", { id: "flw-pro-upgrade" });
+        window.location.href = data.paymentUrl;
+      } else {
+        toast.error(data.error || "Could not connect to payment gateway. Please try again.", { id: "flw-pro-upgrade" });
+      }
+    } catch {
+      toast.error("Gateway connection timed out. Please try again.", { id: "flw-pro-upgrade" });
+    } finally {
+      setIsUpgrading(false);
+    }
+  };
+
   const fetchRequests = useCallback(async () => {
     try {
       const { data: userData } = await supabase.auth.getUser();
@@ -87,6 +128,16 @@ export default function WorkerDashboardPage() {
         .maybeSingle();
       if (profile && profile.avatar_url) {
         setAvatarUrl(profile.avatar_url);
+      }
+
+      // Fetch professional tier and verification status
+      const { data: proRecord } = await supabase
+        .from("professionals")
+        .select("tier, is_elite")
+        .eq("id", userData.user.id)
+        .maybeSingle();
+      if (proRecord && (proRecord.tier === "elite" || proRecord.is_elite)) {
+        setProTier("elite");
       }
 
       // Execute wallet and requests fetches concurrently in parallel
@@ -481,6 +532,70 @@ export default function WorkerDashboardPage() {
           animate="show"
           className="space-y-6"
         >
+          {/* Pro Accreditation Tier & Handbook Banner */}
+          <motion.div
+            variants={itemVariants}
+            className={`p-5 rounded-3xl border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm ${
+              proTier === 'elite'
+                ? "bg-slate-900 border-amber-400/40 text-white shadow-amber-400/5"
+                : "bg-slate-900 border-slate-800 text-white"
+            }`}
+          >
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                {proTier === 'elite' ? (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider bg-amber-400/20 text-amber-300 border border-amber-400/40 px-2.5 py-0.5 rounded-full">
+                    <Sparkles size={11} /> ★ Elite Verified Pro Active
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider bg-sky-500/20 text-sky-300 border border-sky-500/30 px-2.5 py-0.5 rounded-full">
+                    <CheckCircle2 size={11} /> Starter Pro Tier Active
+                  </span>
+                )}
+                <span className="text-[10px] font-bold text-slate-400">
+                  {proTier === 'elite' ? "Top 1-3 inDrive Placement (+30 Match Score) · 60s Lead Time" : "Standard Proximity Radar Listing"}
+                </span>
+              </div>
+              <p className="text-xs text-slate-300 font-medium">
+                {proTier === 'elite'
+                  ? "Your profile is boosted with priority inDrive placement, 60s lead time, and 0% instant payout fees."
+                  : "Boost your bookings by 3x and rank at the top of homeowner comparison screens."}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2.5 w-full md:w-auto flex-wrap sm:flex-nowrap">
+              <Link
+                href="/worker/handbook"
+                target="_blank"
+                className="flex-1 md:flex-initial h-10 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-2xs"
+              >
+                <BookOpen size={14} />
+                <span>Pro Handbook (PDF)</span>
+              </Link>
+
+              {proTier !== 'elite' && (
+                <button
+                  type="button"
+                  onClick={handleUpgradeToElite}
+                  disabled={isUpgrading}
+                  className="flex-1 md:flex-initial h-10 px-5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md shadow-amber-400/20 transition-all cursor-pointer disabled:opacity-50"
+                >
+                  {isUpgrading ? (
+                    <>
+                      <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-slate-950 border-t-transparent" />
+                      <span>Connecting...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles size={14} />
+                      <span>Upgrade to Elite (₦2,000)</span>
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
+          </motion.div>
+
           {/* Earnings stats with Net Disbursal & Withdraw Modal */}
           <div className="grid gap-4 sm:grid-cols-3">
             <motion.div variants={itemVariants} className="glass-panel p-6 shadow-premium border-brand-primary/20 flex flex-col justify-between">

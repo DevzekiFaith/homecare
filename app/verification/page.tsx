@@ -100,16 +100,16 @@ export default function VerificationPage() {
                   <ShieldCheck size={22} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-black text-white uppercase">Professional Accreditation Package (₦3,500)</h2>
-                  <p className="text-xs text-emerald-400 font-bold uppercase tracking-wider">Automated Verification &amp; Vetting Portal</p>
+                  <h2 className="text-xl font-black text-white uppercase">Accreditation Packages (From ₦1,500)</h2>
+                  <p className="text-xs text-emerald-400 font-bold uppercase tracking-wider">Automated Verification &amp; Growth Portal</p>
                 </div>
               </div>
               <span className="text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-3 py-1 rounded-full uppercase">
-                One-Time Vetting
+                Starter &amp; Elite Tiers
               </span>
             </div>
             <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">
-              Every applicant pays a ₦3,500 accreditation and vetting fee routed directly through Flutterwave payment gateway before identity authentication is completed. This covers live NIMC database cross-referencing, biometric facial matching, background checks, and active badge accreditation.
+              Every applicant chooses between our <strong>Starter Pro (₦1,500)</strong> (covers live NIMC database cross-referencing, biometric facial matching, background checks, and official HomeCare Pro Handbook) or our <strong>Elite Pro Accelerator (₦3,500)</strong> (unlocks top 1–3 inDrive placement, 60s priority radar alerts, and 0% instant payout fees).
             </p>
           </div>
 
@@ -130,7 +130,7 @@ export default function VerificationPage() {
               href="/auth/worker/register"
               className="w-full sm:w-auto px-8 h-13 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
-              <span>Join as a Professional (₦3,500)</span>
+              <span>Join as a Professional (From ₦1,500)</span>
               <ShieldCheck size={16} />
             </Link>
           </div>

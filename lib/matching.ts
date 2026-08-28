@@ -47,11 +47,12 @@ export async function getMatchingCandidates(
         const rating = w.rating ? Number(w.rating) : Number((4.7 + (index % 4) * 0.08).toFixed(2));
         const jobs = w.completed_jobs_count || (24 + index * 18);
         const isNinVerified = w.is_verified || w.verified_status === "approved" || w.verified_status === "verified";
+        const isElite = w.tier === "elite" || w.is_elite === true || index === 0;
         const dist = Number((0.8 + index * 0.9).toFixed(1));
         const eta = Math.max(4, Math.round(dist * 3.5));
 
-        // Trust Score calculation
-        let score = (rating / 5) * 40 + Math.min(jobs, 50) * 0.6 + (isNinVerified ? 30 : 10);
+        // Trust Score calculation (Elite Tier adds +30 priority ranking boost)
+        let score = (rating / 5) * 40 + Math.min(jobs, 50) * 0.6 + (isNinVerified ? 30 : 10) + (isElite ? 30 : 0);
         if (userTier === "elite") score *= 1.25;
         else if (userTier === "pro") score *= 1.15;
 
@@ -75,7 +76,7 @@ export async function getMatchingCandidates(
           eta_mins: eta,
           price_estimate: proPrice,
           match_score: Math.min(99, Math.round(score)),
-          match_reason: isNinVerified ? "NIMC & Biometric Verified" : "Identity Checked",
+          match_reason: isElite ? "★ Elite Verified Pro · Priority Dispatch" : isNinVerified ? "NIMC & Biometric Verified" : "Identity Checked",
           specialization: w.bio || `${serviceType} Master Craftsman`,
           is_online: true,
         };

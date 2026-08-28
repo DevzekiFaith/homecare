@@ -25,7 +25,8 @@ import {
   AlertCircle,
   Camera,
   Check,
-  ChevronRight
+  ChevronRight,
+  BookOpen
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import LocationMapPicker from "@/app/components/LocationMapPicker";
@@ -86,6 +87,7 @@ function WorkerRegisterContent() {
   const [bio, setBio] = useState("");
 
   // Payment & Accreditation state
+  const [selectedTier, setSelectedTier] = useState<'starter' | 'elite'>('starter');
   const [accreditationPaid, setAccreditationPaid] = useState(false);
   const [paymentRef, setPaymentRef] = useState<string | null>(null);
   const [isInitializingFlw, setIsInitializingFlw] = useState(false);
@@ -97,6 +99,8 @@ function WorkerRegisterContent() {
   const [selCity, setSelCity] = useState("");
   const [selArea, setSelArea] = useState("");
 
+  const currentFee = selectedTier === 'starter' ? 1500 : 3500;
+
   // Refs for smooth scroll targetting
   const photoInputRef = useRef<HTMLInputElement>(null);
   const certInputRef = useRef<HTMLInputElement>(null);
@@ -105,10 +109,14 @@ function WorkerRegisterContent() {
   useEffect(() => {
     const paidParam = searchParams.get("paid");
     const refParam = searchParams.get("ref");
+    const amountParam = searchParams.get("amount");
     if (paidParam === "true" && refParam) {
       setAccreditationPaid(true);
       setPaymentRef(refParam);
-      toast.success("₦3,500 Accreditation Payment Confirmed!", {
+      if (amountParam && Number(amountParam) >= 3000) {
+        setSelectedTier('elite');
+      }
+      toast.success("Accreditation Payment Confirmed!", {
         description: `Flutterwave Ref: ${refParam}. Please proceed with legal name and identity verification.`,
       });
     }
@@ -129,6 +137,7 @@ function WorkerRegisterContent() {
         if (d.selCity) setSelCity(d.selCity);
         if (d.selArea) setSelArea(d.selArea);
         if (d.nin) setNin(d.nin);
+        if (d.selectedTier) setSelectedTier(d.selectedTier);
         if (d.manualTransferRef) setManualTransferRef(d.manualTransferRef);
         if (d.accreditationPaid) setAccreditationPaid(true);
       }
@@ -152,6 +161,7 @@ function WorkerRegisterContent() {
         selCity,
         selArea,
         nin,
+        selectedTier,
         manualTransferRef,
         accreditationPaid
       }));
@@ -194,12 +204,14 @@ function WorkerRegisterContent() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           orderRef: txRef,
-          amount: ACCREDITATION_FEE,
+          amount: currentFee,
           email: email.trim(),
           name: fullName.trim() || "HomeCare Professional",
           phone: phone.trim() || "08000000000",
-          title: "Professional Accreditation Fee",
-          description: "₦3,500 One-time NIMC Identity & Background Vetting Fee",
+          title: selectedTier === 'starter' ? "Starter Pro Accreditation" : "Elite Pro Accelerator",
+          description: selectedTier === 'starter' 
+            ? "₦1,500 NIMC Verification + Pro Handbook (PDF)" 
+            : "₦3,500 Elite Accreditation + Top inDrive Placement",
           type: "pro_accreditation",
         }),
       });
@@ -494,8 +506,10 @@ function WorkerRegisterContent() {
         bio: bio.trim(),
         is_verified: true,
         ai_verified: aiVerified || true,
-        ai_verification_reason: aiVerifyReason || "NIMC & Biometric Authenticated with ₦3,500 Accreditation",
+        ai_verification_reason: aiVerifyReason || `NIMC Authenticated with ${selectedTier === 'starter' ? '₦1,500 Starter' : '₦3,500 Elite'} Accreditation`,
         avatar_url: avatarUrl,
+        tier: selectedTier,
+        is_elite: selectedTier === 'elite',
       });
 
       if (dbError) {
@@ -578,7 +592,7 @@ function WorkerRegisterContent() {
             <div className="space-y-5">
               <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
                 <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-800">
-                  <Award size={17} className="text-sky-600" /> 1. Professional Accreditation Package &amp; Vetting Fee
+                  <Award size={17} className="text-sky-600" /> 1. Select Accreditation &amp; Growth Package
                 </h2>
                 {isPaymentValid && (
                   <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
@@ -587,145 +601,232 @@ function WorkerRegisterContent() {
                 )}
               </div>
 
-              <div className="p-6 rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-md space-y-5 relative overflow-hidden">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">
-                      Standard Accreditation Package
-                    </span>
-                    <h3 className="text-xl font-heading font-black text-white mt-0.5">
-                      ₦3,500 One-Time Vetting Fee
-                    </h3>
-                  </div>
-                  {accreditationPaid ? (
-                    <span className="inline-flex items-center gap-1.5 text-[11px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-3.5 py-1.5 rounded-full uppercase tracking-wider self-start sm:self-auto">
-                      <CheckCircle2 size={14} className="text-emerald-400" /> Payment Verified
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-black bg-sky-500/20 text-sky-300 border border-sky-500/30 px-3 py-1 rounded-full uppercase tracking-wider self-start sm:self-auto">
-                      <ShieldCheck size={13} /> Required For Pro Status
-                    </span>
-                  )}
-                </div>
-
-                <p className="text-xs text-slate-300 font-medium leading-relaxed">
-                  To protect homeowners and ensure fair job distribution, all applicants undergo live government NIMC identity checks, criminal background checks, and trade evaluation before receiving client job dispatch.
-                </p>
-
-                {/* Included Perks Grid */}
-                <div className="grid gap-3 sm:grid-cols-3 text-xs">
-                  <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-1">
-                    <div className="flex items-center gap-1.5 text-emerald-400 font-bold text-[11px]">
-                      <CheckCircle2 size={13} /> Live NIMC Check
-                    </div>
-                    <p className="text-[10px] text-slate-400">Direct biometric and NIN validation with national databases.</p>
-                  </div>
-                  <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-1">
-                    <div className="flex items-center gap-1.5 text-sky-400 font-bold text-[11px]">
-                      <Sparkles size={13} /> Verified Pro Badge
-                    </div>
-                    <p className="text-[10px] text-slate-400">Unlocks customer trust and immediate access to booking requests.</p>
-                  </div>
-                  <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-1">
-                    <div className="flex items-center gap-1.5 text-amber-400 font-bold text-[11px]">
-                      <FileCheck size={13} /> Escrow Protection
-                    </div>
-                    <p className="text-[10px] text-slate-400">Guaranteed payment security with direct payouts to your bank.</p>
-                  </div>
-                </div>
-
-                {/* Primary Payment Action: Flutterwave Gateway */}
-                {accreditationPaid ? (
-                  <div className="p-4 rounded-2xl bg-emerald-950/60 border border-emerald-500/40 flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <CheckCircle2 size={20} className="text-emerald-400 shrink-0" />
-                      <div>
-                        <p className="text-xs font-black uppercase text-emerald-200">Flutterwave Payment Confirmed</p>
-                        <p className="text-[11px] text-emerald-300/80 font-mono">Ref: {paymentRef || "FLW-VERIFIED"}</p>
+              <div className="space-y-4">
+                {/* Dual Tier Selector Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Tier 1: Starter Pro */}
+                  <div
+                    onClick={() => !accreditationPaid && setSelectedTier('starter')}
+                    className={`p-6 rounded-3xl border-2 transition-all relative overflow-hidden flex flex-col justify-between ${
+                      accreditationPaid && selectedTier !== 'starter'
+                        ? "opacity-50 cursor-not-allowed border-slate-200 bg-white"
+                        : selectedTier === 'starter'
+                        ? "border-sky-600 bg-sky-50/70 shadow-md ring-2 ring-sky-500/20 cursor-pointer"
+                        : "border-slate-200 bg-white hover:border-slate-300 cursor-pointer"
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <span className="text-[10px] font-black uppercase tracking-wider bg-sky-100 text-sky-800 px-2.5 py-0.5 rounded-full">
+                          Starter Pro
+                        </span>
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                          selectedTier === 'starter' ? "border-sky-600 bg-sky-600 text-white" : "border-slate-300"
+                        }`}>
+                          {selectedTier === 'starter' && <Check size={12} />}
+                        </div>
                       </div>
-                    </div>
-                    <span className="text-xs font-bold text-emerald-300">₦3,500 Settled</span>
-                  </div>
-                ) : (
-                  <div className="space-y-3 pt-2">
-                    {/* Primary Flutterwave Button */}
-                    <button
-                      type="button"
-                      onClick={handleFlutterwavePayment}
-                      disabled={isInitializingFlw}
-                      className="w-full h-13 rounded-2xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-sky-500/25 transition-all hover:scale-101 cursor-pointer disabled:opacity-50"
-                    >
-                      {isInitializingFlw ? (
-                        <>
-                          <span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-950 border-t-transparent" />
-                          <span>Connecting Flutterwave Gateway...</span>
-                        </>
-                      ) : (
-                        <>
-                          <CreditCard size={17} />
-                          <span>Pay ₦3,500 via Flutterwave Gateway (Primary No. 1)</span>
-                        </>
-                      )}
-                    </button>
 
-                    <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1">
-                      <span className="flex items-center gap-1"><Lock size={12} className="text-emerald-400" /> Instant automated confirmation</span>
+                      <h3 className="text-2xl font-black text-slate-900 tracking-tight">
+                        ₦1,500 <span className="text-xs font-bold text-slate-500 lowercase">one-time</span>
+                      </h3>
+                      <p className="text-xs text-slate-600 font-medium mt-1 leading-relaxed">
+                        Low-friction verified onboarding with official training handbook.
+                      </p>
+
+                      <ul className="mt-4 space-y-2 text-xs font-semibold text-slate-700">
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 size={14} className="text-emerald-600 shrink-0" />
+                          <span>Live NIMC NIN &amp; Biometric Vetting</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 size={14} className="text-emerald-600 shrink-0" />
+                          <span><strong>Pro Master Handbook (PDF Guide)</strong></span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 size={14} className="text-emerald-600 shrink-0" />
+                          <span>100% Guaranteed Escrow Payouts</span>
+                        </li>
+                        <li className="flex items-center gap-2 text-slate-400">
+                          <span className="w-3.5 h-0.5 bg-slate-300 rounded-full shrink-0" />
+                          <span>Standard Radar Proximity Listing</span>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div className="mt-4 pt-3 border-t border-slate-200/80 text-[11px] font-bold text-sky-700">
+                      Ideal for new professionals starting out
+                    </div>
+                  </div>
+
+                  {/* Tier 2: Elite Accelerator */}
+                  <div
+                    onClick={() => !accreditationPaid && setSelectedTier('elite')}
+                    className={`p-6 rounded-3xl border-2 transition-all relative overflow-hidden flex flex-col justify-between ${
+                      accreditationPaid && selectedTier !== 'elite'
+                        ? "opacity-50 cursor-not-allowed border-slate-200 bg-slate-900 text-white"
+                        : selectedTier === 'elite'
+                        ? "border-amber-400 bg-slate-900 text-white shadow-xl ring-2 ring-amber-400/30 cursor-pointer"
+                        : "border-slate-800 bg-slate-900 text-white hover:border-slate-700 cursor-pointer"
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <span className="text-[10px] font-black uppercase tracking-wider bg-amber-400/20 text-amber-300 border border-amber-400/40 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                          <Sparkles size={11} /> ★ Recommended · 3x Bookings
+                        </span>
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                          selectedTier === 'elite' ? "border-amber-400 bg-amber-400 text-slate-950" : "border-slate-600"
+                        }`}>
+                          {selectedTier === 'elite' && <Check size={12} />}
+                        </div>
+                      </div>
+
+                      <h3 className="text-2xl font-black text-white tracking-tight">
+                        ₦3,500 <span className="text-xs font-bold text-slate-400 lowercase">one-time</span>
+                      </h3>
+                      <p className="text-xs text-slate-300 font-medium mt-1 leading-relaxed">
+                        Top candidate inDrive placement, priority radar alerts, &amp; 0% instant payout fees.
+                      </p>
+
+                      <ul className="mt-4 space-y-2 text-xs font-semibold text-slate-200">
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 size={14} className="text-amber-400 shrink-0" />
+                          <span><strong>Top 1–3 inDrive Candidate Placement (+30 pts)</strong></span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 size={14} className="text-amber-400 shrink-0" />
+                          <span><strong>60s Priority Lead Time on New Job Alerts</strong></span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 size={14} className="text-amber-400 shrink-0" />
+                          <span>Gold Elite Pro Badge on Profile</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 size={14} className="text-amber-400 shrink-0" />
+                          <span>0% Free Instant NIBSS Bank Payouts</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 size={14} className="text-amber-400 shrink-0" />
+                          <span>Includes Pro Master Handbook (PDF)</span>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div className="mt-4 pt-3 border-t border-white/10 text-[11px] font-bold text-amber-300">
+                      Best choice for high-earning tradespeople
+                    </div>
+                  </div>
+                </div>
+
+                {/* Payment Checkout Box */}
+                <div className="p-6 rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-md space-y-4">
+                  {accreditationPaid ? (
+                    <div className="p-4 rounded-2xl bg-emerald-950/60 border border-emerald-500/40 flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <CheckCircle2 size={20} className="text-emerald-400 shrink-0" />
+                        <div>
+                          <p className="text-xs font-black uppercase text-emerald-200">
+                            {selectedTier === 'starter' ? "Starter Pro (₦1,500)" : "Elite Pro (₦3,500)"} Payment Confirmed
+                          </p>
+                          <p className="text-[11px] text-emerald-300/80 font-mono">Ref: {paymentRef || "FLW-VERIFIED"}</p>
+                        </div>
+                      </div>
+                      <Link
+                        href="/worker/handbook"
+                        target="_blank"
+                        className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 transition-all"
+                      >
+                        <BookOpen size={13} /> Handbook
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {/* Primary Flutterwave Button */}
                       <button
                         type="button"
-                        onClick={() => setShowManualTransfer(!showManualTransfer)}
-                        className="text-sky-300 hover:underline font-bold cursor-pointer"
+                        onClick={handleFlutterwavePayment}
+                        disabled={isInitializingFlw}
+                        className={`w-full h-14 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg transition-all hover:scale-101 cursor-pointer disabled:opacity-50 ${
+                          selectedTier === 'elite'
+                            ? "bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-amber-400/25"
+                            : "bg-sky-500 hover:bg-sky-400 text-slate-950 shadow-sky-500/25"
+                        }`}
                       >
-                        {showManualTransfer ? "Hide Bank Transfer Details" : "Alternative: Globus Bank Deposit →"}
+                        {isInitializingFlw ? (
+                          <>
+                            <span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-950 border-t-transparent" />
+                            <span>Connecting Flutterwave Gateway...</span>
+                          </>
+                        ) : (
+                          <>
+                            <CreditCard size={17} />
+                            <span>
+                              Pay ₦{currentFee.toLocaleString()} with Flutterwave ({selectedTier === 'starter' ? 'Starter' : 'Elite'})
+                            </span>
+                          </>
+                        )}
                       </button>
-                    </div>
 
-                    {/* Secondary Alternative: Globus Bank Deposit */}
-                    {showManualTransfer && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-3 text-xs pt-3"
-                      >
-                        <div className="flex justify-between items-center text-slate-300 border-b border-white/10 pb-2">
-                          <span className="font-bold text-[10px] uppercase tracking-wider text-slate-400">
-                            Alternative Bank Transfer (Backup)
-                          </span>
-                          <span className="text-[10px] text-slate-300 font-bold uppercase">{PAYMENT_ACCOUNT.bankName}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-slate-400">Account Number:</span>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              navigator.clipboard.writeText(PAYMENT_ACCOUNT.accountNumber);
-                              toast.success(`Account Number Copied: ${PAYMENT_ACCOUNT.accountNumber}`);
-                            }}
-                            className="font-mono font-black text-white hover:text-sky-300 transition-colors flex items-center gap-1 cursor-pointer"
-                          >
-                            <span>{PAYMENT_ACCOUNT.accountNumber}</span>
-                            <span className="text-[10px] bg-white/10 px-1.5 py-0.5 rounded text-sky-300">Copy</span>
-                          </button>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-slate-400">Account Name:</span>
-                          <span className="font-bold text-white text-[11px]">{PAYMENT_ACCOUNT.accountName}</span>
-                        </div>
-                        <div className="pt-2">
-                          <label className="block text-[10px] font-bold uppercase text-slate-400 mb-1">
-                            Transfer Reference / Sender Name:
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="e.g. Olawale Ibrahim / 1000501179 Ref"
-                            value={manualTransferRef}
-                            onChange={(e) => setManualTransferRef(e.target.value)}
-                            className="w-full rounded-xl bg-white/10 border border-white/20 px-3 py-2 text-xs font-mono text-white placeholder:text-slate-500 outline-none focus:border-sky-400"
-                          />
-                        </div>
-                      </motion.div>
-                    )}
-                  </div>
-                )}
+                      <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1">
+                        <span className="flex items-center gap-1"><Lock size={12} className="text-emerald-400" /> Instant automated confirmation</span>
+                        <button
+                          type="button"
+                          onClick={() => setShowManualTransfer(!showManualTransfer)}
+                          className="text-sky-300 hover:underline font-bold cursor-pointer"
+                        >
+                          {showManualTransfer ? "Hide Bank Transfer Details" : "Alternative: Globus Bank Deposit →"}
+                        </button>
+                      </div>
+
+                      {/* Secondary Alternative: Globus Bank Deposit */}
+                      {showManualTransfer && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-3 text-xs pt-3"
+                        >
+                          <div className="flex justify-between items-center text-slate-300 border-b border-white/10 pb-2">
+                            <span className="font-bold text-[10px] uppercase tracking-wider text-slate-400">
+                              Alternative Bank Transfer (Backup)
+                            </span>
+                            <span className="text-[10px] text-slate-300 font-bold uppercase">{PAYMENT_ACCOUNT.bankName}</span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-slate-400">Account Number:</span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                navigator.clipboard.writeText(PAYMENT_ACCOUNT.accountNumber);
+                                toast.success(`Account Number Copied: ${PAYMENT_ACCOUNT.accountNumber}`);
+                              }}
+                              className="font-mono font-black text-white hover:text-sky-300 transition-colors flex items-center gap-1 cursor-pointer"
+                            >
+                              <span>{PAYMENT_ACCOUNT.accountNumber}</span>
+                              <span className="text-[10px] bg-white/10 px-1.5 py-0.5 rounded text-sky-300">Copy</span>
+                            </button>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-slate-400">Account Name:</span>
+                            <span className="font-bold text-white text-[11px]">{PAYMENT_ACCOUNT.accountName}</span>
+                          </div>
+                          <div className="pt-2">
+                            <label className="block text-[10px] font-bold uppercase text-slate-400 mb-1">
+                              Transfer Reference / Sender Name:
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="e.g. Olawale Ibrahim / 1000501179 Ref"
+                              value={manualTransferRef}
+                              onChange={(e) => setManualTransferRef(e.target.value)}
+                              className="w-full rounded-xl bg-white/10 border border-white/20 px-3 py-2 text-xs font-mono text-white placeholder:text-slate-500 outline-none focus:border-sky-400"
+                            />
+                          </div>
+                        </motion.div>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
