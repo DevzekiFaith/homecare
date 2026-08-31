@@ -128,6 +128,18 @@ export async function GET(req: Request) {
       return NextResponse.redirect(`${origin}/customer/dashboard?payment=success&service=${encodeURIComponent(resolvedOrderRef)}`);
     }
 
+    if (paymentType === "pro_upgrade" && userId) {
+      await supabase
+        .from("professionals")
+        .update({
+          tier: "elite",
+          is_elite: true,
+        })
+        .eq("id", userId);
+
+      return NextResponse.redirect(`${origin}/worker/dashboard?upgrade=success`);
+    }
+
     if (paymentType === "pro_accreditation") {
       return NextResponse.redirect(
         `${origin}/auth/worker/register?paid=true&ref=${encodeURIComponent(transactionId || resolvedOrderRef || "")}&amount=${verifiedAmount}`
