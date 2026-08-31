@@ -172,12 +172,12 @@ export default function ChatModal({ requestId, isOpen, onClose, title = "Chat", 
                       <div
                         className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm ${
                           isMine
-                            ? "bg-brand-primary text-background rounded-tr-none shadow-lg shadow-brand-primary/10"
+                            ? "bg-sky-600 text-white rounded-tr-none shadow-md shadow-sky-600/20"
                             : "bg-white/5 text-foreground border border-white/10 rounded-tl-none"
                         }`}
                       >
                         <p className="leading-relaxed whitespace-pre-wrap break-words">{msg.content}</p>
-                        <p className={`text-[9px] mt-1 font-bold opacity-50 ${isMine ? "text-background" : "text-zinc-500"}`}>
+                        <p className={`text-[9px] mt-1 font-bold opacity-75 ${isMine ? "text-sky-100" : "text-zinc-500"}`}>
                           {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </p>
                       </div>
@@ -195,12 +195,12 @@ export default function ChatModal({ requestId, isOpen, onClose, title = "Chat", 
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   placeholder="Type a message..."
-                  className="flex-1 bg-background border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors"
+                  className="flex-1 bg-background border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-sky-500/50 transition-colors"
                 />
                 <button
                   type="submit"
                   disabled={!newMessage.trim() || !userId}
-                  className="h-11 w-11 rounded-xl bg-brand-primary text-background flex items-center justify-center hover:bg-brand-primary/90 transition-all disabled:opacity-50 disabled:grayscale"
+                  className="h-11 w-11 rounded-xl bg-sky-600 text-white flex items-center justify-center hover:bg-sky-500 transition-all disabled:opacity-50 disabled:grayscale cursor-pointer shadow-md shadow-sky-600/30"
                 >
                   <Send size={18} />
                 </button>

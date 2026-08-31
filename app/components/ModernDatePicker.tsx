@@ -88,14 +88,14 @@ export default function ModernDatePicker({
             <button 
                 type="button"
                 onClick={() => setViewMode('strip')}
-                className={`h-7 px-3 rounded-full flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest transition-all ${viewMode === 'strip' ? "bg-brand-primary text-background shadow-lg" : "text-zinc-500 hover:text-zinc-300"}`}
+                className={`h-7 px-3 rounded-full flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest transition-all cursor-pointer ${viewMode === 'strip' ? "bg-sky-600 text-white shadow-md shadow-sky-600/30" : "text-zinc-500 hover:text-zinc-300"}`}
             >
                 <ListFilter size={10} /> Strip
             </button>
             <button 
                 type="button"
                 onClick={() => setViewMode('grid')}
-                className={`h-7 px-3 rounded-full flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest transition-all ${viewMode === 'grid' ? "bg-brand-primary text-background shadow-lg" : "text-zinc-500 hover:text-zinc-300"}`}
+                className={`h-7 px-3 rounded-full flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest transition-all cursor-pointer ${viewMode === 'grid' ? "bg-sky-600 text-white shadow-md shadow-sky-600/30" : "text-zinc-500 hover:text-zinc-300"}`}
             >
                 <LayoutGrid size={10} /> Grid
             </button>
@@ -114,10 +114,10 @@ export default function ModernDatePicker({
             <div className="flex items-center justify-between mb-4">
                  <p className="text-[11px] font-bold text-zinc-400">Next 3 weeks</p>
                  <div className="flex gap-2">
-                    <button type="button" onClick={() => handleScroll('left')} className="h-8 w-8 rounded-xl flex items-center justify-center bg-white/5 border border-white/5 hover:border-brand-primary/30 transition-all text-zinc-400">
+                    <button type="button" onClick={() => handleScroll('left')} className="h-8 w-8 rounded-xl flex items-center justify-center bg-white/5 border border-white/5 hover:border-sky-400/30 transition-all text-zinc-400 cursor-pointer">
                       <ChevronLeft size={16} />
                     </button>
-                    <button type="button" onClick={() => handleScroll('right')} className="h-8 w-8 rounded-xl flex items-center justify-center bg-white/5 border border-white/5 hover:border-brand-primary/30 transition-all text-zinc-400">
+                    <button type="button" onClick={() => handleScroll('right')} className="h-8 w-8 rounded-xl flex items-center justify-center bg-white/5 border border-white/5 hover:border-sky-400/30 transition-all text-zinc-400 cursor-pointer">
                       <ChevronRight size={16} />
                     </button>
                  </div>
@@ -139,20 +139,20 @@ export default function ModernDatePicker({
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => onSelect(date)}
-                    className={`flex-shrink-0 snap-center w-[76px] h-[98px] rounded-[28px] flex flex-col items-center justify-center transition-all duration-500 border relative ${
+                    className={`flex-shrink-0 snap-center w-[76px] h-[98px] rounded-[28px] flex flex-col items-center justify-center transition-all duration-300 border relative cursor-pointer ${
                       isSelected 
-                        ? "bg-brand-primary border-brand-primary shadow-[0_15px_40px_-10px_rgba(249,115,22,0.6)]" 
-                        : "glass-panel border-white/5 hover:border-brand-primary/30 bg-white/[0.03]"
+                        ? "bg-sky-600 border-sky-400 shadow-[0_10px_30px_-5px_rgba(2,132,199,0.5)] text-white" 
+                        : "glass-panel border-white/5 hover:border-sky-400/30 bg-white/[0.03]"
                     }`}
                   >
-                    <span className={`text-[9.5px] font-black uppercase tracking-[0.2em] ${isSelected ? "text-background" : "text-zinc-500"}`}>
+                    <span className={`text-[9.5px] font-black uppercase tracking-[0.2em] ${isSelected ? "text-sky-100" : "text-zinc-500"}`}>
                       {formatDay(date)}
                     </span>
-                    <span className={`text-2xl font-heading font-extrabold mt-2 leading-none ${isSelected ? "text-background" : "text-foreground"}`}>
+                    <span className={`text-2xl font-heading font-extrabold mt-2 leading-none ${isSelected ? "text-white" : "text-foreground"}`}>
                       {formatDate(date)}
                     </span>
                     {isToday && !isSelected && (
-                       <div className="absolute bottom-3 h-1.5 w-1.5 rounded-full bg-brand-primary shadow-[0_0_10px_rgba(249,115,22,0.8)]" />
+                       <div className="absolute bottom-3 h-1.5 w-1.5 rounded-full bg-sky-500 shadow-[0_0_10px_rgba(2,132,199,0.8)]" />
                     )}
                   </motion.button>
                 );
@@ -170,10 +170,10 @@ export default function ModernDatePicker({
             <div className="flex items-center justify-between mb-4">
                  <p className="text-[11px] font-bold text-zinc-400">Select any day</p>
                  <div className="flex gap-2">
-                    <button type="button" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))} className="h-8 w-8 rounded-xl flex items-center justify-center bg-white/5 border border-white/5 hover:border-brand-primary/30 transition-all text-zinc-400">
+                    <button type="button" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))} className="h-8 w-8 rounded-xl flex items-center justify-center bg-white/5 border border-white/5 hover:border-sky-400/30 transition-all text-zinc-400 cursor-pointer">
                       <ChevronLeft size={16} />
                     </button>
-                    <button type="button" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))} className="h-8 w-8 rounded-xl flex items-center justify-center bg-white/5 border border-white/5 hover:border-brand-primary/30 transition-all text-zinc-400">
+                    <button type="button" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))} className="h-8 w-8 rounded-xl flex items-center justify-center bg-white/5 border border-white/5 hover:border-sky-400/30 transition-all text-zinc-400 cursor-pointer">
                       <ChevronRight size={16} />
                     </button>
                  </div>
@@ -195,16 +195,16 @@ export default function ModernDatePicker({
                             type="button"
                             disabled={isPast}
                             onClick={() => onSelect(date)}
-                            className={`aspect-square sm:h-11 sm:w-11 rounded-xl sm:rounded-2xl flex items-center justify-center text-xs font-bold transition-all ${
+                            className={`aspect-square sm:h-11 sm:w-11 rounded-xl sm:rounded-2xl flex items-center justify-center text-xs font-black transition-all cursor-pointer ${
                                 isSelected 
-                                    ? "bg-brand-primary text-background shadow-lg shadow-brand-primary/20" 
+                                    ? "bg-sky-600 text-white shadow-lg shadow-sky-600/40 border border-sky-400" 
                                     : isPast 
                                         ? "text-zinc-800 opacity-30 cursor-not-allowed"
-                                        : "text-zinc-400 hover:bg-white/5 hover:text-brand-primary border border-transparent hover:border-white/10"
+                                        : "text-zinc-400 hover:bg-white/5 hover:text-sky-400 border border-transparent hover:border-white/10"
                             }`}
                         >
                             {date.getDate()}
-                            {isToday && !isSelected && <div className="absolute top-1 right-1 h-1 w-1 rounded-full bg-brand-primary" />}
+                            {isToday && !isSelected && <div className="absolute top-1 right-1 h-1 w-1 rounded-full bg-sky-500" />}
                         </button>
                     );
                 })}
@@ -216,7 +216,7 @@ export default function ModernDatePicker({
       {/* Integrated Time Picker */}
       <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-white/5 relative z-10">
         <label className="text-[10px] font-bold uppercase tracking-wider sm:tracking-[0.25em] text-zinc-500 flex items-center gap-2.5 mb-4 sm:mb-6">
-          <Clock size={12} className="text-brand-primary" strokeWidth={3} />
+          <Clock size={12} className="text-sky-500" strokeWidth={3} />
           Available Slots
         </label>
         <div className="grid grid-cols-2 min-[400px]:grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3">
@@ -229,10 +229,10 @@ export default function ModernDatePicker({
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => onTimeSelect?.(time)}
-                className={`h-11 rounded-2xl text-[11px] font-black border transition-all duration-300 flex items-center justify-center ${
+                className={`h-11 rounded-2xl text-[11px] font-black border transition-all duration-300 flex items-center justify-center cursor-pointer ${
                     isSelected 
-                    ? "bg-brand-primary border-brand-primary text-background shadow-[0_10px_20px_-5px_rgba(249,115,22,0.4)]" 
-                    : "glass-panel border-white/5 text-zinc-400 hover:border-brand-primary/30"
+                    ? "bg-sky-600 border-sky-400 text-white shadow-[0_10px_25px_-5px_rgba(2,132,199,0.5)]" 
+                    : "glass-panel border-white/5 text-zinc-400 hover:border-sky-400/30"
                 }`}
                 >
                 {time}

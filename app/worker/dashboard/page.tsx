@@ -614,7 +614,7 @@ export default function WorkerDashboardPage() {
                   setWithdrawAmount(balance > 0 ? balance : 10000);
                   setIsWithdrawOpen(true);
                 }}
-                className="mt-4 w-full h-9 rounded-xl bg-brand-primary text-background hover:bg-sky-400 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md shadow-sky-500/20"
+                className="mt-4 w-full h-9 rounded-xl bg-sky-600 text-white hover:bg-sky-500 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md shadow-sky-600/25"
               >
                 <ArrowDownToLine size={14} />
                 <span>Withdraw Funds</span>
@@ -632,7 +632,7 @@ export default function WorkerDashboardPage() {
             <motion.div variants={itemVariants} className="glass-panel p-6 shadow-premium flex flex-col justify-between">
               <div>
                 <p className="text-[10px] uppercase tracking-widest font-bold text-zinc-500">Rating</p>
-                <p className="mt-2 text-3xl font-heading font-extrabold text-foreground tracking-tighter">4.9<span className="text-brand-primary ml-1 text-2xl">★</span></p>
+                <p className="mt-2 text-3xl font-heading font-extrabold text-foreground tracking-tighter">4.9<span className="text-sky-500 ml-1 text-2xl">★</span></p>
               </div>
               <span className="text-[10px] font-bold text-sky-400">Top 5% Verified Tier</span>
             </motion.div>
@@ -642,20 +642,20 @@ export default function WorkerDashboardPage() {
           <div className="flex bg-white/5 p-1 rounded-2xl border border-white/10 w-full sm:w-fit flex-wrap gap-1 sm:gap-0">
             <button 
               onClick={() => setActiveTab('radar')}
-              className={`flex-grow sm:flex-none flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all ${activeTab === 'radar' ? 'bg-brand-primary text-background font-black' : 'text-zinc-500 hover:text-foreground'}`}
+              className={`flex-grow sm:flex-none flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black transition-all cursor-pointer ${activeTab === 'radar' ? 'bg-sky-600 text-white shadow-md shadow-sky-600/30' : 'text-zinc-400 hover:text-white'}`}
             >
               <Navigation size={14} /> Area Radar
             </button>
             <button 
               onClick={() => setActiveTab('my-jobs')}
-              className={`flex-grow sm:flex-none flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all ${activeTab === 'my-jobs' ? 'bg-brand-primary text-background font-black' : 'text-zinc-500 hover:text-foreground'}`}
+              className={`flex-grow sm:flex-none flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black transition-all cursor-pointer ${activeTab === 'my-jobs' ? 'bg-sky-600 text-white shadow-md shadow-sky-600/30' : 'text-zinc-400 hover:text-white'}`}
             >
               <ClipboardList size={14} /> My Active Jobs 
               {myActiveJobs.length > 0 && <span className="flex h-4 w-4 items-center justify-center rounded-full bg-white/20 text-[9px] font-black">{myActiveJobs.length}</span>}
             </button>
             <button 
               onClick={() => setActiveTab('completed')}
-              className={`flex-grow sm:flex-none flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all ${activeTab === 'completed' ? 'bg-brand-primary text-background font-black' : 'text-zinc-500 hover:text-foreground'}`}
+              className={`flex-grow sm:flex-none flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black transition-all cursor-pointer ${activeTab === 'completed' ? 'bg-sky-600 text-white shadow-md shadow-sky-600/30' : 'text-zinc-400 hover:text-white'}`}
             >
               <CheckCircle2 size={14} /> Completed Jobs
               {myCompletedJobs.length > 0 && <span className="flex h-4 w-4 items-center justify-center rounded-full bg-white/20 text-[9px] font-black">{myCompletedJobs.length}</span>}
@@ -1134,7 +1134,7 @@ export default function WorkerDashboardPage() {
                 type="button"
                 disabled={isWithdrawing || !withdrawAmount || withdrawAmount > balance}
                 onClick={handleProcessPayout}
-                className="w-full h-12 rounded-full bg-brand-primary hover:bg-sky-400 text-background font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50 shadow-lg shadow-sky-500/25"
+                className="w-full h-12 rounded-full bg-sky-600 hover:bg-sky-500 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50 shadow-lg shadow-sky-600/30 border border-sky-400/30"
               >
                 {isWithdrawing ? "Processing Disbursal..." : "Confirm Bank Disbursal"}
               </button>
