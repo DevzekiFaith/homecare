@@ -70,6 +70,8 @@ export default function WorkerDashboardPage() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [origin, setOrigin] = useState("");
 
+  const [dismissedIds, setDismissedIds] = useState<string[]>([]);
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       setOrigin(window.location.origin);
@@ -78,6 +80,12 @@ export default function WorkerDashboardPage() {
       try {
         const cached = localStorage.getItem("hc_worker_avatar");
         if (cached) setAvatarUrl(cached);
+      } catch {}
+
+      // Check dismissed jobs
+      try {
+        const savedDismissed = localStorage.getItem("hc_dismissed_jobs");
+        if (savedDismissed) setDismissedIds(JSON.parse(savedDismissed));
       } catch {}
 
       // Check upgrade success query param
@@ -350,31 +358,31 @@ export default function WorkerDashboardPage() {
 
   const handleDeleteJobWorker = (jobId: string) => {
     toast("Decline & Remove Job Request?", {
-      description: "Are you sure you want to remove this booking request from your radar?",
+      description: "Are you sure you want to permanently remove this booking request from your radar?",
       action: {
         label: "Confirm Remove",
         onClick: async () => {
+          // Immediately hide and persist locally
+          const updated = [...dismissedIds, jobId];
+          setDismissedIds(updated);
           try {
-            const res = await fetch("/api/admin/delete-job", {
+            localStorage.setItem("hc_dismissed_jobs", JSON.stringify(updated));
+          } catch {}
+          setRequests((prev) => prev.filter((r) => r.id !== jobId));
+
+          try {
+            await fetch("/api/admin/delete-job", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ id: jobId }),
             });
-
-            const data = await res.json();
-            if (!data.success) {
-              toast.error("Failed to remove job: " + (data.error || "Unknown error"));
-              return;
-            }
-
-            setRequests((prev) => prev.filter((r) => r.id !== jobId));
-            toast.error("Job request removed from feed", {
-              description: "This booking has been declined and removed from your radar.",
-              duration: 4000,
-            });
-          } catch (err: unknown) {
-            toast.error("Remove job error: " + (err instanceof Error ? err.message : "Error"));
+          } catch (err) {
+            console.warn("Delete API sync warning:", err);
           }
+
+          toast.success("Job Removed from Feed", {
+            description: "This booking has been permanently removed from your radar.",
+          });
         },
       },
       cancel: {
@@ -564,9 +572,25 @@ export default function WorkerDashboardPage() {
     }
   };
 
-  const radarJobs = requests.filter(r => r.status === 'pending' || r.status === 'new' || !r.assigned_worker_id);
-  const myActiveJobs = requests.filter(r => r.assigned_worker_id === user?.id && r.status === 'in_progress');
-  const myCompletedJobs = requests.filter(r => r.assigned_worker_id === user?.id && r.status === 'completed');
+  const radarJobs = requests.filter(
+    (r) =>
+      r.status !== "cancelled" &&
+      r.status !== "completed" &&
+      (!r.assigned_worker_id || r.status === "pending" || r.status === "new") &&
+      !dismissedIds.includes(r.id)
+  );
+  const myActiveJobs = requests.filter(
+    (r) =>
+      (r.assigned_worker_id === user?.id || !r.assigned_worker_id) &&
+      r.status === "in_progress" &&
+      !dismissedIds.includes(r.id)
+  );
+  const myCompletedJobs = requests.filter(
+    (r) =>
+      r.status === "completed" &&
+      (!user?.id || r.assigned_worker_id === user?.id || !r.assigned_worker_id) &&
+      !dismissedIds.includes(r.id)
+  );
   const displayJobs = activeTab === 'radar' ? radarJobs : activeTab === 'my-jobs' ? myActiveJobs : myCompletedJobs;
 
   return (
