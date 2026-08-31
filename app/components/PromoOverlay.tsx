@@ -81,23 +81,23 @@ export default function PromoOverlay() {
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="fixed inset-0 z-[100] flex items-center justify-center px-4"
           >
-            <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto scrollbar-hide rounded-3xl border border-white/10 bg-background shadow-[0_0_60px_rgba(249,115,22,0.15)]">
+            <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto scrollbar-hide rounded-3xl border border-slate-700/80 bg-slate-900 shadow-[0_0_60px_rgba(2,132,199,0.25)] text-slate-100">
               {/* Close Button */}
               <button
                 onClick={handleDismiss}
-                className="absolute top-4 right-4 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-zinc-300 hover:text-white hover:bg-black/60 transition-all"
+                className="absolute top-4 right-4 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-slate-800/80 backdrop-blur-md border border-slate-600 text-slate-300 hover:text-white hover:bg-slate-700 transition-all cursor-pointer"
               >
                 <X size={18} />
               </button>
 
               {/* Top Banner */}
-              <div className="relative bg-gradient-to-r from-brand-primary/20 via-rose-500/10 to-violet-500/10 px-6 py-3 border-b border-white/5">
+              <div className="relative bg-gradient-to-r from-sky-500/20 via-blue-500/20 to-sky-500/20 px-6 py-3 border-b border-slate-700/60">
                 <div className="flex items-center gap-2">
                   <Flame
                     size={16}
-                    className="text-brand-primary animate-pulse"
+                    className="text-sky-400 animate-pulse"
                   />
-                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-primary">
+                  <span className="text-[11px] font-black uppercase tracking-[0.2em] text-sky-300">
                     Featured Deal — Limited Stock
                   </span>
                 </div>
@@ -106,7 +106,7 @@ export default function PromoOverlay() {
               {/* Content */}
               <div className="flex flex-col sm:flex-row gap-0">
                 {/* Image */}
-                <div className="relative w-full sm:w-1/2 aspect-video sm:aspect-auto sm:min-h-[280px] bg-white/5 shrink-0">
+                <div className="relative w-full sm:w-1/2 aspect-video sm:aspect-auto sm:min-h-[280px] bg-slate-800/50 shrink-0">
                   <Image
                     src={product.image}
                     alt={product.name}
@@ -115,7 +115,7 @@ export default function PromoOverlay() {
                     sizes="(max-width: 640px) 100vw, 250px"
                     unoptimized
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent sm:bg-gradient-to-r" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent sm:bg-gradient-to-r" />
 
                   {/* Badge */}
                   {product.badge && (
@@ -127,13 +127,13 @@ export default function PromoOverlay() {
 
                 {/* Details */}
                 <div className="flex-1 p-6 flex flex-col justify-center">
-                  <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500 mb-2">
+                  <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-sky-400 mb-2">
                     {product.category}
                   </span>
-                  <h3 className="text-xl font-heading font-extrabold text-foreground mb-2">
+                  <h3 className="text-xl font-heading font-extrabold text-white mb-2 leading-tight">
                     {product.name}
                   </h3>
-                  <p className="text-sm text-zinc-400 leading-relaxed mb-4">
+                  <p className="text-sm text-slate-300 leading-relaxed mb-4">
                     {product.description}
                   </p>
 
@@ -148,12 +148,12 @@ export default function PromoOverlay() {
                             className={
                               star <= Math.round(product.rating!)
                                 ? "text-amber-400 fill-amber-400"
-                                : "text-zinc-600"
+                                : "text-slate-600"
                             }
                           />
                         ))}
                       </div>
-                      <span className="text-[10px] text-zinc-500 font-medium">
+                      <span className="text-[10px] text-slate-400 font-medium">
                         {product.rating} ({product.reviewCount} reviews)
                       </span>
                     </div>
@@ -161,8 +161,8 @@ export default function PromoOverlay() {
 
                   {/* Price */}
                   <div className="flex items-baseline gap-2 mb-6">
-                    <span suppressHydrationWarning className="text-2xl font-extrabold text-foreground">
-                      <span className="text-brand-primary text-base mr-0.5">
+                    <span suppressHydrationWarning className="text-2xl font-extrabold text-white">
+                      <span className="text-sky-400 text-base mr-0.5 font-black">
                         ₦
                       </span>
                       {product.price.toLocaleString()}
@@ -178,7 +178,7 @@ export default function PromoOverlay() {
                   <div className="flex flex-col sm:flex-row gap-3">
                     <button
                       onClick={handleAddToCart}
-                      className="flex-1 flex items-center justify-center gap-2 h-12 rounded-xl bg-brand-primary text-background text-[11px] font-bold uppercase tracking-[0.15em] hover:bg-brand-primary/90 transition-all shadow-lg shadow-brand-primary/20"
+                      className="flex-1 flex items-center justify-center gap-2 h-12 rounded-xl bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 active:from-sky-700 active:to-blue-700 text-white text-xs font-black uppercase tracking-[0.15em] transition-all shadow-lg shadow-sky-600/30 cursor-pointer border border-sky-400/30"
                     >
                       <ShoppingCart size={16} />
                       Add to Cart
@@ -186,7 +186,7 @@ export default function PromoOverlay() {
                     <Link
                       href="/store"
                       onClick={handleDismiss}
-                      className="flex items-center justify-center gap-2 h-12 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-[11px] font-bold uppercase tracking-[0.15em] text-zinc-300 transition-all px-5"
+                      className="flex items-center justify-center gap-2 h-12 rounded-xl border border-slate-600 bg-slate-800 hover:bg-slate-700 text-xs font-black uppercase tracking-[0.15em] text-white transition-all px-5 cursor-pointer shadow-sm"
                     >
                       View Store <ArrowRight size={14} />
                     </Link>

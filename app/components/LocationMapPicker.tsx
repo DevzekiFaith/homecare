@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { MapPin, Search, Loader2, CheckCircle2, X } from "lucide-react";
+import { MapPin, Search, Loader2, CheckCircle2, X, Sparkles } from "lucide-react";
 
 // ── Data Models ────────────────────────────────────────────────
 export interface AreaPoint {
@@ -324,22 +324,38 @@ export default function LocationMapPicker({
 
           {/* Suggestions dropdown */}
           {suggestions.length > 0 && (
-            <ul className="absolute z-50 mt-1 w-full rounded-xl border border-slate-200 bg-white shadow-xl overflow-hidden text-sm">
-              {suggestions.map((s) => (
-                <li key={s.place_id}>
+            <div className="absolute z-50 mt-2 w-full rounded-2xl border-2 border-sky-500/20 bg-white/95 backdrop-blur-md shadow-2xl p-2.5 space-y-2 max-h-80 overflow-y-auto">
+              <div className="px-2 py-1 flex items-center justify-between text-[11px] font-black uppercase tracking-wider text-sky-800 bg-sky-50 rounded-lg border border-sky-100">
+                <span className="flex items-center gap-1.5">
+                  <Sparkles size={13} className="text-sky-600" /> Suggested Locations
+                </span>
+                <span className="text-[10px] bg-sky-600 text-white font-bold px-2 py-0.5 rounded-full">
+                  {suggestions.length} found
+                </span>
+              </div>
+              <div className="space-y-1.5">
+                {suggestions.map((s) => (
                   <button
+                    key={s.place_id}
                     type="button"
                     onClick={() => handleSelectSuggestion(s)}
-                    className="w-full text-left px-4 py-2.5 hover:bg-sky-50 hover:text-sky-700 transition-colors flex items-start gap-2.5 border-b border-slate-100 last:border-0"
+                    className="w-full text-left px-3.5 py-3 bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-150 flex items-start gap-3 group cursor-pointer border border-sky-400/40"
                   >
-                    <MapPin size={13} className="shrink-0 mt-0.5 text-sky-500" />
-                    <span className="font-medium text-slate-800 text-xs leading-relaxed line-clamp-2">
-                      {s.display_name}
+                    <span className="p-1.5 rounded-lg bg-white/20 text-white shrink-0 mt-0.5 group-hover:bg-white group-hover:text-sky-600 transition-colors">
+                      <MapPin size={14} className="shrink-0" />
                     </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-white text-xs leading-snug line-clamp-2 drop-shadow-sm">
+                        {s.display_name}
+                      </p>
+                      <p className="text-[10px] text-sky-100 font-semibold mt-0.5 flex items-center gap-1">
+                        <span>Click to choose this location</span> &rarr;
+                      </p>
+                    </div>
                   </button>
-                </li>
-              ))}
-            </ul>
+                ))}
+              </div>
+            </div>
           )}
         </div>
 

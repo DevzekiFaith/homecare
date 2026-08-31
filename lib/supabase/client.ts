@@ -31,5 +31,17 @@ export function createClient() {
         }
     )
 
+    // Automatically purge invalid/stale refresh tokens to prevent console AuthApiError loops
+    if (typeof window !== 'undefined') {
+        supabaseClient.auth.getSession().then((res: { error: { message?: string } | null }) => {
+            const error = res?.error;
+            if (error && (error.message?.toLowerCase().includes("refresh token") || error.message?.toLowerCase().includes("invalid_grant"))) {
+                supabaseClient?.auth.signOut({ scope: 'local' }).catch(() => {});
+            }
+        }).catch(() => {
+            // Ignore background error
+        });
+    }
+
     return supabaseClient
 }
