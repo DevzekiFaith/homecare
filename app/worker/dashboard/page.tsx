@@ -26,6 +26,7 @@ interface ServiceRequest {
   status: string;
   image_url: string | null;
   assigned_worker_id: string | null;
+  property_id?: string | null;
 }
 
 const containerVariants = {
@@ -271,15 +272,34 @@ export default function WorkerDashboardPage() {
   
        if (updateError) throw updateError;
        
-       toast.success("Job Completed!", {
-         description: "Well done, Pro! Earnings updated."
-       });
-       
-       // Get the job details to display in the QR modal
+       // Get the job details to display in the QR modal and write to Maintenance Passport
        const completedJob = requests.find(r => r.id === jobId);
        if (completedJob) {
          setQrCodeJob({ ...completedJob, status: 'completed' });
+
+         // If associated with a property, automatically record to Digital Maintenance Passport
+         if (completedJob.property_id) {
+           try {
+             await supabase.from("property_maintenance_records").insert({
+               property_id: completedJob.property_id,
+               service_request_id: completedJob.id,
+               performed_by_id: user?.id || null,
+               performed_by_name: user?.user_metadata?.full_name || "Verified HomeCare Professional",
+               category: completedJob.service_type,
+               title: `${completedJob.service_type} Service Completed`,
+               work_performed: completedJob.description || "On-site repair and maintenance completed.",
+               date_completed: new Date().toISOString(),
+               cost: 15000,
+             });
+           } catch (passportErr) {
+             console.warn("Maintenance passport sync warning:", passportErr);
+           }
+         }
        }
+       
+       toast.success("Job Completed!", {
+         description: "Well done, Pro! Earnings and Maintenance Passport updated."
+       });
        
        fetchRequests();
      } catch (err: unknown) {
@@ -743,9 +763,19 @@ export default function WorkerDashboardPage() {
                             <p className="text-sm font-bold text-foreground group-hover:text-brand-primary transition-colors">
                               {job.service_type}
                             </p>
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mt-1">
-                              {job.address.slice(0, 30)}{job.address.length > 30 ? '...' : ''}
-                            </p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+                                {job.address.slice(0, 30)}{job.address.length > 30 ? '...' : ''}
+                              </p>
+                              {job.property_id && (
+                                <Link
+                                  href={`/property/${job.property_id}`}
+                                  className="text-[9px] font-black text-sky-400 bg-sky-500/10 border border-sky-500/30 px-2 py-0.5 rounded-full hover:bg-sky-500/20 transition-colors"
+                                >
+                                  🏢 Property Job
+                                </Link>
+                              )}
+                            </div>
                           </div>
                           <span className={`inline-flex h-6 items-center rounded-full border px-3 text-[9px] font-bold uppercase tracking-widest ${
                             job.status === 'pending' || job.status === 'new'

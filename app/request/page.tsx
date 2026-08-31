@@ -175,9 +175,11 @@ function RequestContent() {
 
   const [user, setUser] = useState<User | null>(null);
   const [selectedParts, setSelectedParts] = useState<Product[]>([]);
+  const [propertyId, setPropertyId] = useState<string | null>(null);
+  const [defaultDetails, setDefaultDetails] = useState<string>("");
   const searchParams = useSearchParams();
 
-  // Handle pre-selected part from store
+  // Handle pre-selected part, property_id, service, and address from URL
   useEffect(() => {
     const partId = searchParams.get('part');
     if (partId) {
@@ -188,6 +190,26 @@ function RequestContent() {
            setSelectedService(part.serviceLink[0]);
         }
       }
+    }
+
+    const pId = searchParams.get('property_id');
+    if (pId) {
+      setPropertyId(pId);
+    }
+
+    const addr = searchParams.get('address');
+    if (addr) {
+      setAddress(decodeURIComponent(addr));
+    }
+
+    const serv = searchParams.get('service');
+    if (serv) {
+      setSelectedService(decodeURIComponent(serv));
+    }
+
+    const det = searchParams.get('details');
+    if (det) {
+      setDefaultDetails(decodeURIComponent(det));
     }
   }, [searchParams]);
 
@@ -361,7 +383,8 @@ function RequestContent() {
           : details,
         address: address,
         preferred_time: preferredTime,
-        image_url: imageUrl
+        image_url: imageUrl,
+        property_id: propertyId || null,
       });
 
       if (requestError) {
@@ -627,6 +650,19 @@ function RequestContent() {
                     </motion.div>
                 )}
 
+                {propertyId && (
+                  <div className="p-4 rounded-2xl bg-sky-50 border border-sky-200 flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-sky-700">HomeCare Property Care Binding</span>
+                      <p className="text-xs font-bold text-slate-900">Binding job to Property: {propertyId}</p>
+                      <p className="text-[10px] text-slate-500">This repair will automatically sync to the property&apos;s Digital Maintenance Passport.</p>
+                    </div>
+                    <span className="text-[10px] font-black uppercase tracking-wider text-sky-700 bg-sky-100 px-2.5 py-1 rounded-full">
+                      Auto-Synced
+                    </span>
+                  </div>
+                )}
+
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2 col-span-full">
                     <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-700">
@@ -700,6 +736,7 @@ function RequestContent() {
                     required
                     name="details"
                     rows={4}
+                    defaultValue={defaultDetails}
                     placeholder="Describe the issue. Detailed descriptions help us match the right pro."
                     className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm text-slate-800 outline-none transition focus:border-sky-600 focus:ring-2 focus:ring-sky-100 placeholder:text-slate-400 shadow-xs"
                   />

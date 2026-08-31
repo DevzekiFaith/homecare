@@ -14,7 +14,8 @@ import {
   Lock,
   ShieldCheck,
   Home,
-  Star
+  Star,
+  Building2,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import AdminLockScreen from "@/app/components/admin/AdminLockScreen";
@@ -23,6 +24,7 @@ import { playSound } from "@/lib/audio-fx";
 
 const NAV = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/properties", label: "Properties", icon: Building2 },
   { href: "/admin/jobs", label: "Jobs", icon: ClipboardList },
   { href: "/admin/workers", label: "Workers", icon: Users },
   { href: "/admin/store-orders", label: "Store Orders", icon: ShoppingBag },

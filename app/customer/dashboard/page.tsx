@@ -36,17 +36,30 @@ interface Order {
   delivery_address: string;
 }
 
+interface PropertyItem {
+  id: string;
+  property_id: string;
+  name: string;
+  property_type: string;
+  address: string;
+  city: string;
+  health_score?: number | null;
+  health_status: string;
+  created_at: string;
+}
+
 const containerVariants = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } };
 const itemVariants = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 300 } } };
 
 export default function CustomerDashboardPage() {
   const [requests, setRequests] = useState<Request[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [properties, setProperties] = useState<PropertyItem[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [balance, setBalance] = useState(0);
   const [tier, setTier] = useState<'basic' | 'pro' | 'elite'>('basic');
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'requests' | 'orders'>('requests');
+  const [activeTab, setActiveTab] = useState<'requests' | 'orders' | 'properties'>('requests');
   const [trackingJob, setTrackingJob] = useState<Request | null>(null);
   const [chatJob, setChatJob] = useState<Request | null>(null);
   const isFetchingRef = useRef(false);
@@ -73,8 +86,8 @@ export default function CustomerDashboardPage() {
       }
       setUser(currentUser);
 
-      // Execute all 4 queries concurrently in parallel
-      const [reqRes, orderRes, walletRes, profileRes] = await Promise.all([
+      // Execute all 5 queries concurrently in parallel
+      const [reqRes, orderRes, propRes, walletRes, profileRes] = await Promise.all([
         supabase
           .from('service_requests')
           .select('*')
@@ -84,6 +97,11 @@ export default function CustomerDashboardPage() {
           .from('store_orders')
           .select('*')
           .eq('user_id', currentUser.id)
+          .order('created_at', { ascending: false }),
+        supabase
+          .from('properties')
+          .select('*')
+          .eq('owner_id', currentUser.id)
           .order('created_at', { ascending: false }),
         supabase
           .from('wallets')
@@ -99,6 +117,7 @@ export default function CustomerDashboardPage() {
 
       setRequests(reqRes.data || []);
       setOrders(orderRes.data || []);
+      setProperties(propRes.data || []);
 
       if (walletRes.data) {
         setBalance(Number(walletRes.data.balance));
@@ -313,15 +332,24 @@ export default function CustomerDashboardPage() {
               </Link>
             </div>
 
-            <div className="flex gap-4 mb-6 border-b border-white/5">
+            <div className="flex gap-4 mb-6 border-b border-white/5 flex-wrap">
                <button 
                  onClick={() => setActiveTab('requests')}
                  className={`pb-3 text-[10px] font-bold uppercase tracking-widest transition-all relative ${
                    activeTab === 'requests' ? 'text-brand-primary' : 'text-zinc-500 hover:text-zinc-300'
                  }`}
                >
-                 Service Requests
+                 Service Requests ({requests.length})
                  {activeTab === 'requests' && <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-primary" />}
+               </button>
+               <button 
+                 onClick={() => setActiveTab('properties')}
+                 className={`pb-3 text-[10px] font-bold uppercase tracking-widest transition-all relative ${
+                   activeTab === 'properties' ? 'text-brand-primary' : 'text-zinc-500 hover:text-zinc-300'
+                 }`}
+               >
+                 My Properties ({properties.length})
+                 {activeTab === 'properties' && <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-primary" />}
                </button>
                <button 
                  onClick={() => setActiveTab('orders')}
@@ -329,7 +357,7 @@ export default function CustomerDashboardPage() {
                    activeTab === 'orders' ? 'text-brand-primary' : 'text-zinc-500 hover:text-zinc-300'
                  }`}
                >
-                 Product Orders
+                 Product Orders ({orders.length})
                  {activeTab === 'orders' && <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-primary" />}
                </button>
             </div>
@@ -416,6 +444,80 @@ export default function CustomerDashboardPage() {
                         </div>
                       </div>
                   ))}
+                </div>
+              )
+            ) : activeTab === 'properties' ? (
+              properties.length === 0 ? (
+                <div className="py-8 flex flex-col items-center justify-center text-zinc-500 text-center space-y-3">
+                   <p className="text-sm font-bold text-foreground">No Registered Properties</p>
+                   <p className="text-xs max-w-sm text-zinc-400">Register your house, apartment, clinic, or office building to generate an outdoor Property QR and Digital Maintenance Passport.</p>
+                   <Link href="/property/register" className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-sky-600 hover:bg-sky-500 text-white text-xs font-black uppercase tracking-wider shadow-md shadow-sky-600/30 transition-all">
+                     + Register Your Property
+                   </Link>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center pb-2">
+                    <p className="text-xs text-zinc-400">All properties registered under your account</p>
+                    <Link
+                      href="/property/register"
+                      className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-sky-600 text-white text-[10px] font-black uppercase tracking-wider shadow-xs hover:bg-sky-500 transition-all"
+                    >
+                      + Add Property
+                    </Link>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {properties.map((prop) => (
+                      <div
+                        key={prop.id}
+                        className="p-5 rounded-2xl bg-white/5 border border-white/10 hover:border-sky-500/40 transition-all space-y-3 flex flex-col justify-between"
+                      >
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-sky-400 bg-sky-500/10 border border-sky-500/20 px-2.5 py-0.5 rounded-full">
+                              {prop.property_id}
+                            </span>
+                            <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border ${
+                              prop.health_status === 'healthy'
+                                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                                : prop.health_status === 'attention'
+                                ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                                : prop.health_status === 'critical'
+                                ? 'bg-rose-500/10 border-rose-500/30 text-rose-400'
+                                : 'bg-white/5 border-white/10 text-zinc-400'
+                            }`}>
+                              {prop.health_status.replace('_', ' ')}
+                            </span>
+                          </div>
+
+                          <h3 className="text-sm font-bold text-foreground">{prop.name}</h3>
+                          <p className="text-xs text-zinc-400 line-clamp-1">📍 {prop.address}</p>
+                          
+                          <div className="pt-1 flex items-center gap-2 text-[10px] text-zinc-400">
+                            <span className="capitalize">{prop.property_type.replace('_', ' ')}</span>
+                            <span>•</span>
+                            <span>Health Score: <strong className="text-foreground">{prop.health_score !== null && prop.health_score !== undefined ? `${prop.health_score}/100` : 'Unassessed'}</strong></span>
+                          </div>
+                        </div>
+
+                        <div className="pt-3 border-t border-white/5 flex items-center justify-between">
+                          <Link
+                            href={`/property/${prop.property_id}`}
+                            className="text-xs font-bold text-sky-400 hover:text-sky-300 flex items-center gap-1"
+                          >
+                            <span>Open Digital Passport</span> →
+                          </Link>
+                          <Link
+                            href={`/request?property_id=${prop.property_id}&address=${encodeURIComponent(prop.address)}`}
+                            className="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[10px] font-black uppercase tracking-wider transition-all"
+                          >
+                            Book Repair
+                          </Link>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )
             ) : (
