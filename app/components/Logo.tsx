@@ -29,13 +29,12 @@ export default function Logo({ className = "", size = "md", href = "/", variant 
   
   const careClass = variant === "white" 
     ? "text-white" 
-    : "text-brand-primary";
+    : "text-sky-600";
 
   const Content = (
     <div className={`flex items-center font-heading font-black tracking-tighter ${sizes[size]} ${className}`}>
       <div className="relative flex items-center justify-center">
-        <div className="absolute inset-0 bg-brand-primary/20 blur-md rounded-full" />
-        <div className="relative h-8 w-8 sm:h-9 sm:w-9 flex items-center justify-center rounded-xl bg-gradient-to-br from-brand-primary to-brand-glow shadow-premium border border-white/20">
+        <div className="relative h-8 w-8 sm:h-9 sm:w-9 flex items-center justify-center rounded-xl bg-sky-600 shadow-md shadow-sky-600/25 border border-sky-500">
           <Zap size={iconSizes[size]} className="text-white fill-white" />
         </div>
       </div>

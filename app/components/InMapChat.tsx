@@ -347,7 +347,7 @@ export default function InMapChat({
                         className={`max-w-[85%] rounded-xl px-3 py-2 text-xs leading-relaxed ${
                           isWorker
                             ? "bg-slate-800 text-slate-100 border border-white/10 rounded-tl-none"
-                            : "bg-gradient-to-r from-sky-600 to-sky-700 text-white rounded-tr-none shadow-md shadow-sky-600/30"
+                            : "bg-sky-600 text-white rounded-tr-none shadow-md shadow-sky-600/30"
                         }`}
                       >
                         <p className="whitespace-pre-wrap break-words">{msg.content}</p>

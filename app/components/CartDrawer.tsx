@@ -228,7 +228,7 @@ export default function CartDrawer() {
                     setIsCartOpen(false);
                     router.push("/store/checkout");
                   }}
-                  className="flex items-center justify-center gap-2 w-full h-12 sm:h-13 rounded-2xl bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 active:from-sky-700 active:to-blue-700 text-white text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-sky-600/30 active:scale-[0.98] cursor-pointer border border-sky-400/30"
+                  className="flex items-center justify-center gap-2 w-full h-12 sm:h-13 rounded-2xl bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-sky-600/30 active:scale-[0.98] cursor-pointer border border-sky-500"
                 >
                   <span>Proceed to Checkout</span> <ArrowRight size={16} />
                 </button>

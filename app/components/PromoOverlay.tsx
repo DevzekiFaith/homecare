@@ -91,7 +91,7 @@ export default function PromoOverlay() {
               </button>
 
               {/* Top Banner */}
-              <div className="relative bg-gradient-to-r from-sky-500/20 via-blue-500/20 to-sky-500/20 px-6 py-3 border-b border-slate-700/60">
+              <div className="relative bg-sky-950/80 px-6 py-3 border-b border-slate-700/60">
                 <div className="flex items-center gap-2">
                   <Flame
                     size={16}
@@ -115,7 +115,6 @@ export default function PromoOverlay() {
                     sizes="(max-width: 640px) 100vw, 250px"
                     unoptimized
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent sm:bg-gradient-to-r" />
 
                   {/* Badge */}
                   {product.badge && (
@@ -178,7 +177,7 @@ export default function PromoOverlay() {
                   <div className="flex flex-col sm:flex-row gap-3">
                     <button
                       onClick={handleAddToCart}
-                      className="flex-1 flex items-center justify-center gap-2 h-12 rounded-xl bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 active:from-sky-700 active:to-blue-700 text-white text-xs font-black uppercase tracking-[0.15em] transition-all shadow-lg shadow-sky-600/30 cursor-pointer border border-sky-400/30"
+                      className="flex-1 flex items-center justify-center gap-2 h-12 rounded-xl bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white text-xs font-black uppercase tracking-[0.15em] transition-all shadow-lg shadow-sky-600/30 cursor-pointer border border-sky-500"
                     >
                       <ShoppingCart size={16} />
                       Add to Cart
