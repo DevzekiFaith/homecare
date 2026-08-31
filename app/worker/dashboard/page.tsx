@@ -468,25 +468,37 @@ export default function WorkerDashboardPage() {
     }
 
     setIsWithdrawing(true);
-    const breakdown = calculatePayoutBreakdown(withdrawAmount, isInstantPayout);
-
     try {
-      const newBalance = balance - withdrawAmount;
-      if (user?.id) {
-        await supabase
-          .from("wallets")
-          .update({ balance: newBalance })
-          .eq("user_id", user.id);
+      const res = await fetch("/api/wallet/withdraw", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: withdrawAmount,
+          bankName,
+          accountNumber,
+          isInstant: isInstantPayout,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!data.success) {
+        throw new Error(data.error || "Failed to process bank withdrawal");
       }
-      setBalance(newBalance);
+
+      setBalance(data.newBalance);
       setIsWithdrawOpen(false);
       setWithdrawAmount(0);
 
-      toast.success(isInstantPayout ? "Instant Payout Dispatched!" : "Payout Request Queued!", {
-        description: `${breakdown.formattedNet} transferred to ${accountNumber} (${bankName}). Arriving ${breakdown.estimatedArrival}.`,
-      });
+      toast.success(
+        isInstantPayout ? "Instant NIBSS Dispatched!" : "Bank Payout Processed!",
+        {
+          description: `₦${Number(data.disbursedNet).toLocaleString()} sent to ${accountNumber} (${bankName}). Ref: ${data.reference}`,
+          duration: 6000,
+        }
+      );
     } catch (err: unknown) {
-      toast.error("Payout failed", {
+      toast.error("Withdrawal failed", {
         description: err instanceof Error ? err.message : "Error processing withdrawal",
       });
     } finally {
