@@ -28,6 +28,7 @@ import {
   Clock,
   Plus,
   Printer,
+  Download,
   X,
   FileText,
   Camera,
@@ -338,6 +339,118 @@ export default function PropertyCarePage() {
       </html>
     `);
     printWindow.document.close();
+  };
+
+  // Handle Download Badge PNG Image
+  const handleDownloadBadgePng = async () => {
+    if (!property) return;
+    try {
+      toast.loading("Generating High-Resolution Badge Image...", { id: "dl-badge" });
+
+      const qrTargetUrl = `${window.location.origin}/property/${property.property_id}`;
+      const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(qrTargetUrl)}`;
+
+      // Create high-res canvas (800x1050)
+      const canvas = document.createElement("canvas");
+      canvas.width = 800;
+      canvas.height = 1050;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("Could not create canvas context");
+
+      // Background
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.roundRect(20, 20, 760, 1010, 48);
+      ctx.fill();
+
+      // Border
+      ctx.lineWidth = 8;
+      ctx.strokeStyle = "#0284c7";
+      ctx.stroke();
+
+      // Brand Header
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "900 42px system-ui, -apple-system, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("HOMECARE", 400, 100);
+
+      ctx.fillStyle = "#0284c7";
+      ctx.font = "800 20px system-ui, -apple-system, sans-serif";
+      ctx.fillText("PROPERTY CARE SYSTEM", 400, 135);
+
+      // Property ID Pill
+      ctx.fillStyle = "#e0f2fe";
+      ctx.beginPath();
+      ctx.roundRect(250, 160, 300, 50, 25);
+      ctx.fill();
+
+      ctx.fillStyle = "#0369a1";
+      ctx.font = "900 24px monospace";
+      ctx.fillText(property.property_id, 400, 194);
+
+      // Load and Draw QR Code
+      const qrImg = new window.Image();
+      qrImg.crossOrigin = "anonymous";
+      qrImg.src = qrImgUrl;
+      await new Promise((resolve, reject) => {
+        qrImg.onload = resolve;
+        qrImg.onerror = reject;
+      });
+
+      // QR Wrapper Box
+      ctx.fillStyle = "#f0f9ff";
+      ctx.beginPath();
+      ctx.roundRect(175, 235, 450, 450, 32);
+      ctx.fill();
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "#0284c7";
+      ctx.stroke();
+
+      // Draw QR Image
+      ctx.drawImage(qrImg, 200, 260, 400, 400);
+
+      // Instructions
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "900 28px system-ui, -apple-system, sans-serif";
+      ctx.fillText("SCAN TO MANAGE & REPAIR", 400, 740);
+
+      ctx.fillStyle = "#64748b";
+      ctx.font = "500 18px system-ui, -apple-system, sans-serif";
+      ctx.fillText("Point smartphone camera to report issues or book verified pros", 400, 775);
+
+      // Property Details
+      ctx.fillStyle = "#1e293b";
+      ctx.font = "bold 22px system-ui, -apple-system, sans-serif";
+      ctx.fillText(property.name, 400, 840);
+
+      ctx.fillStyle = "#64748b";
+      ctx.font = "500 17px system-ui, -apple-system, sans-serif";
+      ctx.fillText(property.address, 400, 875);
+
+      // Footer Guarantee Pill
+      ctx.fillStyle = "#f1f5f9";
+      ctx.beginPath();
+      ctx.roundRect(130, 930, 540, 45, 22);
+      ctx.fill();
+
+      ctx.fillStyle = "#475569";
+      ctx.font = "800 15px system-ui, -apple-system, sans-serif";
+      ctx.fillText("100% ESCROW PROTECTED • NIN VERIFIED TECHNICIANS", 400, 958);
+
+      // Convert to blob and download
+      canvas.toBlob((blob) => {
+        if (!blob) throw new Error("Canvas to Blob failed");
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.download = `HomeCare_Property_QR_${property.property_id}.png`;
+        link.href = url;
+        link.click();
+        URL.revokeObjectURL(url);
+        toast.success("Badge Image Downloaded!", { id: "dl-badge" });
+      }, "image/png");
+    } catch (err: any) {
+      toast.error("Download failed: " + (err.message || "Error generating image"), { id: "dl-badge" });
+    }
   };
 
   if (loading) {
@@ -776,18 +889,27 @@ export default function PropertyCarePage() {
         {/* Tab 2: Full Maintenance Passport */}
         {activeTab === "passport" && isOwnerOrAdmin && (
           <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-xs space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h2 className="text-xl font-black text-slate-900 uppercase font-heading">Digital Maintenance Passport</h2>
                 <p className="text-xs text-slate-500 font-medium">Permanent audit-proof service history for {property.name}</p>
               </div>
-              <button
-                onClick={handlePrintBadge}
-                className="px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-800 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 cursor-pointer"
-              >
-                <Printer size={14} />
-                <span>Print Passport Badge</span>
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleDownloadBadgePng}
+                  className="px-4 py-2 rounded-full bg-sky-600 hover:bg-sky-500 text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5 shadow-xs cursor-pointer"
+                >
+                  <Download size={14} />
+                  <span>Download Badge (.PNG)</span>
+                </button>
+                <button
+                  onClick={handlePrintBadge}
+                  className="px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-800 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Printer size={14} />
+                  <span>Print Badge</span>
+                </button>
+              </div>
             </div>
 
             {maintenanceRecords.length === 0 ? (
@@ -1357,8 +1479,16 @@ export default function PropertyCarePage() {
 
               <div className="pt-2 flex flex-col gap-2">
                 <button
-                  onClick={handlePrintBadge}
+                  onClick={handleDownloadBadgePng}
                   className="w-full py-3 rounded-full bg-sky-600 hover:bg-sky-500 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md shadow-sky-600/30 cursor-pointer"
+                >
+                  <Download size={15} />
+                  <span>Download Badge Image (.PNG)</span>
+                </button>
+
+                <button
+                  onClick={handlePrintBadge}
+                  className="w-full py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer"
                 >
                   <Printer size={15} />
                   <span>Print Outdoor Badge</span>
@@ -1369,7 +1499,7 @@ export default function PropertyCarePage() {
                     navigator.clipboard.writeText(qrTargetUrl);
                     toast.success("Link copied to clipboard!");
                   }}
-                  className="w-full py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold uppercase tracking-wider transition-all"
+                  className="w-full py-2.5 rounded-full bg-slate-50 hover:bg-slate-100 text-slate-600 text-xs font-bold uppercase tracking-wider transition-all"
                 >
                   Copy Property Link
                 </button>
