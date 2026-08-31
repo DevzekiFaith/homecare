@@ -583,8 +583,8 @@ export default function CustomerDashboardPage() {
               <button
                 type="button"
                 onClick={() => {
-                  const shareText = encodeURIComponent("Check out HomeCare - elite home services!");
-                  const shareUrl = window.location.origin;
+                  const shareText = "Check out HomeCare - Nigeria's #1 verified home repairs and maintenance platform!";
+                  const shareUrl = "https://www.homecare.com.ng";
                   if (navigator.share) {
                     navigator.share({ title: "HomeCare", text: shareText, url: shareUrl });
                   } else {

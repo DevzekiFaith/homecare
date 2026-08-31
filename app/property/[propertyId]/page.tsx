@@ -294,7 +294,7 @@ export default function PropertyCarePage() {
     const printWindow = window.open("", "_blank");
     if (!printWindow) return;
 
-    const qrTargetUrl = `${window.location.origin}/property/${property.property_id}`;
+    const qrTargetUrl = `https://www.homecare.com.ng/property/${property.property_id}`;
     const qrImg = `https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=${encodeURIComponent(qrTargetUrl)}`;
 
     printWindow.document.write(`
@@ -347,7 +347,7 @@ export default function PropertyCarePage() {
     try {
       toast.loading("Generating High-Resolution Badge Image...", { id: "dl-badge" });
 
-      const qrTargetUrl = `${window.location.origin}/property/${property.property_id}`;
+      const qrTargetUrl = `https://www.homecare.com.ng/property/${property.property_id}`;
       const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(qrTargetUrl)}`;
 
       // Create high-res canvas (800x1050)
@@ -498,7 +498,7 @@ export default function PropertyCarePage() {
   }
 
   const statusBadge = getHealthStatusBadge(property.health_status);
-  const qrTargetUrl = typeof window !== "undefined" ? `${window.location.origin}/property/${property.property_id}` : `https://www.homecare.com.ng/property/${property.property_id}`;
+  const qrTargetUrl = `https://www.homecare.com.ng/property/${property.property_id}`;
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrTargetUrl)}`;
 
   return (

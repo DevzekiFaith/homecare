@@ -60,8 +60,8 @@ export default function HomeClient() {
               <button
                 type="button"
                 onClick={() => {
-                  const shareText = encodeURIComponent("Check out HomeCare - book handymen in 2 mins! Book it. Fix it. Done.");
-                  const shareUrl = window.location.origin;
+                  const shareText = "Check out HomeCare - book verified plumbers, electricians & handymen in 2 mins!";
+                  const shareUrl = "https://www.homecare.com.ng";
                   if (navigator.share) {
                     navigator.share({ title: "HomeCare", text: shareText, url: shareUrl });
                   } else {
