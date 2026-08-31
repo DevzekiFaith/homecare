@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import Logo from "@/app/components/Logo";
 import dynamic from "next/dynamic";
 import { calculatePayoutBreakdown } from "@/lib/monetization";
+import { NIGERIAN_BANKS } from "@/lib/nigerian-banks";
 
 const ChatModal = dynamic(() => import("@/app/components/ChatModal"), { ssr: false });
 const LiveMap = dynamic(() => import("@/app/components/LiveMap"), { ssr: false });
@@ -1190,14 +1191,11 @@ export default function WorkerDashboardPage() {
                     onChange={(e) => setBankName(e.target.value)}
                     className="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-3 text-white text-xs font-semibold focus:border-brand-primary outline-none"
                   >
-                    <option value="Access Bank" className="bg-zinc-900 text-white">Access Bank</option>
-                    <option value="GTBank" className="bg-zinc-900 text-white">Guaranty Trust Bank (GTBank)</option>
-                    <option value="Zenith Bank" className="bg-zinc-900 text-white">Zenith Bank</option>
-                    <option value="First Bank" className="bg-zinc-900 text-white">First Bank of Nigeria</option>
-                    <option value="UBA" className="bg-zinc-900 text-white">United Bank for Africa (UBA)</option>
-                    <option value="Kuda Bank" className="bg-zinc-900 text-white">Kuda Microfinance Bank</option>
-                    <option value="Opay" className="bg-zinc-900 text-white">OPay Digital Services</option>
-                    <option value="Palmpay" className="bg-zinc-900 text-white">PalmPay</option>
+                    {NIGERIAN_BANKS.map((b) => (
+                      <option key={b.code} value={b.name} className="bg-zinc-900 text-white">
+                        {b.name} {b.isMfb ? "• MFB" : ""}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div>
