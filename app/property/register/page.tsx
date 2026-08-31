@@ -202,7 +202,7 @@ export default function RegisterPropertyPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 antialiased py-12 px-4 sm:px-6">
+    <div className="min-h-screen bg-slate-50 text-slate-900 antialiased py-12 px-4 sm:px-6 pt-24">
       <div className="max-w-2xl mx-auto space-y-8">
         {/* Back Link */}
         <div className="flex items-center justify-between">
