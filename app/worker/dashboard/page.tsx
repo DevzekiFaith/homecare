@@ -1040,15 +1040,15 @@ export default function WorkerDashboardPage() {
               <div className="bg-white p-4 rounded-2xl inline-block shadow-lg mb-6 border border-white/10">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
-                    `${origin || 'https://www.homecare.com.ng'}/review?request_id=${qrCodeJob.id}`
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(
+                    `https://www.homecare.com.ng/review?request_id=${qrCodeJob.id}`
                   )}`}
                   alt="Review QR Code"
                   className="w-48 h-48 mx-auto"
                 />
               </div>
 
-              <div className="space-y-1.5 text-left bg-white/5 p-4 rounded-2xl border border-white/5 text-xs text-zinc-400">
+              <div className="space-y-1.5 text-left bg-white/5 p-4 rounded-2xl border border-white/5 text-xs text-zinc-400 mb-4">
                 <div className="flex justify-between">
                   <span>Service Type:</span>
                   <span className="font-bold text-white uppercase">{qrCodeJob.service_type}</span>
@@ -1061,6 +1061,28 @@ export default function WorkerDashboardPage() {
                   <span>Location:</span>
                   <span className="font-bold text-white truncate max-w-[150px]">{qrCodeJob.address.split(',')[0]}</span>
                 </div>
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const url = `https://www.homecare.com.ng/review?request_id=${qrCodeJob.id}`;
+                    navigator.clipboard.writeText(url);
+                    toast.success("Review link copied to clipboard!");
+                  }}
+                  className="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold uppercase tracking-wider transition-all cursor-pointer"
+                >
+                  Copy Review Link
+                </button>
+                <Link
+                  href={`/review?request_id=${qrCodeJob.id}`}
+                  target="_blank"
+                  className="px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs"
+                >
+                  <ExternalLink size={14} />
+                  <span>Open</span>
+                </Link>
               </div>
             </motion.div>
           </motion.div>
