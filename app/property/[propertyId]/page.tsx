@@ -179,12 +179,6 @@ export default function PropertyCarePage() {
       } catch {
         // Child tables pending remote migration — maintain clean empty states
       }
-
-      setEquipment(eqRes.data || []);
-      setHealthChecks(hcRes.data || []);
-      setIssues(issuesRes.data || []);
-      setMaintenanceRecords(maintRes.data || []);
-      setUpcomingMaintenance(upRes.data || []);
     } catch (err) {
       console.error("Error loading property care system data:", err);
     } finally {
