@@ -169,7 +169,7 @@ export default function RootLayout({
         <CartProvider>
           <Nav />
           <RootWrapper>
-            <div id="content">{children}</div>
+            <div id="content" className="pt-16 sm:pt-20">{children}</div>
           </RootWrapper>
           <MobileBottomNav />
         </CartProvider>
