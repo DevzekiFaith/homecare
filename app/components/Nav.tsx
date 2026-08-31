@@ -82,7 +82,7 @@ export default function Nav() {
 
   return (
     <nav
-      className="sticky top-0 z-50 border-b border-sky-100 bg-white/95 backdrop-blur-xl transition-all shadow-xs"
+      className="relative z-50 border-b border-sky-100 bg-white transition-all shadow-xs"
       aria-label="Main"
     >
       <div className="absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-transparent via-sky-500/20 to-transparent" />
