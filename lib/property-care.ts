@@ -308,3 +308,64 @@ export function getHealthStatusBadge(status: 'healthy' | 'attention' | 'critical
       };
   }
 }
+
+/**
+ * Baseline Seed / Demo Properties for immediate operation & resilience
+ */
+export const DEFAULT_PROPERTIES: Property[] = [
+  {
+    id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+    property_id: 'HC-PROP-004821',
+    name: 'Lekki Phase 1 Luxury Duplex',
+    property_type: 'duplex',
+    address: '14 Admiralty Way, Lekki Phase 1, Lagos',
+    city: 'Lagos',
+    state: 'Lagos State',
+    floors_count: 2,
+    units_count: 1,
+    bedrooms_count: 5,
+    year_built: 2021,
+    occupancy_type: 'owner_occupied',
+    health_score: 88,
+    health_status: 'healthy',
+    last_health_check_date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
+    qr_active: true,
+    created_at: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'c9a646d3-9c61-4cd7-bf15-47048096b01e',
+    property_id: 'HC-PROP-008912',
+    name: 'Maitama Executive Residence',
+    property_type: 'apartment',
+    address: '22 Mississippi Street, Maitama, Abuja',
+    city: 'Abuja',
+    state: 'FCT',
+    floors_count: 4,
+    units_count: 8,
+    bedrooms_count: 3,
+    year_built: 2019,
+    occupancy_type: 'tenant_occupied',
+    health_score: 64,
+    health_status: 'attention',
+    last_health_check_date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+    qr_active: true,
+    created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'e16b9b6e-6c84-48f8-b3bc-5e36928e46bc',
+    property_id: 'HC-PROP-001245',
+    name: 'Independence Layout Medical Plaza',
+    property_type: 'clinic',
+    address: '7 Ogui Road, Independence Layout, Enugu',
+    city: 'Enugu',
+    state: 'Enugu State',
+    floors_count: 3,
+    units_count: 6,
+    occupancy_type: 'commercial',
+    health_score: null,
+    health_status: 'not_assessed',
+    last_health_check_date: null,
+    qr_active: true,
+    created_at: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+];

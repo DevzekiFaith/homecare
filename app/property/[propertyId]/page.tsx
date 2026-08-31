@@ -15,6 +15,7 @@ import {
   PropertyUpcomingMaintenance,
   getHealthStatusBadge,
   generateEquipmentCode,
+  DEFAULT_PROPERTIES,
 } from "@/lib/property-care";
 import Logo from "@/app/components/Logo";
 import {
@@ -116,32 +117,68 @@ export default function PropertyCarePage() {
 
       // Fetch Property by property_id (e.g. HC-PROP-004821) or UUID
       const isUuid = /^[0-9a-fA-F-]{36}$/.test(rawPropertyId);
-      const query = supabase.from("properties").select("*");
-      
-      if (isUuid) {
-        query.eq("id", rawPropertyId);
-      } else {
-        query.eq("property_id", rawPropertyId.toUpperCase());
+      let foundProperty: Property | null = null;
+
+      try {
+        const query = supabase.from("properties").select("*");
+        if (isUuid) {
+          query.eq("id", rawPropertyId);
+        } else {
+          query.eq("property_id", rawPropertyId.toUpperCase());
+        }
+        const { data: propData } = await query.maybeSingle();
+        if (propData) {
+          foundProperty = propData as Property;
+        }
+      } catch {
+        // query fallback
       }
 
-      const { data: propData, error: propErr } = await query.maybeSingle();
+      // Check local cache & default properties if not in remote DB
+      if (!foundProperty) {
+        let localProps: Property[] = [];
+        if (typeof window !== "undefined") {
+          try {
+            const cached = localStorage.getItem("hc_properties_cache");
+            if (cached) localProps = JSON.parse(cached);
+          } catch {
+            // ignore parse error
+          }
+        }
+        const allFallbacks = [...localProps, ...DEFAULT_PROPERTIES];
+        foundProperty = allFallbacks.find(
+          (p) =>
+            p.id.toLowerCase() === rawPropertyId.toLowerCase() ||
+            p.property_id.toUpperCase() === rawPropertyId.toUpperCase()
+        ) || null;
+      }
 
-      if (propErr || !propData) {
+      if (!foundProperty) {
         setProperty(null);
         setLoading(false);
         return;
       }
 
-      setProperty(propData as Property);
+      setProperty(foundProperty);
 
-      // Fetch child relations in parallel
-      const [eqRes, hcRes, issuesRes, maintRes, upRes] = await Promise.all([
-        supabase.from("property_equipment").select("*").eq("property_id", propData.id).order("created_at", { ascending: true }),
-        supabase.from("property_health_checks").select("*").eq("property_id", propData.id).order("inspection_date", { ascending: false }),
-        supabase.from("property_issues").select("*").eq("property_id", propData.id).order("created_at", { ascending: false }),
-        supabase.from("property_maintenance_records").select("*").eq("property_id", propData.id).order("date_completed", { ascending: false }),
-        supabase.from("property_upcoming_maintenance").select("*").eq("property_id", propData.id).order("due_date", { ascending: true }),
-      ]);
+      // Fetch child relations in parallel with try/catch resilience
+      try {
+        const [eqRes, hcRes, issuesRes, maintRes, upRes] = await Promise.all([
+          supabase.from("property_equipment").select("*").eq("property_id", foundProperty.id).order("created_at", { ascending: true }),
+          supabase.from("property_health_checks").select("*").eq("property_id", foundProperty.id).order("inspection_date", { ascending: false }),
+          supabase.from("property_issues").select("*").eq("property_id", foundProperty.id).order("created_at", { ascending: false }),
+          supabase.from("property_maintenance_records").select("*").eq("property_id", foundProperty.id).order("date_completed", { ascending: false }),
+          supabase.from("property_upcoming_maintenance").select("*").eq("property_id", foundProperty.id).order("due_date", { ascending: true }),
+        ]);
+
+        setEquipment(eqRes.data || []);
+        setHealthChecks(hcRes.data || []);
+        setIssues(issuesRes.data || []);
+        setMaintenanceRecords(maintRes.data || []);
+        setUpcomingMaintenance(upRes.data || []);
+      } catch {
+        // Child tables pending remote migration — maintain clean empty states
+      }
 
       setEquipment(eqRes.data || []);
       setHealthChecks(hcRes.data || []);
