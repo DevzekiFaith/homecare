@@ -86,12 +86,12 @@ export default function WorkerDashboardPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           orderRef: txRef,
-          amount: 2000,
+          amount: 3500,
           email: user.email || "pro@homecare.ng",
           name: user.user_metadata?.full_name || "HomeCare Professional",
           phone: "08000000000",
           title: "Elite Pro Accelerator Upgrade",
-          description: "₦2,000 Upgrade for Top 1–3 inDrive Placement, Gold Badge & 60s Priority Radar",
+          description: "₦3,500 Upgrade for Top 1–3 inDrive Placement, Gold Badge & 60s Priority Radar",
           type: "pro_upgrade",
         }),
       });
@@ -530,7 +530,11 @@ export default function WorkerDashboardPage() {
             </div>
           </div>
           <div className="flex items-center gap-4 text-left sm:text-right">
-            <div className="relative group cursor-pointer" onClick={() => document.getElementById("avatar-file-input")?.click()}>
+            <div 
+              className="relative group cursor-pointer flex flex-col items-center" 
+              onClick={() => document.getElementById("avatar-file-input")?.click()}
+              title="Click to change your profile photo"
+            >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user?.user_metadata?.full_name || "worker")}`}
@@ -540,6 +544,9 @@ export default function WorkerDashboardPage() {
               <div className="absolute inset-0 bg-black/60 rounded-2xl opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
                 <Camera size={16} className="text-white" />
               </div>
+              <span className="mt-1 text-[9px] font-bold text-sky-400 group-hover:underline flex items-center gap-0.5">
+                <Camera size={10} /> Change
+              </span>
               <input
                 type="file"
                 id="avatar-file-input"
@@ -620,7 +627,7 @@ export default function WorkerDashboardPage() {
                   ) : (
                     <>
                       <Sparkles size={14} />
-                      <span>Upgrade to Elite (₦2,000)</span>
+                      <span>Upgrade to Elite (₦3,500)</span>
                     </>
                   )}
                 </button>
