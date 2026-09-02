@@ -244,6 +244,65 @@ export async function getMatchingCandidates(
             is_online: true,
           }
         ],
+        "Property Inspector": [
+          {
+            id: "pro-insp-01",
+            full_name: "Engr. Babajide Fashanu (FNSE, COREN)",
+            phone: "+234 803 112 3344",
+            service_type: "Lead MEP & Property Auditor",
+            avatar_url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80",
+            verified_status: "approved",
+            rating: 4.99,
+            completed_jobs_count: 142,
+            city: city,
+            area: city === "Enugu" ? "Independence Layout" : "Lekki Phase 1 / Ikoyi",
+            distance_km: 1.2,
+            eta_mins: 15,
+            price_estimate: basePrice,
+            match_score: 99,
+            match_reason: "★ COREN Certified Lead MEP Engineer · 12+ Yrs Experience",
+            specialization: "Concealed Leak Acoustics, Thermal Imaging & Electrical Load Auditing",
+            is_online: true,
+          },
+          {
+            id: "pro-insp-02",
+            full_name: "Engr. Chinedu Okeke (MNSE)",
+            phone: "+234 805 223 4455",
+            service_type: "Certified Building Systems Inspector",
+            avatar_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80",
+            verified_status: "approved",
+            rating: 4.94,
+            completed_jobs_count: 98,
+            city: city,
+            area: city === "Enugu" ? "GRA" : "Victoria Island / Oniru",
+            distance_km: 2.1,
+            eta_mins: 20,
+            price_estimate: basePrice,
+            match_score: 97,
+            match_reason: "Hydraulics & Inverter Stress Sweep Certified",
+            specialization: "Dampness Profiling, Pipe Pressure Sweeps & DB Panel Diagnostics",
+            is_online: true,
+          },
+          {
+            id: "pro-insp-03",
+            full_name: "Engr. Amina Bello (COREN)",
+            phone: "+234 814 334 5566",
+            service_type: "Lead Electrical & Moisture Auditor",
+            avatar_url: "https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=400&auto=format&fit=crop&q=80",
+            verified_status: "approved",
+            rating: 4.91,
+            completed_jobs_count: 76,
+            city: city,
+            area: city === "Enugu" ? "New Haven" : "Ikeja GRA / Magodo",
+            distance_km: 3.4,
+            eta_mins: 25,
+            price_estimate: basePrice,
+            match_score: 95,
+            match_reason: "HVAC & High-Load Electrical Specialist",
+            specialization: "Infrared Thermography, Insulation Resistance & Roofing Scans",
+            is_online: true,
+          }
+        ],
         Carpenter: [
           {
             id: "pro-carp-01",
@@ -286,7 +345,12 @@ export async function getMatchingCandidates(
         ]
       };
 
-      const matchedKey = Object.keys(mockDatabase).find(k => serviceType.toLowerCase().includes(k.toLowerCase())) || "Plumber";
+      const matchedKey = Object.keys(mockDatabase).find(k => 
+        serviceType.toLowerCase().includes(k.toLowerCase()) || 
+        k.toLowerCase().includes(serviceType.toLowerCase()) ||
+        (serviceType.toLowerCase().includes("inspection") && k === "Property Inspector") ||
+        (serviceType.toLowerCase().includes("audit") && k === "Property Inspector")
+      ) || "Plumber";
       const mocks = mockDatabase[matchedKey] || mockDatabase["Plumber"];
       
       mocks.forEach(m => {

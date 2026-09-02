@@ -150,12 +150,12 @@ export async function GET(req: Request) {
       await supabase
         .from("store_orders")
         .update({
-          status: "processing",
+          status: "paid",
         })
         .eq("order_ref", resolvedOrderRef);
 
       return NextResponse.redirect(
-        `${origin}/customer/dashboard?inspection=success&ref=${encodeURIComponent(resolvedOrderRef)}&amount=${verifiedAmount}`
+        `${origin}/inspection/confirmed?ref=${encodeURIComponent(resolvedOrderRef)}&amount=${verifiedAmount}&status=paid`
       );
     }
 

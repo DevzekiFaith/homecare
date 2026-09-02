@@ -103,13 +103,13 @@ export default function PropertyInspectionPage() {
         if (data.success && data.paymentUrl) {
           window.location.href = data.paymentUrl;
         } else {
-          toast.info("Inspection booking recorded! Please complete bank transfer to our verified account.", { id: "insp-pay" });
-          setSubmitting(false);
+          toast.success("Inspection booking recorded!", { id: "insp-pay" });
+          window.location.href = `/inspection/confirmed?ref=${encodeURIComponent(orderRef)}&payment=transfer`;
         }
       } catch (flwErr) {
         clearTimeout(flwTimeout);
-        toast.info("Inspection request logged! Please pay via direct bank transfer.", { id: "insp-pay" });
-        setSubmitting(false);
+        toast.info("Inspection request logged!", { id: "insp-pay" });
+        window.location.href = `/inspection/confirmed?ref=${encodeURIComponent(orderRef)}&payment=transfer`;
       }
     } catch (err: unknown) {
       console.error("Inspection checkout error:", err);
