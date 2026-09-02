@@ -215,7 +215,7 @@ export const HEALTH_CHECK_SYSTEMS = [
   },
   {
     id: 'building_condition',
-    label: 'Structural & Building Envelope',
+    label: 'Building Envelope & Finishes',
     iconName: 'Building',
     items: [
       'Roofing Sheets, Gutters & Ceiling Stains',

@@ -141,7 +141,7 @@ export default function PropertyInspectionPage() {
               Property <span className="text-cyan-200">Inspection & Audit</span>
             </h1>
             <p className="mt-2 text-sm sm:text-base text-sky-100/90 font-medium max-w-2xl leading-relaxed">
-              Before you sign lease agreements or complete property acquisitions, verified engineers inspect electrical safety, concealed plumbing leaks, and structural roofing integrity.
+              Before you sign lease agreements or complete property acquisitions, verified engineers inspect electrical safety, concealed plumbing leaks, ceiling dampness, and roofing integrity.
             </p>
           </div>
         </div>
@@ -158,7 +158,7 @@ export default function PropertyInspectionPage() {
             {[
               "Complete Electrical Safety & High-Load Stress Sweep",
               "Acoustic & Pressure Concealed Pipe Leak Detection",
-              "Structural Foundation, Ceiling Dampness & Roof Inspection",
+              "Ceiling Dampness, Wall Moisture & Roof Inspection",
               "Same-Day Official Certified PDF Engineering Report"
             ].map((feature, i) => (
               <div key={i} className="flex items-center gap-3">
