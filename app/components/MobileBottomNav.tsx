@@ -98,24 +98,30 @@ export default function MobileBottomNav() {
   }
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-[60] bg-white/95 backdrop-blur-xl border-t border-sky-100 px-4 pb-safe-area-inset-bottom shadow-lg">
-      <div className="flex items-center justify-between h-16">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-[60] bg-white/95 backdrop-blur-xl border-t border-sky-100 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] pb-safe-area-inset-bottom">
+      <div 
+        className="flex items-center justify-between sm:justify-around gap-1 overflow-x-auto no-scrollbar px-2 py-1 h-16"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex flex-col items-center justify-center gap-1 transition-colors ${
+              className={`flex-1 min-w-[44px] max-w-[62px] flex flex-col items-center justify-center gap-1 py-1 px-1 rounded-xl transition-all shrink-0 ${
                 isActive ? "text-sky-600 font-extrabold" : "text-slate-500 hover:text-slate-900"
               }`}
             >
               <item.icon 
-                size={20} 
+                size={18} 
                 fill={isActive ? "currentColor" : "none"} 
                 strokeWidth={isActive ? 2.5 : 2} 
+                className="shrink-0"
               />
-              <span className="text-[9px] font-bold uppercase tracking-widest">{item.label}</span>
+              <span className="text-[9px] font-bold uppercase tracking-tight text-center whitespace-nowrap leading-none">
+                {item.label}
+              </span>
             </Link>
           );
         })}
@@ -123,24 +129,28 @@ export default function MobileBottomNav() {
         {/* Cart button */}
         <button
           onClick={() => setIsCartOpen(true)}
-          className="relative flex flex-col items-center justify-center gap-1 text-slate-500 hover:text-sky-600 transition-colors"
+          className="relative flex-1 min-w-[44px] max-w-[62px] flex flex-col items-center justify-center gap-1 py-1 px-1 rounded-xl transition-all shrink-0 text-slate-500 hover:text-sky-600 cursor-pointer"
         >
-          <ShoppingCart size={20} />
+          <ShoppingCart size={18} className="shrink-0" />
           {cartCount > 0 && (
-            <span suppressHydrationWarning className="absolute -top-1 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-sky-600 text-white text-[8px] font-extrabold">
+            <span suppressHydrationWarning className="absolute top-0.5 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-sky-600 text-white text-[8px] font-black shadow-xs ring-1 ring-white">
               {cartCount > 9 ? "9+" : cartCount}
             </span>
           )}
-          <span className="text-[9px] font-bold uppercase tracking-widest">Cart</span>
+          <span className="text-[9px] font-bold uppercase tracking-tight text-center whitespace-nowrap leading-none">
+            Cart
+          </span>
         </button>
 
         {user && (
           <button
             onClick={handleLogout}
-            className="flex flex-col items-center justify-center gap-1 text-slate-500 hover:text-rose-600 transition-colors"
+            className="flex-1 min-w-[44px] max-w-[62px] flex flex-col items-center justify-center gap-1 py-1 px-1 rounded-xl transition-all shrink-0 text-slate-500 hover:text-rose-600 cursor-pointer"
           >
-            <LogOut size={20} />
-            <span className="text-[9px] font-bold uppercase tracking-widest">Logout</span>
+            <LogOut size={18} className="shrink-0" />
+            <span className="text-[9px] font-bold uppercase tracking-tight text-center whitespace-nowrap leading-none">
+              Logout
+            </span>
           </button>
         )}
       </div>
