@@ -30,9 +30,9 @@ export default function RootWrapper({ children }: { children: React.ReactNode })
           schema: "public",
           table: "service_requests",
         },
-        (payload: any) => {
+        (payload: { new?: { service_type?: string; address?: string } }) => {
           const newReq = payload.new;
-          if (newReq) {
+          if (newReq && newReq.service_type && newReq.address) {
             playSound("scan");
             toast.info("🚨 New Live Service Request!", {
               description: `${newReq.service_type} requested at ${newReq.address.split(",")[0]}`,
@@ -68,14 +68,14 @@ export default function RootWrapper({ children }: { children: React.ReactNode })
   ];
 
   const shouldHideFooter = hideFooterPaths.includes(pathname);
-  const isStore = pathname.startsWith("/store");
+  const hidePromoOverlay = pathname.startsWith("/auth") || pathname === "/store/checkout";
 
   return (
     <>
       {children}
       {!shouldHideFooter && <Footer />}
       <CartDrawer />
-      {isStore && <PromoOverlay />}
+      {!hidePromoOverlay && <PromoOverlay />}
       <WhatsAppButton />
       <SupportModal />
     </>

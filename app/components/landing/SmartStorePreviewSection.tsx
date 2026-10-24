@@ -120,10 +120,10 @@ export default function SmartStorePreviewSection() {
                 </div>
 
                 <Link
-                  href="/request?service=Electrician"
-                  className="text-[10px] font-bold text-sky-600 hover:underline flex items-center justify-center gap-1 pt-1"
+                  href={`/request?service=${encodeURIComponent(product.serviceLink[0] || "Electrician")}`}
+                  className="text-[10px] font-bold text-sky-700 hover:text-sky-900 flex items-center justify-center gap-1 pt-1 group"
                 >
-                  <span>Need help installing? Book electrician →</span>
+                  <span>Need HomeCare installation? Book {product.serviceLink[0] || "Electrician"} →</span>
                 </Link>
               </div>
             </div>
