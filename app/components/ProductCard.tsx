@@ -86,17 +86,9 @@ export default function ProductCard({
       {/* Badge */}
       {product.badge && (
         <div
-          className={`absolute top-5 right-5 z-20 px-3 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest border shadow-xs transition-transform duration-300 group-hover:scale-105 flex items-center gap-1 ${
-            product.badge === "Best Seller"
-              ? "bg-amber-50 border-amber-200 text-amber-700"
-              : product.badge === "New"
-              ? "bg-emerald-50 border-emerald-200 text-emerald-700"
-              : product.badge === "Hot Deal"
-              ? "bg-rose-50 border-rose-200 text-rose-700"
-              : "bg-sky-50 border-sky-200 text-sky-700"
-          }`}
+          className="absolute top-5 right-5 z-20 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-sky-200 bg-sky-50 text-sky-800 shadow-xs transition-transform duration-300 group-hover:scale-105 flex items-center gap-1"
         >
-          {product.badge === "Hot Deal" && <Flame size={10} className="mr-0.5 fill-rose-600 text-rose-600" />}
+          {product.badge === "Hot Deal" && <Flame size={10} className="mr-0.5 fill-sky-600 text-sky-600" />}
           {product.badge}
         </div>
       )}
@@ -141,7 +133,7 @@ export default function ProductCard({
             <div className="mt-2.5 flex items-center justify-between text-[10px] text-sky-800 bg-sky-50 px-2.5 py-1 rounded-lg border border-sky-100 font-bold">
               <span className="truncate">⭐ {product.sourceOrigin}</span>
               {product.warrantyMonths && (
-                <span className="shrink-0 font-extrabold text-emerald-700 ml-1.5">{product.warrantyMonths}m Warranty</span>
+                <span className="shrink-0 font-extrabold text-sky-700 ml-1.5">{product.warrantyMonths}m Warranty</span>
               )}
             </div>
           )}
@@ -165,7 +157,7 @@ export default function ProductCard({
                       size={12}
                       className={
                         star <= Math.round(product.rating!)
-                          ? "text-amber-400 fill-amber-400"
+                          ? "text-sky-500 fill-sky-500"
                           : "text-slate-200"
                       }
                     />
@@ -181,10 +173,10 @@ export default function ProductCard({
 
             {/* Stock indicator */}
             {product.stock !== undefined && product.stock <= 25 && (
-              <div className="flex items-center gap-1 px-2 py-0.5 rounded bg-rose-50 text-rose-600">
+              <div className="flex items-center gap-1 px-2 py-0.5 rounded bg-sky-50 text-sky-700 border border-sky-200">
                 <span className="relative flex h-1.5 w-1.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-rose-500"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-sky-600"></span>
                 </span>
                 <p className="text-[9px] font-bold uppercase tracking-wider">
                   {product.stock} left
@@ -217,15 +209,15 @@ export default function ProductCard({
             )}
 
             {hasDiscount && (
-              <span className="bg-rose-50 text-rose-700 border border-rose-200/80 text-[10px] font-black px-1.5 py-0.5 rounded-md">
+              <span className="bg-sky-50 text-sky-800 border border-sky-200 text-[10px] font-black px-1.5 py-0.5 rounded-md">
                 -{discountPercent}%
               </span>
             )}
           </div>
 
           {hasDiscount && (
-            <div className="mt-1 flex items-center gap-1.5 text-[10px] text-emerald-700 font-bold">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+            <div className="mt-1 flex items-center gap-1.5 text-[10px] text-sky-800 font-bold">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-sky-600 shrink-0" />
               <span>Direct Factory Supply</span>
               <span className="text-slate-300">•</span>
               <span>Save ₦{savings.toLocaleString()} vs Retail</span>

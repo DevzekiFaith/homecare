@@ -86,17 +86,17 @@ export default function FlashDeal({
   return (
     <div className="rounded-3xl border border-sky-100 bg-white overflow-hidden shadow-lg shadow-sky-950/5">
       {/* Flash Deal Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-blue-900 to-sky-900 text-white px-4 sm:px-5 py-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-sky-800/40">
+      <div className="bg-gradient-to-r from-slate-900 via-sky-950 to-slate-900 text-white px-4 sm:px-5 py-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-sky-800/40">
         <div className="flex items-center gap-2.5">
           <div className="relative flex items-center justify-center w-8 h-8 rounded-xl bg-sky-500/20 border border-sky-400/30 text-sky-300 shadow-inner shrink-0">
-            <Flame size={17} className="text-amber-400 fill-amber-400 animate-pulse" />
+            <Flame size={17} className="text-sky-300 fill-sky-300 animate-pulse" />
           </div>
           <div>
             <div className="flex items-center gap-2">
               <span className="text-xs font-black uppercase tracking-wider text-white">
                 HOMECARE FLASH DEAL
               </span>
-              <span className="px-2 py-0.5 rounded-full bg-amber-400/20 border border-amber-400/40 text-[9px] font-bold text-amber-300">
+              <span className="px-2 py-0.5 rounded-full bg-sky-500/20 border border-sky-400/30 text-[9px] font-bold text-sky-200">
                 LIMITED STOCK
               </span>
             </div>
@@ -121,7 +121,7 @@ export default function FlashDeal({
               {String(timeLeft.minutes).padStart(2, "0")}m
             </span>
             <span className="text-sky-400 font-bold">:</span>
-            <span className="bg-slate-900/90 px-2 py-0.5 rounded-md text-[11px] font-black text-amber-300 border border-amber-500/30 shadow-xs">
+            <span className="bg-slate-900/90 px-2 py-0.5 rounded-md text-[11px] font-black text-sky-200 border border-sky-500/30 shadow-xs">
               {String(timeLeft.seconds).padStart(2, "0")}s
             </span>
           </div>
@@ -137,7 +137,7 @@ export default function FlashDeal({
               ₦{currentTotalPrice.toLocaleString()}
             </span>
             {includeInstallation ? (
-              <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-sky-700 bg-sky-50 px-2 py-0.5 rounded-md border border-sky-200">
+              <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-sky-800 bg-sky-50 px-2 py-0.5 rounded-md border border-sky-200">
                 Total
               </span>
             ) : null}
@@ -149,14 +149,14 @@ export default function FlashDeal({
             onClick={onToggleInstallation}
             className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-black border transition-all cursor-pointer shadow-xs active:scale-95 select-none ${
               includeInstallation
-                ? "bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-300 ring-2 ring-emerald-400/20 shadow-emerald-500/10"
+                ? "bg-sky-600 text-white border-sky-600 ring-2 ring-sky-500/25 shadow-sky-600/20"
                 : "bg-sky-50 hover:bg-sky-100 text-sky-900 border-sky-300 hover:border-sky-400 shadow-sky-500/10"
             }`}
             title={includeInstallation ? "Pro Installation Included — click to remove" : "Click to add HomeCare™ Certified Pro Installation"}
           >
             {includeInstallation ? (
               <>
-                <Check size={14} className="text-emerald-600 stroke-[3]" />
+                <Check size={14} className="text-white stroke-[3]" />
                 <span>✓ ₦{baseAppliancePrice.toLocaleString()} Item + ₦{fee.toLocaleString()} Pro Installer</span>
               </>
             ) : (
@@ -176,8 +176,8 @@ export default function FlashDeal({
           </span>
 
           {/* Discount Percentage Badge */}
-          <span className="bg-rose-50 text-rose-700 border border-rose-200 text-xs font-extrabold px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-2xs">
-            <Tag size={11} className="text-rose-600" />
+          <span className="bg-sky-50 text-sky-800 border border-sky-200 text-xs font-extrabold px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-2xs">
+            <Tag size={11} className="text-sky-600" />
             -{discountPercent}% OFF
           </span>
 
@@ -192,7 +192,7 @@ export default function FlashDeal({
         <div
           className={`rounded-2xl p-3 sm:p-3.5 border transition-all ${
             includeInstallation
-              ? "bg-gradient-to-r from-sky-50/90 via-sky-50/50 to-emerald-50/60 border-sky-300 ring-1 ring-sky-400/20 shadow-xs"
+              ? "bg-sky-50/80 border-sky-300 ring-1 ring-sky-400/20 shadow-xs"
               : "bg-slate-50/80 border-slate-200 hover:border-slate-300"
           }`}
         >
@@ -216,7 +216,7 @@ export default function FlashDeal({
                   <span
                     className={`text-[11px] font-black px-2 py-0.5 rounded-full border ${
                       includeInstallation
-                        ? "bg-emerald-100 text-emerald-800 border-emerald-300 font-extrabold"
+                        ? "bg-sky-100 text-sky-900 border-sky-300 font-extrabold"
                         : "bg-white text-slate-700 border-slate-200"
                     }`}
                   >
@@ -243,7 +243,7 @@ export default function FlashDeal({
                   <span
                     className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md border font-bold text-[11px] shadow-2xs ${
                       includeInstallation
-                        ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+                        ? "bg-sky-100 border-sky-200 text-sky-900"
                         : "bg-white border-slate-200 text-slate-400"
                     }`}
                   >
@@ -264,7 +264,7 @@ export default function FlashDeal({
                 onClick={onToggleInstallation}
                 className={`w-full sm:w-auto h-9 px-3.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shrink-0 cursor-pointer shadow-xs active:scale-95 ${
                   includeInstallation
-                    ? "bg-white hover:bg-rose-50 text-rose-700 border border-rose-200"
+                    ? "bg-white hover:bg-slate-100 text-slate-700 border border-slate-300"
                     : "bg-sky-600 hover:bg-sky-700 text-white border border-sky-600 shadow-sky-600/20"
                 }`}
               >
@@ -289,13 +289,13 @@ export default function FlashDeal({
               <span>{claimedPercent}% CLAIMED</span>
             </span>
             <span className="text-slate-600 font-medium text-[11px]">
-              Only <strong className="text-rose-600 font-extrabold">{stock} units remaining</strong>
+              Only <strong className="text-sky-700 font-extrabold">{stock} units remaining</strong>
             </span>
           </div>
 
           <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden p-0.5 border border-slate-200">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-sky-600 via-blue-600 to-cyan-500 transition-all duration-500"
+              className="h-full rounded-full bg-sky-600 transition-all duration-500"
               style={{ width: `${claimedPercent}%` }}
             />
           </div>

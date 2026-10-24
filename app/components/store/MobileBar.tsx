@@ -49,7 +49,7 @@ export default function MobileBar({
 
         <button
           onClick={handleChat}
-          className="flex flex-col items-center justify-center w-10 sm:w-11 h-10 sm:h-11 rounded-xl text-slate-600 hover:text-emerald-700 active:scale-95 transition-transform"
+          className="flex flex-col items-center justify-center w-10 sm:w-11 h-10 sm:h-11 rounded-xl text-slate-600 hover:text-sky-700 active:scale-95 transition-transform"
           title="Chat on WhatsApp"
         >
           <MessageSquare size={17} />
@@ -79,7 +79,7 @@ export default function MobileBar({
           ₦{(product.price + (includeInstallation ? installationFee : 0)).toLocaleString()}
         </span>
         {includeInstallation ? (
-          <span className="text-[8px] font-black uppercase tracking-tight text-emerald-700">
+          <span className="text-[8px] font-black uppercase tracking-tight text-sky-800">
             + Pro Install
           </span>
         ) : (

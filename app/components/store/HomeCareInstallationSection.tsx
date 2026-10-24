@@ -211,8 +211,8 @@ export default function HomeCareInstallationSection({
               onClick={() => onToggleInstallation(!isSelected)}
               className={`w-full sm:w-auto h-11 px-5 rounded-full text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md ${
                 isSelected
-                  ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-emerald-500/25 ring-2 ring-emerald-300"
-                  : "bg-gradient-to-r from-sky-400 to-cyan-300 hover:from-sky-300 hover:to-cyan-200 text-slate-950 shadow-sky-500/25 font-black"
+                  ? "bg-sky-600 hover:bg-sky-500 text-white shadow-sky-600/25 ring-2 ring-sky-400"
+                  : "bg-sky-600 hover:bg-sky-500 text-white shadow-sky-600/25 font-black"
               }`}
             >
               {isSelected ? (
@@ -227,7 +227,7 @@ export default function HomeCareInstallationSection({
                 </>
               ) : (
                 <>
-                  <Zap size={14} className="fill-slate-950 text-slate-950" />
+                  <Zap size={14} className="fill-white text-white" />
                   <span>+ Bundle &amp; Add (₦{(productPrice + installationFee).toLocaleString()})</span>
                 </>
               )}

@@ -40,19 +40,12 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-const PACK_VARIANTS = [
-  { id: "1pack", name: "1x Standard Unit", discountNote: "Standard", multiplier: 1, savings: 0 },
-  { id: "2pack", name: "2x Family Pack", discountNote: "Save 10%", multiplier: 1.8, savings: 0.1, badge: "Popular" },
-  { id: "4pack", name: "4x Whole-Home Pack", discountNote: "Save 18%", multiplier: 3.28, savings: 0.18, badge: "Best Value" },
-];
-
 export default function ProductDetailPage({ params }: PageProps) {
   const resolvedParams = use(params);
   const router = useRouter();
   const { cartItems, addToCart, setIsCartOpen, setInstallationForProduct, cartCount } = useCart();
   
   const [quantity, setQuantity] = useState(1);
-  const [selectedPack, setSelectedPack] = useState(PACK_VARIANTS[0]);
   const [activeTab, setActiveTab] = useState<"features" | "specs" | "box">("features");
   const [justAdded, setJustAdded] = useState(false);
   const [imgError, setImgError] = useState(false);
@@ -65,20 +58,17 @@ export default function ProductDetailPage({ params }: PageProps) {
     return PRODUCTS.find((p) => p.id === resolvedParams.id) || null;
   }, [resolvedParams.id]);
 
-  // Dynamic calculated bundle price based on pack variant and installation option
+  // Dynamic price based on product and installation option
   const effectivePrice = useMemo(() => {
     if (!product) return 0;
-    const base = Math.round(product.price * selectedPack.multiplier);
-    return includeInstallation ? base + installationFee : base;
-  }, [product, selectedPack, includeInstallation]);
+    return includeInstallation ? product.price + installationFee : product.price;
+  }, [product, includeInstallation]);
 
   const effectiveOriginalPrice = useMemo(() => {
     if (!product) return 0;
     const baseOriginal = product.originalPrice || Math.round((product.price * 1.52) / 500) * 500;
-    const count = selectedPack.id === "1pack" ? 1 : selectedPack.id === "2pack" ? 2 : 4;
-    const base = Math.round(baseOriginal * count);
-    return includeInstallation ? base + installationFee : base;
-  }, [product, selectedPack, includeInstallation]);
+    return includeInstallation ? baseOriginal + installationFee : baseOriginal;
+  }, [product, includeInstallation]);
 
   // Store metadata
   const storeMetadata = useMemo(() => {
@@ -119,22 +109,8 @@ export default function ProductDetailPage({ params }: PageProps) {
     );
   }
 
-  const variantId = selectedPack.id === "1pack" ? product.id : `${product.id}-${selectedPack.id}`;
-  const variantName = selectedPack.id === "1pack" ? product.name : `${product.name} (${selectedPack.name})`;
-  const baseVariantPrice = Math.round(product.price * selectedPack.multiplier);
-  const baseVariantOriginalPrice = Math.round(
-    (product.originalPrice || Math.round((product.price * 1.52) / 500) * 500) *
-      (selectedPack.id === "1pack" ? 1 : selectedPack.id === "2pack" ? 2 : 4)
-  );
-
-  // Customized product payload with real pack details
-  const variantProduct: Product = {
-    ...product,
-    id: variantId,
-    name: variantName,
-    price: baseVariantPrice,
-    originalPrice: baseVariantOriginalPrice,
-  };
+  const basePrice = product.price;
+  const baseOriginalPrice = product.originalPrice || Math.round((product.price * 1.52) / 500) * 500;
 
   // Direct 1-click installation toggle that adds/updates installation in the cart or toggles selection on page
   const handleToggleInstallation = (targetVal?: boolean, bundleIfEmpty: boolean = false) => {
@@ -159,9 +135,9 @@ export default function ProductDetailPage({ params }: PageProps) {
         }
       );
     } else if (bundleIfEmpty) {
-      addToCart(variantProduct, quantity, nextVal, installationFee, selectedPack.id);
+      addToCart(product, quantity, nextVal, installationFee);
       toast.success("Added to Cart with Pro Installation!", {
-        description: `${variantProduct.name} (+₦${installationFee.toLocaleString()} HomeCare™ Installation) added to your shopping cart.`,
+        description: `${product.name} (+₦${installationFee.toLocaleString()} HomeCare™ Installation) added to your shopping cart.`,
         action: {
           label: "View Cart",
           onClick: () => setIsCartOpen(true),
@@ -184,10 +160,10 @@ export default function ProductDetailPage({ params }: PageProps) {
   };
 
   const handleAddToCart = () => {
-    addToCart(variantProduct, quantity, includeInstallation, installationFee, selectedPack.id);
+    addToCart(product, quantity, includeInstallation, installationFee);
     setJustAdded(true);
     toast.success("Added to Cart!", {
-      description: `${quantity}x ${variantProduct.name}${includeInstallation ? ` + HomeCare™ Pro Installation (+₦${installationFee.toLocaleString()})` : ""} added to your shopping cart.`,
+      description: `${quantity}x ${product.name}${includeInstallation ? ` + HomeCare™ Pro Installation (+₦${installationFee.toLocaleString()})` : ""} added to your shopping cart.`,
       action: {
         label: "View Cart",
         onClick: () => setIsCartOpen(true),
@@ -198,7 +174,7 @@ export default function ProductDetailPage({ params }: PageProps) {
   };
 
   const handleBuyNow = () => {
-    addToCart(variantProduct, quantity, includeInstallation, installationFee, selectedPack.id);
+    addToCart(product, quantity, includeInstallation, installationFee);
     if (typeof window !== "undefined") {
       try {
         localStorage.setItem("homecare_selected_state", deliveryState);
@@ -389,8 +365,8 @@ export default function ProductDetailPage({ params }: PageProps) {
             {/* Flash Deal Bar & Price */}
             <FlashDeal
               price={effectivePrice}
-              appliancePrice={baseVariantPrice}
-              originalPrice={baseVariantOriginalPrice}
+              appliancePrice={basePrice}
+              originalPrice={baseOriginalPrice}
               soldCount={product.soldCount || (product.reviewCount ? product.reviewCount * 4 : 1420)}
               stock={product.stock || 25}
               includeInstallation={includeInstallation}
@@ -405,8 +381,8 @@ export default function ProductDetailPage({ params }: PageProps) {
                   {product.sourceOrigin || "Official HomeCare Certified"}
                 </span>
 
-                <span className="text-[10px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-800 px-2.5 py-1 rounded-md border border-emerald-200 flex items-center gap-1">
-                  <CheckCircle2 size={11} className="text-emerald-600" />
+                <span className="text-[10px] font-black uppercase tracking-wider bg-sky-50 text-sky-800 px-2.5 py-1 rounded-md border border-sky-200 flex items-center gap-1">
+                  <CheckCircle2 size={11} className="text-sky-600" />
                   In Stock ({product.stock || 25} units at Lagos Hub)
                 </span>
               </div>
@@ -424,7 +400,7 @@ export default function ProductDetailPage({ params }: PageProps) {
                       size={15}
                       className={
                         star <= Math.round(product.rating || 4.9)
-                          ? "text-amber-400 fill-amber-400"
+                          ? "text-sky-500 fill-sky-500"
                           : "text-slate-200"
                       }
                     />
@@ -434,7 +410,7 @@ export default function ProductDetailPage({ params }: PageProps) {
                   {product.rating || 4.9} <span className="text-slate-400">({product.reviewCount || 340} verified reviews)</span>
                 </span>
                 <span className="text-slate-300">•</span>
-                <span className="text-xs font-bold text-emerald-700">
+                <span className="text-xs font-bold text-sky-700">
                   99% customer satisfaction
                 </span>
               </div>
@@ -444,69 +420,6 @@ export default function ProductDetailPage({ params }: PageProps) {
             <p className="text-sm text-slate-600 leading-relaxed">
               {product.description}
             </p>
-
-            {/* Product Variants Section (Bundle Pack Options) */}
-            <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/90 shadow-sm space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-black uppercase tracking-wider text-slate-700">
-                  Select Pack / Quantity Bundle
-                </span>
-                {selectedPack.savings > 0 && (
-                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                    {selectedPack.discountNote}
-                  </span>
-                )}
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                {PACK_VARIANTS.map((pack) => {
-                  const isSelected = selectedPack.id === pack.id;
-                  const packPrice = Math.round(product.price * pack.multiplier);
-                  return (
-                    <button
-                      key={pack.id}
-                      type="button"
-                      onClick={() => setSelectedPack(pack)}
-                      className={`relative p-3.5 rounded-2xl border text-left transition-all flex flex-col justify-between cursor-pointer ${
-                        isSelected
-                          ? "border-sky-600 bg-sky-50/70 ring-2 ring-sky-600/20 shadow-xs"
-                          : "border-slate-200 hover:border-sky-300 hover:bg-slate-50 bg-white"
-                      }`}
-                    >
-                      {pack.badge && (
-                        <span className="absolute -top-2 right-3 text-[9px] font-black uppercase tracking-wider bg-sky-600 text-white px-2 py-0.5 rounded-full shadow-2xs">
-                          {pack.badge}
-                        </span>
-                      )}
-                      <div>
-                        <p className={`text-xs ${isSelected ? "font-black text-sky-950" : "font-bold text-slate-800"}`}>
-                          {pack.name}
-                        </p>
-                        <p className="text-[10px] text-sky-700 font-extrabold mt-0.5">
-                          {pack.discountNote}
-                        </p>
-                      </div>
-                      <p className="text-sm font-black text-slate-900 mt-2 font-heading">
-                        ₦{packPrice.toLocaleString()}
-                      </p>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Selected Pack Summary */}
-              <div className="bg-slate-50/80 rounded-2xl p-3 border border-slate-200/80 flex items-center justify-between gap-2 text-xs">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 size={15} className="text-sky-600 shrink-0" />
-                  <span className="text-slate-600 text-[11px]">
-                    Selected: <strong className="text-slate-900">{selectedPack.name}</strong>
-                  </span>
-                </div>
-                <span className="text-[10px] font-bold text-sky-800 bg-sky-100/70 px-2 py-0.5 rounded-md">
-                  Ready to Dispatch
-                </span>
-              </div>
-            </div>
 
             {/* Quantity Selector & Action Buttons */}
             <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/90 shadow-sm space-y-4">
@@ -561,7 +474,7 @@ export default function ProductDetailPage({ params }: PageProps) {
                       <p className="text-xs font-black text-slate-900 uppercase">
                         Home<span className="text-sky-600">Care</span>™ Certified Installation
                       </p>
-                      <span className="text-[9px] font-black uppercase text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                      <span className="text-[9px] font-black uppercase text-sky-800 bg-sky-50 px-2 py-0.5 rounded-full border border-sky-200">
                         +₦{installationFee.toLocaleString()}
                       </span>
                       {includeInstallation && (
@@ -598,8 +511,8 @@ export default function ProductDetailPage({ params }: PageProps) {
                     {justAdded
                       ? "Added to Cart!"
                       : includeInstallation
-                      ? `Add Appliance + Pro Install (₦${((baseVariantPrice + installationFee) * quantity).toLocaleString()})`
-                      : `Add to Cart (₦${(baseVariantPrice * quantity).toLocaleString()})`}
+                      ? `Add Appliance + Pro Install (₦${((basePrice + installationFee) * quantity).toLocaleString()})`
+                      : `Add to Cart (₦${(basePrice * quantity).toLocaleString()})`}
                   </span>
                 </button>
 
@@ -610,8 +523,8 @@ export default function ProductDetailPage({ params }: PageProps) {
                   <Zap size={16} className="text-sky-200 fill-sky-200" />
                   <span>
                     {includeInstallation
-                      ? `Buy Both Now (₦${((baseVariantPrice + installationFee) * quantity).toLocaleString()})`
-                      : `Buy Now (₦${(baseVariantPrice * quantity).toLocaleString()})`}
+                      ? `Buy Both Now (₦${((basePrice + installationFee) * quantity).toLocaleString()})`
+                      : `Buy Now (₦${(basePrice * quantity).toLocaleString()})`}
                   </span>
                 </button>
               </div>
@@ -715,7 +628,7 @@ export default function ProductDetailPage({ params }: PageProps) {
               isSelected={includeInstallation}
               onToggleInstallation={(selected) => handleToggleInstallation(selected, true)}
               isProductInCart={!!cartItem}
-              productPrice={baseVariantPrice}
+              productPrice={basePrice}
             />
 
           </div>
@@ -761,7 +674,7 @@ export default function ProductDetailPage({ params }: PageProps) {
 
       {/* Sticky Bottom Bar for Mobile Viewport */}
       <MobileBar
-        product={variantProduct}
+        product={product}
         onAddToCart={handleAddToCart}
         onBuyNow={handleBuyNow}
         justAdded={justAdded}
