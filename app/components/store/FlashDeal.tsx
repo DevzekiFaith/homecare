@@ -130,31 +130,62 @@ export default function FlashDeal({
 
       <div className="p-5 sm:p-6 space-y-4">
         {/* Price Row */}
-        <div className="flex items-baseline gap-2.5 sm:gap-3 flex-wrap">
-          <span className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight font-heading">
-            ₦{currentTotalPrice.toLocaleString()}
-          </span>
+        <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
+          {/* Main Price Display */}
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight font-heading">
+              ₦{currentTotalPrice.toLocaleString()}
+            </span>
+            {includeInstallation ? (
+              <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-sky-700 bg-sky-50 px-2 py-0.5 rounded-md border border-sky-200">
+                Total
+              </span>
+            ) : null}
+          </div>
 
+          {/* Pro Installer Cost Directly Close to the Price */}
+          <button
+            type="button"
+            onClick={onToggleInstallation}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-black border transition-all cursor-pointer shadow-xs active:scale-95 select-none ${
+              includeInstallation
+                ? "bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-300 ring-2 ring-emerald-400/20 shadow-emerald-500/10"
+                : "bg-sky-50 hover:bg-sky-100 text-sky-900 border-sky-300 hover:border-sky-400 shadow-sky-500/10"
+            }`}
+            title={includeInstallation ? "Pro Installation Included — click to remove" : "Click to add HomeCare™ Certified Pro Installation"}
+          >
+            {includeInstallation ? (
+              <>
+                <Check size={14} className="text-emerald-600 stroke-[3]" />
+                <span>✓ ₦{baseAppliancePrice.toLocaleString()} Item + ₦{fee.toLocaleString()} Pro Installer</span>
+              </>
+            ) : (
+              <>
+                <Wrench size={13} className="text-sky-600" />
+                <span>+ ₦{fee.toLocaleString()} Pro Installer</span>
+                <span className="text-[9px] uppercase font-black text-sky-700 bg-sky-200/70 px-1.5 py-0.2 rounded">
+                  Add
+                </span>
+              </>
+            )}
+          </button>
+
+          {/* Strikethrough Original Market Price */}
           <span className="text-base sm:text-lg font-bold text-slate-400 line-through">
             ₦{currentStrikePrice.toLocaleString()}
           </span>
 
+          {/* Discount Percentage Badge */}
           <span className="bg-rose-50 text-rose-700 border border-rose-200 text-xs font-extrabold px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-2xs">
             <Tag size={11} className="text-rose-600" />
             -{discountPercent}% OFF
           </span>
 
+          {/* Best Price (30d) Badge */}
           <span className="text-[11px] font-bold uppercase tracking-wider text-sky-800 bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-200 flex items-center gap-1">
             <TrendingDown size={12} className="text-sky-600" />
             Best Price (30d)
           </span>
-
-          {includeInstallation && (
-            <span className="text-[11px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-300 flex items-center gap-1 shadow-2xs">
-              <Check size={12} className="text-emerald-600" strokeWidth={3} />
-              Includes Pro Install (+₦{fee.toLocaleString()})
-            </span>
-          )}
         </div>
 
         {/* Transparent Cost Breakdown: What Customers Are Paying For & How It Is Added */}
