@@ -130,45 +130,16 @@ export default function FlashDeal({
 
       <div className="p-5 sm:p-6 space-y-4">
         {/* Price Row */}
-        <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
-          {/* Main Price Display */}
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight font-heading">
-              ₦{currentTotalPrice.toLocaleString()}
-            </span>
-            {includeInstallation ? (
-              <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-sky-800 bg-sky-50 px-2 py-0.5 rounded-md border border-sky-200">
-                Total
-              </span>
-            ) : null}
-          </div>
+        <div className="flex items-baseline gap-2.5 sm:gap-3 flex-wrap">
+          <span className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight font-heading">
+            ₦{currentTotalPrice.toLocaleString()}
+          </span>
 
-          {/* Pro Installer Cost Directly Close to the Price */}
-          <button
-            type="button"
-            onClick={onToggleInstallation}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-black border transition-all cursor-pointer shadow-xs active:scale-95 select-none ${
-              includeInstallation
-                ? "bg-sky-600 text-white border-sky-600 ring-2 ring-sky-500/25 shadow-sky-600/20"
-                : "bg-sky-50 hover:bg-sky-100 text-sky-900 border-sky-300 hover:border-sky-400 shadow-sky-500/10"
-            }`}
-            title={includeInstallation ? "Pro Installation Included — click to remove" : "Click to add HomeCare™ Certified Pro Installation"}
-          >
-            {includeInstallation ? (
-              <>
-                <Check size={14} className="text-white stroke-[3]" />
-                <span>✓ ₦{baseAppliancePrice.toLocaleString()} Item + ₦{fee.toLocaleString()} Pro Installer</span>
-              </>
-            ) : (
-              <>
-                <Wrench size={13} className="text-sky-600" />
-                <span>+ ₦{fee.toLocaleString()} Pro Installer</span>
-                <span className="text-[9px] uppercase font-black text-sky-700 bg-sky-200/70 px-1.5 py-0.2 rounded">
-                  Add
-                </span>
-              </>
-            )}
-          </button>
+          {includeInstallation && (
+            <span className="text-[11px] font-black uppercase tracking-wider text-sky-800 bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-200">
+              With Installation
+            </span>
+          )}
 
           {/* Strikethrough Original Market Price */}
           <span className="text-base sm:text-lg font-bold text-slate-400 line-through">
@@ -188,97 +159,91 @@ export default function FlashDeal({
           </span>
         </div>
 
-        {/* Transparent Cost Breakdown: What Customers Are Paying For & How It Is Added */}
+        {/* Simple & Clean Installation Option Bar */}
         <div
-          className={`rounded-2xl p-3 sm:p-3.5 border transition-all ${
+          onClick={onToggleInstallation}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onToggleInstallation?.();
+            }
+          }}
+          className={`rounded-2xl p-3 sm:p-3.5 border transition-all flex items-center justify-between gap-3 cursor-pointer select-none ${
             includeInstallation
-              ? "bg-sky-50/80 border-sky-300 ring-1 ring-sky-400/20 shadow-xs"
-              : "bg-slate-50/80 border-slate-200 hover:border-slate-300"
+              ? "bg-sky-50 border-sky-300 ring-1 ring-sky-400/20 shadow-xs"
+              : "bg-slate-50/80 border-slate-200 hover:border-sky-300 hover:bg-sky-50/30"
           }`}
         >
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="flex items-start sm:items-center gap-2.5 min-w-0">
-              <div
-                className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border transition-colors ${
-                  includeInstallation
-                    ? "bg-sky-600 text-white border-sky-600 shadow-xs"
-                    : "bg-white text-slate-500 border-slate-200 shadow-2xs"
-                }`}
-              >
-                <Wrench size={14} className={includeInstallation ? "text-white" : "text-sky-600"} />
-              </div>
-
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs font-black text-slate-900 tracking-tight">
-                    HomeCare™ Certified Installation:
-                  </span>
-                  <span
-                    className={`text-[11px] font-black px-2 py-0.5 rounded-full border ${
-                      includeInstallation
-                        ? "bg-sky-100 text-sky-900 border-sky-300 font-extrabold"
-                        : "bg-white text-slate-700 border-slate-200"
-                    }`}
-                  >
-                    +₦{fee.toLocaleString()}
-                  </span>
-                  {includeInstallation ? (
-                    <span className="text-[9px] font-black uppercase text-sky-800 bg-sky-100/90 px-2 py-0.5 rounded-md border border-sky-200">
-                      ✓ Added to Your Total
-                    </span>
-                  ) : (
-                    <span className="text-[10px] font-medium text-slate-500">
-                      (Optional Add-on)
-                    </span>
-                  )}
-                </div>
-
-                {/* Explicit Cost Breakdown: what they are paying for and how it is added */}
-                <div className="text-[11px] text-slate-600 mt-1 flex items-center gap-1.5 flex-wrap">
-                  <span className="text-slate-500 font-semibold">What you pay for:</span>
-                  <span className="inline-flex items-center gap-1 bg-white px-2 py-0.5 rounded-md border border-slate-200 text-slate-800 font-bold text-[11px] shadow-2xs">
-                    Appliance: ₦{baseAppliancePrice.toLocaleString()}
-                  </span>
-                  <span className="text-slate-400 font-black">+</span>
-                  <span
-                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md border font-bold text-[11px] shadow-2xs ${
-                      includeInstallation
-                        ? "bg-sky-100 border-sky-200 text-sky-900"
-                        : "bg-white border-slate-200 text-slate-400"
-                    }`}
-                  >
-                    Pro Install: {includeInstallation ? `₦${fee.toLocaleString()}` : "₦0 (Not added)"}
-                  </span>
-                  <span className="text-slate-400 font-black">=</span>
-                  <span className="inline-flex items-center gap-1 bg-slate-900 px-2 py-0.5 rounded-md text-white font-black text-[11px] shadow-2xs">
-                    Total: ₦{currentTotalPrice.toLocaleString()}
-                  </span>
-                </div>
-              </div>
+          <div className="flex items-center gap-3 min-w-0">
+            <div
+              className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border transition-colors ${
+                includeInstallation
+                  ? "bg-sky-600 text-white border-sky-600 shadow-2xs"
+                  : "bg-white text-sky-600 border-slate-200 shadow-2xs"
+              }`}
+            >
+              {includeInstallation ? (
+                <Check size={16} strokeWidth={3} className="text-white" />
+              ) : (
+                <Wrench size={15} className="text-sky-600" />
+              )}
             </div>
 
-            {/* Quick Action Toggle Button */}
-            {onToggleInstallation && (
-              <button
-                type="button"
-                onClick={onToggleInstallation}
-                className={`w-full sm:w-auto h-9 px-3.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shrink-0 cursor-pointer shadow-xs active:scale-95 ${
-                  includeInstallation
-                    ? "bg-white hover:bg-slate-100 text-slate-700 border border-slate-300"
-                    : "bg-sky-600 hover:bg-sky-700 text-white border border-sky-600 shadow-sky-600/20"
-                }`}
-              >
-                {includeInstallation ? (
-                  <span>Remove Install</span>
-                ) : (
-                  <>
-                    <Plus size={13} strokeWidth={3} />
-                    <span>Add Install (+₦{fee.toLocaleString()})</span>
-                  </>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs sm:text-sm font-black text-slate-900 tracking-tight">
+                  {includeInstallation
+                    ? "HomeCare™ Certified Installation Included"
+                    : "Add HomeCare™ Certified Installation"}
+                </span>
+                <span
+                  className={`text-[11px] font-black px-2 py-0.5 rounded-full border ${
+                    includeInstallation
+                      ? "bg-sky-600 text-white border-sky-600"
+                      : "bg-sky-100 text-sky-900 border-sky-200"
+                  }`}
+                >
+                  +₦{fee.toLocaleString()}
+                </span>
+                {!includeInstallation && (
+                  <span className="text-[10px] font-medium text-slate-500">
+                    (Optional)
+                  </span>
                 )}
-              </button>
-            )}
+              </div>
+              <p className="text-[11px] text-slate-500 truncate mt-0.5">
+                {includeInstallation
+                  ? `Technician doorstep setup & NEPA surge calibration included (+₦${fee.toLocaleString()})`
+                  : "Doorstep appliance setup & 240V NEPA surge testing by vetted technician."}
+              </p>
+            </div>
           </div>
+
+          {onToggleInstallation && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleInstallation();
+              }}
+              className={`h-8.5 px-3.5 rounded-xl text-xs font-black uppercase tracking-wider shrink-0 transition-all cursor-pointer active:scale-95 flex items-center gap-1 shadow-2xs ${
+                includeInstallation
+                  ? "bg-white hover:bg-slate-100 text-slate-700 border border-slate-300"
+                  : "bg-sky-600 hover:bg-sky-700 text-white shadow-sky-600/20"
+              }`}
+            >
+              {includeInstallation ? (
+                "Remove"
+              ) : (
+                <>
+                  <Plus size={13} strokeWidth={3} />
+                  <span>Add</span>
+                </>
+              )}
+            </button>
+          )}
         </div>
 
         {/* Claimed Progress Bar */}
