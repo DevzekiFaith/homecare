@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { ShoppingCart, Plus, Check, Minus, Star, ShoppingBag, Flame } from "lucide-react";
+import { ShoppingCart, Plus, Check, Minus, Star, ShoppingBag, Flame, Zap } from "lucide-react";
 import { Product } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { toast } from "sonner";
@@ -140,6 +140,14 @@ export default function ProductCard({
               )}
             </div>
           )}
+
+          {/* HomeCare Certified Installation Brand Indicator */}
+          <div className="mt-2 flex items-center gap-1.5 text-[9px] font-extrabold uppercase tracking-wider text-slate-600 bg-slate-50/90 px-2 py-1 rounded-lg border border-slate-200/70">
+            <span className="relative flex h-3.5 w-3.5 items-center justify-center rounded-xs bg-sky-600 text-white shrink-0 shadow-2xs">
+              <Zap size={9} className="fill-white" />
+            </span>
+            <span className="truncate">Home<span className="text-sky-600 font-black">Care</span>™ Installation Available</span>
+          </div>
 
           <div className="flex items-center justify-between mt-3">
             {/* Rating */}

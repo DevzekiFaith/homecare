@@ -74,9 +74,15 @@ export default function MobileBar({
         <span className="text-xs sm:text-sm font-black text-slate-900 font-heading">
           ₦{product.price.toLocaleString()}
         </span>
-        <span className="text-[10px] text-slate-400 line-through">
-          ₦{strikePrice.toLocaleString()}
-        </span>
+        {product.name.includes("Installation") ? (
+          <span className="text-[8px] font-black uppercase tracking-tight text-emerald-700">
+            + Pro Install
+          </span>
+        ) : (
+          <span className="text-[10px] text-slate-400 line-through">
+            ₦{strikePrice.toLocaleString()}
+          </span>
+        )}
       </div>
 
       {/* Action Buttons */}

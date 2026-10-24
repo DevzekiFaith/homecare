@@ -145,6 +145,39 @@ export default function CartDrawer() {
               </div>
             )}
 
+            {/* HomeCare Certified Installation Banner with Brand Logo */}
+            {cartItems.length > 0 && (
+              <div className="mx-4 sm:mx-6 mt-3 p-3 bg-gradient-to-r from-slate-900 to-sky-950 rounded-2xl border border-sky-900/40 text-white flex items-center justify-between gap-3 shadow-md">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="relative w-8 h-8 rounded-xl bg-white p-1 border border-white/20 shrink-0 flex items-center justify-center shadow-xs">
+                    <Image
+                      src="/hclogo.png"
+                      alt="HomeCare Brand Logo"
+                      width={22}
+                      height={22}
+                      className="object-contain rounded-md"
+                    />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-black uppercase text-white truncate">
+                      Home<span className="text-cyan-300">Care</span>™ Certified Installation
+                    </p>
+                    <p className="text-[9px] text-sky-200/70 font-medium leading-tight truncate">
+                      240V NEPA surge testing &amp; escrow guarantee available.
+                    </p>
+                  </div>
+                </div>
+
+                <Link
+                  href="/request"
+                  onClick={() => setIsCartOpen(false)}
+                  className="px-2.5 py-1 rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 text-[9px] font-black uppercase tracking-wider shrink-0 transition-colors"
+                >
+                  Book Pro
+                </Link>
+              </div>
+            )}
+
             {/* Cart Items List */}
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3 sm:space-y-4 bg-slate-50">
               {cartItems.length === 0 ? (

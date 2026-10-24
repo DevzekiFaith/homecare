@@ -13,7 +13,6 @@ import {
   Truck, 
   RotateCcw, 
   Flame, 
-  Wrench, 
   Plus, 
   Minus, 
   Share2, 
@@ -35,6 +34,7 @@ import FlashDeal from "@/app/components/store/FlashDeal";
 import BuyerProtection from "@/app/components/store/BuyerProtection";
 import CustomerReviews from "@/app/components/store/CustomerReviews";
 import MobileBar from "@/app/components/store/MobileBar";
+import HomeCareInstallationSection from "@/app/components/store/HomeCareInstallationSection";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -57,24 +57,28 @@ export default function ProductDetailPage({ params }: PageProps) {
   const [justAdded, setJustAdded] = useState(false);
   const [imgError, setImgError] = useState(false);
   const [deliveryState, setDeliveryState] = useState("Lagos");
+  const [includeInstallation, setIncludeInstallation] = useState(false);
+  const installationFee = 7500;
 
   // Find product by id
   const product = useMemo(() => {
     return PRODUCTS.find((p) => p.id === resolvedParams.id) || null;
   }, [resolvedParams.id]);
 
-  // Dynamic calculated bundle price based on pack variant
+  // Dynamic calculated bundle price based on pack variant and installation option
   const effectivePrice = useMemo(() => {
     if (!product) return 0;
-    return Math.round(product.price * selectedPack.multiplier);
-  }, [product, selectedPack]);
+    const base = Math.round(product.price * selectedPack.multiplier);
+    return includeInstallation ? base + installationFee : base;
+  }, [product, selectedPack, includeInstallation]);
 
   const effectiveOriginalPrice = useMemo(() => {
     if (!product) return 0;
     const baseOriginal = product.originalPrice || Math.round((product.price * 1.52) / 500) * 500;
     const count = selectedPack.id === "1pack" ? 1 : selectedPack.id === "2pack" ? 2 : 4;
-    return Math.round(baseOriginal * count);
-  }, [product, selectedPack]);
+    const base = Math.round(baseOriginal * count);
+    return includeInstallation ? base + installationFee : base;
+  }, [product, selectedPack, includeInstallation]);
 
   // Store metadata
   const storeMetadata = useMemo(() => {
@@ -115,11 +119,17 @@ export default function ProductDetailPage({ params }: PageProps) {
     );
   }
 
-  // Customized product payload with real pack details
+  // Customized product payload with real pack details and optional pro installation
   const variantProduct: Product = {
     ...product,
-    id: selectedPack.id === "1pack" ? product.id : `${product.id}-${selectedPack.id}`,
-    name: selectedPack.id === "1pack"
+    id: includeInstallation
+      ? `${product.id}-${selectedPack.id}-installed`
+      : selectedPack.id === "1pack"
+      ? product.id
+      : `${product.id}-${selectedPack.id}`,
+    name: includeInstallation
+      ? `${product.name} (${selectedPack.name}) + HomeCare™ Certified Installation`
+      : selectedPack.id === "1pack"
       ? product.name
       : `${product.name} (${selectedPack.name})`,
     price: effectivePrice,
@@ -495,23 +505,49 @@ export default function ProductDetailPage({ params }: PageProps) {
                 </button>
               </div>
 
-              {/* Professional Installation Addon */}
-              <div className="bg-sky-50/60 rounded-2xl p-3.5 border border-sky-100 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-sky-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-                    <Wrench size={15} />
+              {/* Interactive HomeCare Certified Installation Addon with Brand Logo */}
+              <div 
+                onClick={() => setIncludeInstallation(!includeInstallation)}
+                className={`rounded-2xl p-3.5 border transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                  includeInstallation
+                    ? "bg-sky-50/90 border-sky-500 ring-2 ring-sky-500/20 shadow-xs"
+                    : "bg-slate-50 border-slate-200/90 hover:border-sky-300"
+                }`}
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="relative w-9 h-9 rounded-xl bg-white p-1 border border-slate-200 shadow-2xs shrink-0 flex items-center justify-center">
+                    <Image
+                      src="/hclogo.png"
+                      alt="HomeCare Logo"
+                      width={28}
+                      height={28}
+                      className="object-contain rounded-lg"
+                    />
                   </div>
-                  <div>
-                    <p className="text-xs font-extrabold text-slate-900">Need Professional Installation in Nigeria?</p>
-                    <p className="text-[10px] text-slate-500 font-medium">Book a vetted HomeCare certified technician in Lagos, Abuja or PH.</p>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="text-xs font-black text-slate-900 uppercase">
+                        Home<span className="text-sky-600">Care</span>™ Certified Installation
+                      </p>
+                      <span className="text-[9px] font-black uppercase text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                        +₦{installationFee.toLocaleString()}
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-slate-500 font-medium leading-tight mt-0.5 truncate">
+                      Vetted Nigerian technician dispatch + NEPA 240V surge testing + 30-day warranty.
+                    </p>
                   </div>
                 </div>
-                <Link
-                  href={`/request?service=${encodeURIComponent(product.serviceLink[0] || "Electrician")}`}
-                  className="px-3.5 py-1.5 rounded-full bg-sky-600 hover:bg-sky-700 text-white text-[10px] font-black uppercase tracking-wider transition-all shrink-0 shadow-xs"
-                >
-                  Book Pro
-                </Link>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${
+                    includeInstallation
+                      ? "bg-sky-600 border-sky-600 text-white"
+                      : "border-slate-300 bg-white"
+                  }`}>
+                    {includeInstallation && <Check size={14} strokeWidth={3} />}
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -603,6 +639,16 @@ export default function ProductDetailPage({ params }: PageProps) {
                 </ul>
               )}
             </div>
+
+            {/* Full HomeCare Certified Installation Section with Brand Logo & Guarantees */}
+            <HomeCareInstallationSection
+              productName={product.name}
+              category={product.category}
+              serviceTypes={product.serviceLink}
+              installationFee={installationFee}
+              isSelected={includeInstallation}
+              onToggleInstallation={(selected) => setIncludeInstallation(selected)}
+            />
 
           </div>
         </div>

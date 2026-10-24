@@ -618,9 +618,21 @@ function CheckoutContent() {
                   )}
                 </button>
 
-                <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                  <ShieldCheck size={14} className="text-emerald-600" />
-                  <span>CarePay Escrow Protection Guaranteed</span>
+                <div className="flex flex-col items-center justify-center gap-1.5 pt-2 border-t border-slate-100">
+                  <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                    <ShieldCheck size={14} className="text-emerald-600" />
+                    <span>CarePay Escrow Protection Guaranteed</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-[9px] font-extrabold text-sky-800 bg-sky-50 px-2.5 py-1 rounded-full border border-sky-200">
+                    <Image
+                      src="/hclogo.png"
+                      alt="HomeCare Brand Logo"
+                      width={14}
+                      height={14}
+                      className="rounded-xs shrink-0"
+                    />
+                    <span>HomeCare™ Verified Nigerian Installation Support</span>
+                  </div>
                 </div>
               </div>
             </div>

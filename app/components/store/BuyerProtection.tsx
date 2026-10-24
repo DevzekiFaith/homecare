@@ -1,6 +1,7 @@
 "use client";
 
-import { ShieldCheck, Lock, CreditCard, RotateCcw, CheckCircle2, Award } from "lucide-react";
+import Image from "next/image";
+import { Lock, CreditCard, RotateCcw, CheckCircle2, Award, Wrench } from "lucide-react";
 
 export default function BuyerProtection() {
   return (
@@ -11,8 +12,14 @@ export default function BuyerProtection() {
       {/* Header */}
       <div className="flex items-center justify-between gap-3 relative z-10 border-b border-slate-800 pb-4">
         <div className="flex items-center gap-3">
-          <div className="relative w-10 h-10 rounded-2xl bg-gradient-to-br from-sky-500 to-blue-700 text-white flex items-center justify-center shrink-0 shadow-lg shadow-sky-500/20">
-            <ShieldCheck size={22} className="text-white" />
+          <div className="relative w-11 h-11 rounded-2xl bg-white p-1.5 shadow-lg shadow-cyan-500/20 border border-white/20 shrink-0 flex items-center justify-center">
+            <Image
+              src="/hclogo.png"
+              alt="HomeCare Brand Logo"
+              width={32}
+              height={32}
+              className="object-contain rounded-xl"
+            />
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -81,6 +88,18 @@ export default function BuyerProtection() {
             <span className="font-extrabold text-white text-xs">Original Sealed Box</span>
             <p className="text-[11px] text-slate-300/80 mt-0.5 leading-relaxed">
               Factory sealed with official manufacturer warranty card, UK 3-pin plug, and quick setup guide.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-start gap-3 bg-white/5 hover:bg-white/10 p-3.5 rounded-2xl border border-white/5 transition-all sm:col-span-2">
+          <div className="w-7 h-7 rounded-lg bg-cyan-400/20 text-cyan-300 flex items-center justify-center shrink-0 mt-0.5">
+            <Wrench size={15} />
+          </div>
+          <div>
+            <span className="font-extrabold text-white text-xs">HomeCare™ Accredited Pro Installation</span>
+            <p className="text-[11px] text-slate-300/80 mt-0.5 leading-relaxed">
+              Pair any appliance with a verified HomeCare technician for safe 240V NEPA surge testing, professional mounting, and a 30-day workmanship guarantee.
             </p>
           </div>
         </div>
