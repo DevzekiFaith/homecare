@@ -94,7 +94,7 @@ const NIGERIAN_PURCHASES: SocialPurchase[] = [
     timeAgo: "22 mins ago",
     productId: "sp-water-5",
     productName: "Smart Ultrasonic Water Tank Monitor",
-    productImage: "/products/smart_water_level_sensor_1787269893994.jpg",
+    productImage: "/products/smart-water-level.jpg",
     price: 38500,
     deliveryStatus: "Delivered & Calibrated with Tuya App",
     actionType: "delivered",
@@ -118,7 +118,7 @@ const NIGERIAN_PURCHASES: SocialPurchase[] = [
     timeAgo: "34 mins ago",
     productId: "sp-power-2",
     productName: "Tuya 3-Gang Smart Surge Extension Board",
-    productImage: "/products/smart_extension_board_1787269911963.jpg",
+    productImage: "/products/extension-board.jpg",
     price: 18500,
     deliveryStatus: "Delivered via Speedaf Courier",
     actionType: "delivered",
@@ -129,8 +129,8 @@ const NIGERIAN_PURCHASES: SocialPurchase[] = [
     location: "Magodo Phase 2, Lagos",
     timeAgo: "41 mins ago",
     productId: "sp-fan-1",
-    productName: "Smart Low-Wattage Inverter Ceiling Fan",
-    productImage: "/products/smart-ceiling-fan.jpg",
+    productName: "Smart Low-Wattage Inverter Fan",
+    productImage: "/products/rechargeable-fan.jpg",
     price: 45000,
     deliveryStatus: "Installed by Verified HomeCare Electrician",
     actionType: "installed",
@@ -263,6 +263,10 @@ export default function PromoOverlay() {
                   fill
                   className="object-cover"
                   unoptimized
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    if (target) target.src = "/products/extension-board.jpg";
+                  }}
                 />
               </Link>
 
@@ -415,6 +419,10 @@ export default function PromoOverlay() {
                           fill
                           className="object-cover"
                           unoptimized
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            if (target) target.src = "/products/extension-board.jpg";
+                          }}
                         />
                       </div>
                       <div className="flex-1 min-w-0">
