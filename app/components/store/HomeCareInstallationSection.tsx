@@ -202,18 +202,19 @@ export default function HomeCareInstallationSection({
               onClick={() => onToggleInstallation(!isSelected)}
               className={`w-full sm:w-auto h-11 px-5 rounded-full text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md ${
                 isSelected
-                  ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-emerald-500/20"
+                  ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-emerald-500/20 ring-2 ring-emerald-300"
                   : "bg-sky-500 hover:bg-sky-400 text-slate-950 shadow-sky-500/20"
               }`}
             >
               {isSelected ? (
                 <>
                   <Check size={15} strokeWidth={3} />
-                  <span>Installation Added (+₦{installationFee.toLocaleString()})</span>
+                  <span>✓ Pro Install in Cart (+₦{installationFee.toLocaleString()})</span>
                 </>
               ) : (
                 <>
-                  <span>+ Add Installation (₦{installationFee.toLocaleString()})</span>
+                  <Wrench size={14} />
+                  <span>+ Add Pro Installation (₦{installationFee.toLocaleString()})</span>
                 </>
               )}
             </button>

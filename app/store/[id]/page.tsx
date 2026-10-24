@@ -49,7 +49,7 @@ const PACK_VARIANTS = [
 export default function ProductDetailPage({ params }: PageProps) {
   const resolvedParams = use(params);
   const router = useRouter();
-  const { cartItems, addToCart, setIsCartOpen, cartCount } = useCart();
+  const { cartItems, addToCart, setIsCartOpen, setInstallationForProduct, cartCount } = useCart();
   
   const [quantity, setQuantity] = useState(1);
   const [selectedPack, setSelectedPack] = useState(PACK_VARIANTS[0]);
@@ -119,28 +119,63 @@ export default function ProductDetailPage({ params }: PageProps) {
     );
   }
 
-  // Customized product payload with real pack details and optional pro installation
+  const variantId = selectedPack.id === "1pack" ? product.id : `${product.id}-${selectedPack.id}`;
+  const variantName = selectedPack.id === "1pack" ? product.name : `${product.name} (${selectedPack.name})`;
+  const baseVariantPrice = Math.round(product.price * selectedPack.multiplier);
+  const baseVariantOriginalPrice = Math.round(
+    (product.originalPrice || Math.round((product.price * 1.52) / 500) * 500) *
+      (selectedPack.id === "1pack" ? 1 : selectedPack.id === "2pack" ? 2 : 4)
+  );
+
+  // Customized product payload with real pack details
   const variantProduct: Product = {
     ...product,
-    id: includeInstallation
-      ? `${product.id}-${selectedPack.id}-installed`
-      : selectedPack.id === "1pack"
-      ? product.id
-      : `${product.id}-${selectedPack.id}`,
-    name: includeInstallation
-      ? `${product.name} (${selectedPack.name}) + HomeCare™ Certified Installation`
-      : selectedPack.id === "1pack"
-      ? product.name
-      : `${product.name} (${selectedPack.name})`,
-    price: effectivePrice,
-    originalPrice: effectiveOriginalPrice,
+    id: variantId,
+    name: variantName,
+    price: baseVariantPrice,
+    originalPrice: baseVariantOriginalPrice,
+  };
+
+  // Direct 1-click installation toggle that adds/updates installation in the cart
+  const handleToggleInstallation = (targetVal?: boolean) => {
+    const nextVal = targetVal !== undefined ? targetVal : !includeInstallation;
+    setIncludeInstallation(nextVal);
+
+    if (cartItem) {
+      setInstallationForProduct(cartItem.product.id, nextVal, installationFee);
+      toast.success(
+        nextVal
+          ? "HomeCare™ Certified Installation Added to Cart!"
+          : "Installation Removed from Cart",
+        {
+          description: nextVal
+            ? `${product.name} in your cart now includes pro technician dispatch (+₦${installationFee.toLocaleString()}).`
+            : "Certified technician dispatch was removed from your cart item.",
+          action: {
+            label: "View Cart",
+            onClick: () => setIsCartOpen(true),
+          },
+          duration: 4000,
+        }
+      );
+    } else {
+      addToCart(variantProduct, quantity, nextVal, installationFee, selectedPack.id);
+      toast.success("Added to Cart with Pro Installation!", {
+        description: `${variantProduct.name} (+₦${installationFee.toLocaleString()} HomeCare™ Installation) added to your shopping cart.`,
+        action: {
+          label: "View Cart",
+          onClick: () => setIsCartOpen(true),
+        },
+        duration: 4500,
+      });
+    }
   };
 
   const handleAddToCart = () => {
-    addToCart(variantProduct, quantity);
+    addToCart(variantProduct, quantity, includeInstallation, installationFee, selectedPack.id);
     setJustAdded(true);
     toast.success("Added to Cart!", {
-      description: `${quantity}x ${variantProduct.name} added to your shopping cart.`,
+      description: `${quantity}x ${variantProduct.name}${includeInstallation ? ` + HomeCare™ Pro Installation (+₦${installationFee.toLocaleString()})` : ""} added to your shopping cart.`,
       action: {
         label: "View Cart",
         onClick: () => setIsCartOpen(true),
@@ -151,7 +186,7 @@ export default function ProductDetailPage({ params }: PageProps) {
   };
 
   const handleBuyNow = () => {
-    addToCart(variantProduct, quantity);
+    addToCart(variantProduct, quantity, includeInstallation, installationFee, selectedPack.id);
     if (typeof window !== "undefined") {
       try {
         localStorage.setItem("homecare_selected_state", deliveryState);
@@ -507,7 +542,7 @@ export default function ProductDetailPage({ params }: PageProps) {
 
               {/* Interactive HomeCare Certified Installation Addon with Brand Logo */}
               <div 
-                onClick={() => setIncludeInstallation(!includeInstallation)}
+                onClick={() => handleToggleInstallation()}
                 className={`rounded-2xl p-3.5 border transition-all cursor-pointer flex items-center justify-between gap-3 ${
                   includeInstallation
                     ? "bg-sky-50/90 border-sky-500 ring-2 ring-sky-500/20 shadow-xs"
@@ -647,7 +682,7 @@ export default function ProductDetailPage({ params }: PageProps) {
               serviceTypes={product.serviceLink}
               installationFee={installationFee}
               isSelected={includeInstallation}
-              onToggleInstallation={(selected) => setIncludeInstallation(selected)}
+              onToggleInstallation={(selected) => handleToggleInstallation(selected)}
             />
 
           </div>
@@ -699,6 +734,8 @@ export default function ProductDetailPage({ params }: PageProps) {
         justAdded={justAdded}
         cartCount={cartCount}
         onOpenCart={() => setIsCartOpen(true)}
+        includeInstallation={includeInstallation}
+        installationFee={installationFee}
       />
     </div>
   );

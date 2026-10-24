@@ -16,7 +16,8 @@ import {
   PackageOpen,
   CheckCircle2,
   Truck,
-  Tag
+  Tag,
+  Wrench,
 } from "lucide-react";
 import { FREE_DELIVERY_THRESHOLD } from "@/lib/store-data";
 import { toast } from "sonner";
@@ -29,8 +30,11 @@ export default function CartDrawer() {
     cartItems,
     removeFromCart,
     updateQuantity,
+    toggleInstallation,
     clearCart,
     cartTotal,
+    itemsSubtotal,
+    installationTotal,
     cartCount,
     isCartOpen,
     setIsCartOpen,
@@ -213,39 +217,54 @@ export default function CartDrawer() {
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.9, x: 50 }}
-                        className="flex gap-3 sm:gap-4 p-3.5 rounded-2xl border border-slate-200 bg-white hover:border-sky-300 transition-all shadow-2xs"
+                        className="p-3.5 rounded-2xl border border-slate-200 bg-white hover:border-sky-300 transition-all shadow-2xs space-y-2.5"
                       >
-                        {/* Thumbnail */}
-                        <div className="relative w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-xl overflow-hidden bg-slate-50 border border-slate-200">
-                          <Image
-                            src={item.product.image}
-                            alt={item.product.name}
-                            fill
-                            className="object-cover"
-                            sizes="80px"
-                            unoptimized
-                          />
-                        </div>
-
-                        {/* Info */}
-                        <div className="flex-1 min-w-0 flex flex-col justify-between">
-                          <div>
-                            <h4 className="text-xs sm:text-sm font-bold text-slate-900 truncate">
-                              {item.product.name}
-                            </h4>
-                            <p className="text-[9px] sm:text-[10px] text-sky-600 font-bold uppercase tracking-wider mt-0.5">
-                              {item.product.category}
-                            </p>
+                        <div className="flex gap-3 sm:gap-4">
+                          {/* Thumbnail */}
+                          <div className="relative w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-xl overflow-hidden bg-slate-50 border border-slate-200">
+                            <Image
+                              src={item.product.image}
+                              alt={item.product.name}
+                              fill
+                              className="object-cover"
+                              sizes="80px"
+                              unoptimized
+                            />
                           </div>
-                          <p suppressHydrationWarning className="text-xs sm:text-sm font-black text-slate-900 mt-1 font-heading">
-                            <span className="text-sky-600 text-[11px] mr-0.5 font-bold">
-                              ₦
-                            </span>
-                            {(
-                              item.product.price * item.quantity
-                            ).toLocaleString()}
-                          </p>
-                        </div>
+
+                          {/* Info */}
+                          <div className="flex-1 min-w-0 flex flex-col justify-between">
+                            <div>
+                              <h4 className="text-xs sm:text-sm font-bold text-slate-900 truncate">
+                                {item.product.name}
+                              </h4>
+                              <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
+                                <span className="text-[9px] sm:text-[10px] text-sky-600 font-bold uppercase tracking-wider">
+                                  {item.product.category}
+                                </span>
+                                {item.withInstallation && (
+                                  <span className="text-[9px] font-black uppercase tracking-tight text-emerald-800 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
+                                    + Pro Install
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <div className="mt-1">
+                              <p suppressHydrationWarning className="text-xs sm:text-sm font-black text-slate-900 font-heading">
+                                <span className="text-sky-600 text-[11px] mr-0.5 font-bold">
+                                  ₦
+                                </span>
+                                {(
+                                  (item.product.price + (item.withInstallation ? (item.installationFee || 7500) : 0)) * item.quantity
+                                ).toLocaleString()}
+                              </p>
+                              {item.withInstallation && (
+                                <p className="text-[9px] text-slate-500 font-medium">
+                                  Appliance: ₦{(item.product.price * item.quantity).toLocaleString()} + Install: ₦{((item.installationFee || 7500) * item.quantity).toLocaleString()}
+                                </p>
+                              )}
+                            </div>
+                          </div>
 
                         {/* Controls */}
                         <div className="flex flex-col items-end justify-between shrink-0 pl-1">
@@ -284,6 +303,64 @@ export default function CartDrawer() {
                               className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-lg bg-sky-600 text-white hover:bg-sky-700 transition-all shadow-xs cursor-pointer"
                             >
                               <Plus size={11} strokeWidth={2.5} />
+                            </button>
+                          </div>
+                        </div>
+                        </div>
+
+                        {/* Interactive Pro Installation Card with 1-Click Toggle */}
+                        <div className={`p-2.5 rounded-xl border transition-all ${
+                          item.withInstallation
+                            ? "bg-sky-50/90 border-sky-300 ring-1 ring-sky-300/40 shadow-2xs"
+                            : "bg-slate-50 border-slate-200/80 hover:border-sky-200"
+                        }`}>
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
+                                item.withInstallation
+                                  ? "bg-sky-600 text-white shadow-xs"
+                                  : "bg-white text-slate-500 border border-slate-200"
+                              }`}>
+                                <Wrench size={13} />
+                              </div>
+                              <div className="min-w-0 text-left">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <span className="text-[11px] font-black uppercase text-slate-900">
+                                    HomeCare™ Installation
+                                  </span>
+                                  <span className={`text-[9px] font-black uppercase px-1.5 py-0.2 rounded-md ${
+                                    item.withInstallation
+                                      ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                                      : "bg-slate-200 text-slate-700"
+                                  }`}>
+                                    +₦{((item.installationFee || 7500) * item.quantity).toLocaleString()}
+                                  </span>
+                                </div>
+                                <p className="text-[9.5px] text-slate-500 font-medium leading-tight truncate mt-0.5">
+                                  {item.withInstallation
+                                    ? "Verified technician will test & calibrate 240V NEPA surge on delivery."
+                                    : "Add vetted technician to mount, wire and calibrate on delivery."}
+                                </p>
+                              </div>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                toggleInstallation(item.product.id);
+                                toast.success(
+                                  !item.withInstallation
+                                    ? "HomeCare™ Certified Installation Added!"
+                                    : "Installation Removed from Item"
+                                );
+                              }}
+                              className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider shrink-0 transition-all cursor-pointer ${
+                                item.withInstallation
+                                  ? "bg-white hover:bg-rose-50 text-slate-700 hover:text-rose-600 border border-slate-200"
+                                  : "bg-sky-600 hover:bg-sky-700 text-white shadow-xs hover:scale-102"
+                              }`}
+                            >
+                              {item.withInstallation ? "Remove" : "+ Add"}
                             </button>
                           </div>
                         </div>
@@ -343,11 +420,21 @@ export default function CartDrawer() {
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-xs sm:text-sm">
-                    <span className="text-slate-500 font-medium">Subtotal</span>
+                    <span className="text-slate-500 font-medium">Appliances Subtotal</span>
                     <span suppressHydrationWarning className="font-bold text-slate-900">
-                      ₦{cartTotal.toLocaleString()}
+                      ₦{itemsSubtotal.toLocaleString()}
                     </span>
                   </div>
+
+                  {installationTotal > 0 && (
+                    <div className="flex items-center justify-between text-xs sm:text-sm text-sky-800 font-bold">
+                      <span className="flex items-center gap-1.5">
+                        <Wrench size={13} className="text-sky-600" />
+                        HomeCare™ Pro Installation
+                      </span>
+                      <span>+₦{installationTotal.toLocaleString()}</span>
+                    </div>
+                  )}
 
                   {discount > 0 && (
                     <div className="flex items-center justify-between text-xs sm:text-sm text-emerald-700 font-bold">

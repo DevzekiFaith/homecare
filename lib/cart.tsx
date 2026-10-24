@@ -6,15 +6,28 @@ import { Product } from "@/lib/products";
 export interface CartItem {
   product: Product;
   quantity: number;
+  withInstallation?: boolean;
+  installationFee?: number;
+  packVariantId?: string;
 }
 
 interface CartContextType {
   cartItems: CartItem[];
-  addToCart: (product: Product, quantity?: number) => void;
+  addToCart: (
+    product: Product,
+    quantity?: number,
+    withInstallation?: boolean,
+    installationFee?: number,
+    packVariantId?: string
+  ) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
+  toggleInstallation: (productId: string, enabled?: boolean, fee?: number) => void;
+  setInstallationForProduct: (productId: string, enabled: boolean, fee?: number) => void;
   clearCart: () => void;
   cartTotal: number;
+  itemsSubtotal: number;
+  installationTotal: number;
   cartCount: number;
   isCartOpen: boolean;
   setIsCartOpen: (open: boolean) => void;
@@ -34,7 +47,33 @@ function loadCart(): CartItem[] {
   if (typeof window === "undefined") return [];
   try {
     const stored = localStorage.getItem(CART_STORAGE_KEY);
-    return stored ? JSON.parse(stored) : [];
+    if (!stored) return [];
+    const parsed: CartItem[] = JSON.parse(stored);
+    return parsed.map((item) => {
+      // Clean up any legacy items where ID ended with -installed
+      if (item.product?.id?.includes("-installed")) {
+        const cleanId = item.product.id.replace("-installed", "");
+        const cleanName = item.product.name.replace(/\s*\+\s*HomeCare™?\s*Certified\s*Installation/gi, "");
+        const installFee = item.installationFee || 7500;
+        const basePrice = Math.max(1000, item.product.price - installFee);
+        return {
+          ...item,
+          product: {
+            ...item.product,
+            id: cleanId,
+            name: cleanName,
+            price: basePrice,
+          },
+          withInstallation: true,
+          installationFee: installFee,
+        };
+      }
+      return {
+        ...item,
+        withInstallation: item.withInstallation ?? false,
+        installationFee: item.installationFee ?? 7500,
+      };
+    });
   } catch {
     return [];
   }
@@ -96,19 +135,73 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [couponCode, mounted]);
 
-  const addToCart = useCallback((product: Product, quantity: number = 1) => {
-    setCartItems((prev) => {
-      const existing = prev.find((item) => item.product.id === product.id);
-      if (existing) {
-        return prev.map((item) =>
-          item.product.id === product.id
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        );
-      }
-      return [...prev, { product, quantity }];
-    });
-  }, []);
+  const addToCart = useCallback(
+    (
+      product: Product,
+      quantity: number = 1,
+      withInstallation?: boolean,
+      installationFee: number = 7500,
+      packVariantId?: string
+    ) => {
+      setCartItems((prev) => {
+        const existingIndex = prev.findIndex((item) => item.product.id === product.id);
+        if (existingIndex > -1) {
+          return prev.map((item, idx) => {
+            if (idx === existingIndex) {
+              return {
+                ...item,
+                quantity: item.quantity + quantity,
+                withInstallation:
+                  withInstallation !== undefined
+                    ? withInstallation
+                    : item.withInstallation ?? false,
+                installationFee: installationFee || item.installationFee || 7500,
+                packVariantId: packVariantId || item.packVariantId,
+              };
+            }
+            return item;
+          });
+        }
+        return [
+          ...prev,
+          {
+            product,
+            quantity,
+            withInstallation: withInstallation ?? false,
+            installationFee: installationFee || 7500,
+            packVariantId,
+          },
+        ];
+      });
+    },
+    []
+  );
+
+  const toggleInstallation = useCallback(
+    (productId: string, enabled?: boolean, fee: number = 7500) => {
+      setCartItems((prev) =>
+        prev.map((item) => {
+          if (item.product.id === productId) {
+            const nextVal = enabled !== undefined ? enabled : !item.withInstallation;
+            return {
+              ...item,
+              withInstallation: nextVal,
+              installationFee: fee || item.installationFee || 7500,
+            };
+          }
+          return item;
+        })
+      );
+    },
+    []
+  );
+
+  const setInstallationForProduct = useCallback(
+    (productId: string, enabled: boolean, fee: number = 7500) => {
+      toggleInstallation(productId, enabled, fee);
+    },
+    [toggleInstallation]
+  );
 
   const removeFromCart = useCallback((productId: string) => {
     setCartItems((prev) => prev.filter((item) => item.product.id !== productId));
@@ -130,10 +223,23 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setCartItems([]);
   }, []);
 
-  const cartTotal = cartItems.reduce(
-    (total, item) => total + item.product.price * item.quantity,
-    0
-  );
+  // Separate item base prices from certified installation fees for full transparency
+  const itemsSubtotal = useMemo(() => {
+    return cartItems.reduce(
+      (sum, item) => sum + item.product.price * item.quantity,
+      0
+    );
+  }, [cartItems]);
+
+  const installationTotal = useMemo(() => {
+    return cartItems.reduce(
+      (sum, item) =>
+        sum + (item.withInstallation ? (item.installationFee ?? 7500) * item.quantity : 0),
+      0
+    );
+  }, [cartItems]);
+
+  const cartTotal = itemsSubtotal + installationTotal;
 
   const cartCount = cartItems.reduce((count, item) => count + item.quantity, 0);
 
@@ -172,8 +278,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     addToCart,
     removeFromCart,
     updateQuantity,
+    toggleInstallation,
+    setInstallationForProduct,
     clearCart,
     cartTotal,
+    itemsSubtotal,
+    installationTotal,
     cartCount,
     isCartOpen,
     setIsCartOpen,
@@ -187,8 +297,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     addToCart,
     removeFromCart,
     updateQuantity,
+    toggleInstallation,
+    setInstallationForProduct,
     clearCart,
     cartTotal,
+    itemsSubtotal,
+    installationTotal,
     cartCount,
     isCartOpen,
     setIsCartOpen,

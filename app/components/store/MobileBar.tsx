@@ -11,6 +11,8 @@ interface MobileBarProps {
   justAdded: boolean;
   cartCount: number;
   onOpenCart?: () => void;
+  includeInstallation?: boolean;
+  installationFee?: number;
 }
 
 export default function MobileBar({
@@ -20,6 +22,8 @@ export default function MobileBar({
   justAdded,
   cartCount,
   onOpenCart,
+  includeInstallation = false,
+  installationFee = 7500,
 }: MobileBarProps) {
   const strikePrice = product.originalPrice || Math.round((product.price * 1.52) / 500) * 500;
 
@@ -72,9 +76,9 @@ export default function MobileBar({
       {/* Price Info Preview */}
       <div className="hidden xs:flex flex-col leading-tight shrink-0 pl-1">
         <span className="text-xs sm:text-sm font-black text-slate-900 font-heading">
-          ₦{product.price.toLocaleString()}
+          ₦{(product.price + (includeInstallation ? installationFee : 0)).toLocaleString()}
         </span>
-        {product.name.includes("Installation") ? (
+        {includeInstallation ? (
           <span className="text-[8px] font-black uppercase tracking-tight text-emerald-700">
             + Pro Install
           </span>

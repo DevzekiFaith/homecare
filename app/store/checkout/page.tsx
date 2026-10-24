@@ -13,7 +13,8 @@ import {
   CreditCard,
   Clock,
   Truck,
-  Tag
+  Tag,
+  Wrench,
 } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { createClient } from "@/lib/supabase/client";
@@ -29,6 +30,8 @@ function CheckoutContent() {
   const { 
     cartItems, 
     cartTotal, 
+    itemsSubtotal,
+    installationTotal,
     cartCount, 
     clearCart, 
     mounted, 
@@ -166,6 +169,9 @@ function CheckoutContent() {
           price: item.product.price,
           quantity: item.quantity,
           image: item.product.image,
+          withInstallation: item.withInstallation ?? false,
+          installationFee: item.withInstallation ? (item.installationFee ?? 7500) : 0,
+          trade: item.product.serviceLink?.[0] || "Electrician",
         })),
         subtotal: cartTotal,
         delivery_fee: deliveryFee,
@@ -504,12 +510,19 @@ function CheckoutContent() {
                         <p className="text-xs font-bold text-slate-900 truncate">
                           {item.product.name}
                         </p>
-                        <p className="text-[11px] text-slate-400 font-medium">
-                          Qty: {item.quantity} × ₦{item.product.price.toLocaleString()}
-                        </p>
+                        <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
+                          <span className="text-[11px] text-slate-400 font-medium">
+                            Qty: {item.quantity} × ₦{item.product.price.toLocaleString()}
+                          </span>
+                          {item.withInstallation && (
+                            <span className="text-[9px] font-black text-emerald-800 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
+                              + Pro Install (₦{((item.installationFee || 7500) * item.quantity).toLocaleString()})
+                            </span>
+                          )}
+                        </div>
                       </div>
                       <p className="text-xs font-extrabold text-slate-900 shrink-0">
-                        ₦{(item.product.price * item.quantity).toLocaleString()}
+                        ₦{((item.product.price + (item.withInstallation ? (item.installationFee || 7500) : 0)) * item.quantity).toLocaleString()}
                       </p>
                     </div>
                   ))}
@@ -572,8 +585,17 @@ function CheckoutContent() {
                 <div className="space-y-2.5 border-t border-slate-100 pt-4 text-xs font-semibold text-slate-600">
                   <div className="flex justify-between">
                     <span>Appliance Subtotal</span>
-                    <span className="font-bold text-slate-900">₦{cartTotal.toLocaleString()}</span>
+                    <span className="font-bold text-slate-900">₦{itemsSubtotal.toLocaleString()}</span>
                   </div>
+
+                  {installationTotal > 0 && (
+                    <div className="flex justify-between text-sky-800 font-bold">
+                      <span className="flex items-center gap-1.5">
+                        <Wrench size={13} className="text-sky-600" /> HomeCare™ Pro Installation
+                      </span>
+                      <span>+₦{installationTotal.toLocaleString()}</span>
+                    </div>
+                  )}
 
                   {discount > 0 && (
                     <div className="flex justify-between text-emerald-700 font-bold">
