@@ -97,6 +97,18 @@ export default function MobileBottomNav() {
     );
   }
 
+  // Hide general mobile nav on product detail pages (where dedicated MobileBar is active) and checkout
+  const isProductDetailPage = Boolean(
+    pathname &&
+    pathname.startsWith("/store/") &&
+    pathname !== "/store" &&
+    pathname !== "/store/track"
+  );
+
+  if (isProductDetailPage) {
+    return null;
+  }
+
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 z-[60] bg-white/95 backdrop-blur-xl border-t border-sky-100 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] pb-safe-area-inset-bottom">
       <div 

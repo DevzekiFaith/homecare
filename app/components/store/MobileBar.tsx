@@ -31,7 +31,7 @@ export default function MobileBar({
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 px-3 sm:px-4 pt-2.5 pb-[calc(0.625rem+env(safe-area-inset-bottom,0px))] shadow-2xl lg:hidden flex items-center justify-between gap-2 sm:gap-3 transition-all">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-slate-200/90 px-3 sm:px-4 pt-2.5 pb-[calc(0.625rem+env(safe-area-inset-bottom,0px))] shadow-2xl lg:hidden flex items-center justify-between gap-2 sm:gap-3 transition-all">
       {/* Left Quick Navigation Icons */}
       <div className="flex items-center gap-1 shrink-0">
         <Link
