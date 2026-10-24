@@ -18,8 +18,10 @@ import {
   Truck,
   Tag,
   Wrench,
+  Zap,
 } from "lucide-react";
 import { FREE_DELIVERY_THRESHOLD } from "@/lib/store-data";
+import { PRODUCTS } from "@/lib/products";
 import { toast } from "sonner";
 
 const ESTIMATED_BASE_DELIVERY = 2000;
@@ -42,6 +44,7 @@ export default function CartDrawer() {
     discount,
     applyCoupon,
     removeCoupon,
+    addToCart,
   } = useCart();
 
   const [inputCoupon, setInputCoupon] = useState("");
@@ -49,6 +52,17 @@ export default function CartDrawer() {
   const deliveryFee = isFreeDelivery ? 0 : ESTIMATED_BASE_DELIVERY;
   const finalTotal = Math.max(0, cartTotal - discount) + deliveryFee;
   const progressPercent = Math.min(100, Math.round((cartTotal / FREE_DELIVERY_THRESHOLD) * 100));
+
+  // High-demand, low-friction smart accessories for 1-tap free delivery unlocking
+  const freeShippingAddons = PRODUCTS.filter(
+    (p) => !cartItems.some((item) => item.product.id === p.id) && p.price <= 15000
+  ).slice(0, 4);
+
+  // Total customer savings compared to open market retail
+  const totalMarketSavings = cartItems.reduce((acc, item) => {
+    const orig = item.product.originalPrice || Math.round((item.product.price * 1.5) / 500) * 500;
+    return acc + Math.max(0, orig - item.product.price) * item.quantity;
+  }, 0);
 
   const handleApplyCoupon = (e: React.FormEvent) => {
     e.preventDefault();
@@ -146,6 +160,41 @@ export default function CartDrawer() {
                     style={{ width: `${progressPercent}%` }}
                   />
                 </div>
+
+                {/* 1-Tap Free Shipping Add-ons Shelf */}
+                {!isFreeDelivery && freeShippingAddons.length > 0 && (
+                  <div className="mt-2.5 pt-2 border-t border-sky-100/90">
+                    <div className="flex items-center justify-between text-[10px] font-bold text-sky-900 mb-1.5">
+                      <span className="flex items-center gap-1 font-extrabold uppercase tracking-wider text-sky-800">
+                        <Zap size={11} className="text-amber-500 fill-amber-500" />
+                        Add to Unlock Free Shipping:
+                      </span>
+                      <span className="text-[9.5px] font-extrabold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200/60">
+                        Save ₦2,000 Delivery
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 no-scrollbar">
+                      {freeShippingAddons.map((addon) => (
+                        <button
+                          key={addon.id}
+                          type="button"
+                          onClick={() => {
+                            addToCart(addon, 1);
+                            toast.success("Added to Cart!", {
+                              description: `${addon.name} (₦${addon.price.toLocaleString()}) added!`,
+                            });
+                          }}
+                          className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white hover:bg-sky-50 border border-sky-200/90 text-[10px] text-slate-800 font-bold shrink-0 transition-all shadow-2xs hover:border-sky-400 group cursor-pointer"
+                        >
+                          <Plus size={11} className="text-sky-600 group-hover:scale-125 transition-transform" />
+                          <span className="truncate max-w-[120px] text-slate-700 font-semibold">{addon.name}</span>
+                          <span className="text-sky-700 font-black shrink-0">+₦{addon.price.toLocaleString()}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -490,6 +539,16 @@ export default function CartDrawer() {
                       {deliveryFee === 0 ? "FREE" : `₦${deliveryFee.toLocaleString()}`}
                     </span>
                   </div>
+
+                  {totalMarketSavings > 0 && (
+                    <div className="flex items-center justify-between text-[11px] text-emerald-800 font-extrabold bg-emerald-50 px-2.5 py-1.5 rounded-xl border border-emerald-200/70">
+                      <span className="flex items-center gap-1.5">
+                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 animate-pulse" />
+                        Direct Factory Savings
+                      </span>
+                      <span>-₦{totalMarketSavings.toLocaleString()} vs Retail</span>
+                    </div>
+                  )}
 
                   <div className="h-px bg-slate-200 my-2" />
                   
