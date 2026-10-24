@@ -136,8 +136,8 @@ export default function ProductDetailPage({ params }: PageProps) {
     originalPrice: baseVariantOriginalPrice,
   };
 
-  // Direct 1-click installation toggle that adds/updates installation in the cart
-  const handleToggleInstallation = (targetVal?: boolean) => {
+  // Direct 1-click installation toggle that adds/updates installation in the cart or toggles selection on page
+  const handleToggleInstallation = (targetVal?: boolean, bundleIfEmpty: boolean = false) => {
     const nextVal = targetVal !== undefined ? targetVal : !includeInstallation;
     setIncludeInstallation(nextVal);
 
@@ -158,7 +158,7 @@ export default function ProductDetailPage({ params }: PageProps) {
           duration: 4000,
         }
       );
-    } else {
+    } else if (bundleIfEmpty) {
       addToCart(variantProduct, quantity, nextVal, installationFee, selectedPack.id);
       toast.success("Added to Cart with Pro Installation!", {
         description: `${variantProduct.name} (+₦${installationFee.toLocaleString()} HomeCare™ Installation) added to your shopping cart.`,
@@ -168,6 +168,18 @@ export default function ProductDetailPage({ params }: PageProps) {
         },
         duration: 4500,
       });
+    } else {
+      toast.info(
+        nextVal
+          ? `Pro Installation Included (+₦${installationFee.toLocaleString()})`
+          : "Pro Installation Removed",
+        {
+          description: nextVal
+            ? "Cost updated to include certified technician setup and surge testing."
+            : "Cost updated for appliance only.",
+          duration: 3000,
+        }
+      );
     }
   };
 
@@ -377,9 +389,13 @@ export default function ProductDetailPage({ params }: PageProps) {
             {/* Flash Deal Bar & Price */}
             <FlashDeal
               price={effectivePrice}
-              originalPrice={effectiveOriginalPrice}
+              appliancePrice={baseVariantPrice}
+              originalPrice={baseVariantOriginalPrice}
               soldCount={product.soldCount || (product.reviewCount ? product.reviewCount * 4 : 1420)}
               stock={product.stock || 25}
+              includeInstallation={includeInstallation}
+              installationFee={installationFee}
+              onToggleInstallation={() => handleToggleInstallation(undefined, false)}
             />
 
             {/* Product Title & Basic Metadata */}
@@ -697,7 +713,7 @@ export default function ProductDetailPage({ params }: PageProps) {
               serviceTypes={product.serviceLink}
               installationFee={installationFee}
               isSelected={includeInstallation}
-              onToggleInstallation={(selected) => handleToggleInstallation(selected)}
+              onToggleInstallation={(selected) => handleToggleInstallation(selected, true)}
               isProductInCart={!!cartItem}
               productPrice={baseVariantPrice}
             />

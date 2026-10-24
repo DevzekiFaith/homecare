@@ -1,13 +1,28 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Flame, Clock, Tag, Eye, ShoppingBag, TrendingDown, TrendingUp } from "lucide-react";
+import {
+  Flame,
+  Clock,
+  Tag,
+  Eye,
+  ShoppingBag,
+  TrendingDown,
+  TrendingUp,
+  Wrench,
+  Check,
+  Plus,
+} from "lucide-react";
 
 interface FlashDealProps {
   price: number;
   originalPrice?: number;
   soldCount?: number;
   stock?: number;
+  includeInstallation?: boolean;
+  installationFee?: number;
+  appliancePrice?: number;
+  onToggleInstallation?: () => void;
 }
 
 export default function FlashDeal({
@@ -15,9 +30,18 @@ export default function FlashDeal({
   originalPrice,
   soldCount = 1420,
   stock = 18,
+  includeInstallation = false,
+  installationFee = 7500,
+  appliancePrice,
+  onToggleInstallation,
 }: FlashDealProps) {
-  const strikePrice = originalPrice || Math.round((price * 1.52) / 500) * 500;
-  const discountPercent = Math.round(((strikePrice - price) / strikePrice) * 100);
+  const fee = installationFee;
+  const baseAppliancePrice = appliancePrice ?? (includeInstallation ? Math.max(0, price - fee) : price);
+  const currentTotalPrice = includeInstallation ? baseAppliancePrice + fee : baseAppliancePrice;
+
+  const baseStrikePrice = originalPrice || Math.round((baseAppliancePrice * 1.52) / 500) * 500;
+  const currentStrikePrice = includeInstallation ? baseStrikePrice + fee : baseStrikePrice;
+  const discountPercent = Math.round(((currentStrikePrice - currentTotalPrice) / currentStrikePrice) * 100);
 
   // Live countdown timer
   const [timeLeft, setTimeLeft] = useState({
@@ -108,11 +132,11 @@ export default function FlashDeal({
         {/* Price Row */}
         <div className="flex items-baseline gap-2.5 sm:gap-3 flex-wrap">
           <span className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight font-heading">
-            ₦{price.toLocaleString()}
+            ₦{currentTotalPrice.toLocaleString()}
           </span>
 
           <span className="text-base sm:text-lg font-bold text-slate-400 line-through">
-            ₦{strikePrice.toLocaleString()}
+            ₦{currentStrikePrice.toLocaleString()}
           </span>
 
           <span className="bg-rose-50 text-rose-700 border border-rose-200 text-xs font-extrabold px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-2xs">
@@ -124,6 +148,106 @@ export default function FlashDeal({
             <TrendingDown size={12} className="text-sky-600" />
             Best Price (30d)
           </span>
+
+          {includeInstallation && (
+            <span className="text-[11px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-300 flex items-center gap-1 shadow-2xs">
+              <Check size={12} className="text-emerald-600" strokeWidth={3} />
+              Includes Pro Install (+₦{fee.toLocaleString()})
+            </span>
+          )}
+        </div>
+
+        {/* Transparent Cost Breakdown: What Customers Are Paying For & How It Is Added */}
+        <div
+          className={`rounded-2xl p-3 sm:p-3.5 border transition-all ${
+            includeInstallation
+              ? "bg-gradient-to-r from-sky-50/90 via-sky-50/50 to-emerald-50/60 border-sky-300 ring-1 ring-sky-400/20 shadow-xs"
+              : "bg-slate-50/80 border-slate-200 hover:border-slate-300"
+          }`}
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-start sm:items-center gap-2.5 min-w-0">
+              <div
+                className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border transition-colors ${
+                  includeInstallation
+                    ? "bg-sky-600 text-white border-sky-600 shadow-xs"
+                    : "bg-white text-slate-500 border-slate-200 shadow-2xs"
+                }`}
+              >
+                <Wrench size={14} className={includeInstallation ? "text-white" : "text-sky-600"} />
+              </div>
+
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs font-black text-slate-900 tracking-tight">
+                    HomeCare™ Certified Installation:
+                  </span>
+                  <span
+                    className={`text-[11px] font-black px-2 py-0.5 rounded-full border ${
+                      includeInstallation
+                        ? "bg-emerald-100 text-emerald-800 border-emerald-300 font-extrabold"
+                        : "bg-white text-slate-700 border-slate-200"
+                    }`}
+                  >
+                    +₦{fee.toLocaleString()}
+                  </span>
+                  {includeInstallation ? (
+                    <span className="text-[9px] font-black uppercase text-sky-800 bg-sky-100/90 px-2 py-0.5 rounded-md border border-sky-200">
+                      ✓ Added to Your Total
+                    </span>
+                  ) : (
+                    <span className="text-[10px] font-medium text-slate-500">
+                      (Optional Add-on)
+                    </span>
+                  )}
+                </div>
+
+                {/* Explicit Cost Breakdown: what they are paying for and how it is added */}
+                <div className="text-[11px] text-slate-600 mt-1 flex items-center gap-1.5 flex-wrap">
+                  <span className="text-slate-500 font-semibold">What you pay for:</span>
+                  <span className="inline-flex items-center gap-1 bg-white px-2 py-0.5 rounded-md border border-slate-200 text-slate-800 font-bold text-[11px] shadow-2xs">
+                    Appliance: ₦{baseAppliancePrice.toLocaleString()}
+                  </span>
+                  <span className="text-slate-400 font-black">+</span>
+                  <span
+                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md border font-bold text-[11px] shadow-2xs ${
+                      includeInstallation
+                        ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+                        : "bg-white border-slate-200 text-slate-400"
+                    }`}
+                  >
+                    Pro Install: {includeInstallation ? `₦${fee.toLocaleString()}` : "₦0 (Not added)"}
+                  </span>
+                  <span className="text-slate-400 font-black">=</span>
+                  <span className="inline-flex items-center gap-1 bg-slate-900 px-2 py-0.5 rounded-md text-white font-black text-[11px] shadow-2xs">
+                    Total: ₦{currentTotalPrice.toLocaleString()}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Action Toggle Button */}
+            {onToggleInstallation && (
+              <button
+                type="button"
+                onClick={onToggleInstallation}
+                className={`w-full sm:w-auto h-9 px-3.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shrink-0 cursor-pointer shadow-xs active:scale-95 ${
+                  includeInstallation
+                    ? "bg-white hover:bg-rose-50 text-rose-700 border border-rose-200"
+                    : "bg-sky-600 hover:bg-sky-700 text-white border border-sky-600 shadow-sky-600/20"
+                }`}
+              >
+                {includeInstallation ? (
+                  <span>Remove Install</span>
+                ) : (
+                  <>
+                    <Plus size={13} strokeWidth={3} />
+                    <span>Add Install (+₦{fee.toLocaleString()})</span>
+                  </>
+                )}
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Claimed Progress Bar */}
