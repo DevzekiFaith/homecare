@@ -284,10 +284,10 @@ export default function CartDrawer() {
                           {/* Info */}
                           <div className="flex-1 min-w-0 flex flex-col justify-between">
                             <div>
-                              <h4 className="text-xs sm:text-sm font-bold text-slate-900 truncate">
+                              <h4 className="text-xs sm:text-sm font-bold text-slate-900 line-clamp-2 leading-snug">
                                 {item.product.name}
                               </h4>
-                              <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
+                              <div className="flex items-center gap-1.5 flex-wrap mt-1">
                                 <span className="text-[9px] sm:text-[10px] text-sky-600 font-bold uppercase tracking-wider">
                                   {item.product.category}
                                 </span>
@@ -298,17 +298,29 @@ export default function CartDrawer() {
                                 )}
                               </div>
                             </div>
-                            <div className="mt-1">
-                              <p suppressHydrationWarning className="text-xs sm:text-sm font-black text-slate-900 font-heading">
-                                <span className="text-sky-600 text-[11px] mr-0.5 font-bold">
-                                  ₦
-                                </span>
-                                {(
-                                  (item.product.price + (item.withInstallation ? (item.installationFee || 7500) : 0)) * item.quantity
-                                ).toLocaleString()}
-                              </p>
+                            <div className="mt-1.5">
+                              <div className="flex items-baseline gap-1.5 flex-wrap">
+                                <p suppressHydrationWarning className="text-xs sm:text-sm font-black text-slate-900 font-heading">
+                                  <span className="text-sky-600 text-[11px] mr-0.5 font-bold">
+                                    ₦
+                                  </span>
+                                  {(
+                                    (item.product.price + (item.withInstallation ? (item.installationFee || 7500) : 0)) * item.quantity
+                                  ).toLocaleString()}
+                                </p>
+                                {item.product.originalPrice && item.product.originalPrice > item.product.price && (
+                                  <span className="text-[10px] text-slate-400 line-through font-semibold">
+                                    ₦{(item.product.originalPrice * item.quantity).toLocaleString()}
+                                  </span>
+                                )}
+                              </div>
+                              {item.quantity > 1 && (
+                                <p className="text-[9px] text-slate-400 font-medium">
+                                  ₦{(item.product.price + (item.withInstallation ? (item.installationFee || 7500) : 0)).toLocaleString()} each
+                                </p>
+                              )}
                               {item.withInstallation && (
-                                <p className="text-[9px] text-slate-500 font-medium">
+                                <p className="text-[9px] text-slate-500 font-medium mt-0.5">
                                   Appliance: ₦{(item.product.price * item.quantity).toLocaleString()} + Install: ₦{((item.installationFee || 7500) * item.quantity).toLocaleString()}
                                 </p>
                               )}
@@ -385,7 +397,7 @@ export default function CartDrawer() {
                                     +₦{((item.installationFee || 7500) * item.quantity).toLocaleString()}
                                   </span>
                                 </div>
-                                <p className="text-[9.5px] text-slate-500 font-medium leading-tight truncate mt-0.5">
+                                <p className="text-[9.5px] text-slate-500 font-medium leading-snug line-clamp-2 mt-0.5">
                                   {item.withInstallation
                                     ? "Verified technician will test & calibrate 240V NEPA surge on delivery."
                                     : "Add vetted technician to mount, wire and calibrate on delivery."}
