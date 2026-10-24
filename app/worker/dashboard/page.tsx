@@ -5,7 +5,7 @@ import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { X, AlertCircle, CheckCircle2, Navigation, ClipboardList, Camera, Trash2, Wallet, ArrowDownToLine, Clock, Sparkles, ExternalLink, Check, MessageCircle, BookOpen, Award, ShieldCheck, Lock } from "lucide-react";
+import { X, AlertCircle, CheckCircle2, Navigation, ClipboardList, Camera, Trash2, Wallet, ArrowDownToLine, Clock, Zap, ExternalLink, Check, MessageCircle, BookOpen, Award, ShieldCheck, Lock } from "lucide-react";
 import { toast } from "sonner";
 import Logo from "@/app/components/Logo";
 import dynamic from "next/dynamic";
@@ -666,7 +666,7 @@ export default function WorkerDashboardPage() {
               <div className="flex items-center gap-2 flex-wrap">
                 {proTier === 'elite' ? (
                   <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider bg-amber-400/20 text-amber-300 border border-amber-400/40 px-2.5 py-0.5 rounded-full">
-                    <Sparkles size={11} /> ★ Elite Verified Pro Active
+                    <Award size={11} /> ★ Elite Verified Pro Active
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider bg-sky-500/20 text-sky-300 border border-sky-500/30 px-2.5 py-0.5 rounded-full">
@@ -708,7 +708,7 @@ export default function WorkerDashboardPage() {
                     </>
                   ) : (
                     <>
-                      <Sparkles size={14} />
+                      <Award size={14} />
                       <span>Upgrade to Elite (₦3,500)</span>
                     </>
                   )}
@@ -1204,7 +1204,7 @@ export default function WorkerDashboardPage() {
                   }`}
                 >
                   <div className="flex items-center gap-1.5 font-bold text-xs">
-                    <Sparkles size={14} className="text-amber-400" />
+                    <Zap size={14} className="text-amber-400" />
                     <span>Instant NIBSS</span>
                   </div>
                   <p className="text-[10px] text-zinc-400 mt-1">Under 3 mins (1.5% fee)</p>

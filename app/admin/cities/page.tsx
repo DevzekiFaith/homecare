@@ -1,6 +1,6 @@
 import { CITIES } from "@/lib/cities";
 import CityList from "./CityList";
-import { MapPin, Globe, Sparkles } from "lucide-react";
+import { MapPin, Globe } from "lucide-react";
 
 export default function AdminCitiesPage() {
   const liveCount = CITIES.filter((c) => c.active).length;

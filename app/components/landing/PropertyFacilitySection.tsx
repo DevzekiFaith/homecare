@@ -11,8 +11,7 @@ import {
   ArrowRight, 
   ClipboardCheck, 
   ChevronLeft, 
-  ChevronRight, 
-  Sparkles 
+  ChevronRight
 } from "lucide-react";
 
 const TARGETS = [
@@ -61,7 +60,7 @@ const TARGETS = [
     perks: ["Multi-property contracts", "24/7 Dispatch SLA", "Dedicated Account Manager"],
     badges: [
       { label: "Dedicated Manager", icon: Building2, color: "bg-purple-500/20 text-purple-300 border-purple-500/30" },
-      { label: "Multi-Location SLA", icon: Sparkles, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
+      { label: "Multi-Location SLA", icon: ShieldCheck, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
     ],
   },
   {

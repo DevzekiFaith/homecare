@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, ChevronDown, ChevronUp, Globe, Sparkles, CheckCircle2 } from "lucide-react";
+import { MapPin, ChevronDown, ChevronUp, Globe, CheckCircle2 } from "lucide-react";
 import { type CityConfig } from "@/lib/cities";
 
 export default function CityList({ cities }: { cities: CityConfig[] }) {

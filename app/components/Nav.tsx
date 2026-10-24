@@ -16,7 +16,6 @@ import {
   ArrowRight,
   LayoutDashboard,
   Wrench,
-  Sparkles,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
@@ -487,7 +486,7 @@ export default function Nav() {
                         CarePay Account
                       </div>
                       <span className="text-[10px] font-bold text-sky-700 flex items-center gap-1">
-                        <Sparkles size={11} className="text-amber-500" />
+                        <ShieldCheck size={11} className="text-emerald-600" />
                         <span>Escrow Protected</span>
                       </span>
                     </div>

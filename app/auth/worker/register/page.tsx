@@ -15,7 +15,6 @@ import {
   ArrowLeft, 
   MapPin, 
   Award, 
-  Sparkles, 
   FileCheck,
   CreditCard,
   Building2,
@@ -570,7 +569,7 @@ function WorkerRegisterContent() {
             <div className="flex flex-wrap items-center gap-3">
               <Logo size="md" />
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs font-black text-sky-700 uppercase tracking-wider">
-                <Sparkles size={13} /> Pro Onboarding
+                <ShieldCheck size={13} /> Pro Onboarding
               </span>
             </div>
             <div>
@@ -690,7 +689,7 @@ function WorkerRegisterContent() {
                     <div>
                       <div className="flex items-center justify-between gap-2 mb-2">
                         <span className="text-[10px] font-black uppercase tracking-wider bg-amber-400/20 text-amber-300 border border-amber-400/40 px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                          <Sparkles size={11} /> ★ Recommended · 3x Bookings
+                          <Award size={11} /> ★ Recommended · 3x Bookings
                         </span>
                         <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                           selectedTier === 'elite' ? "border-amber-400 bg-amber-400 text-slate-950" : "border-slate-600"

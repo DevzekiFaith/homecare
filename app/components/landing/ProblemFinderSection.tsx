@@ -13,7 +13,6 @@ import {
   ArrowRight, 
   ChevronLeft, 
   ChevronRight, 
-  Sparkles, 
   CheckCircle2 
 } from "lucide-react";
 
@@ -116,7 +115,7 @@ const PROBLEMS = [
     badgeTitle: "Generator Power Servicing",
     badgeRole: "Carburetor Cleaning & AVR Tuning",
     badges: [
-      { label: "Carb Cleaned", icon: Sparkles, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
+      { label: "Carb Cleaned", icon: CheckCircle2, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
       { label: "AVR & Battery Fix", icon: Zap, color: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
     ],
   },

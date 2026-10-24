@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Navigation, MessageCircle, Radio, Sparkles } from "lucide-react";
+import { Navigation, MessageCircle, Radio, Globe } from "lucide-react";
 import dynamic from 'next/dynamic';
 
 const RealTimeMap = dynamic(() => import('./RealTimeMap'), {
@@ -89,7 +89,7 @@ export default function InteractiveMapSection() {
 
             <div className="flex items-center gap-3.5 p-4 rounded-2xl bg-white border-2 border-slate-200/80 shadow-xs hover:border-amber-300 transition-all">
               <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0 shadow-xs">
-                <Sparkles size={18} strokeWidth={2.5} />
+                <Globe size={18} strokeWidth={2.5} />
               </div>
               <div>
                 <span className="text-sm font-extrabold text-slate-900 block leading-snug">

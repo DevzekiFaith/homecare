@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, Send, ChevronDown, CheckCheck, ShieldCheck, Sparkles, PhoneCall } from "lucide-react";
+import { MessageCircle, Send, ChevronDown, CheckCheck, ShieldCheck, Radio, PhoneCall } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 
@@ -318,7 +318,7 @@ export default function InMapChat({
             {/* Quick Dispatch Telemetry Banner */}
             <div className="px-3 py-1.5 bg-sky-950/60 border-b border-sky-500/20 flex items-center justify-between text-[10px]">
               <span className="flex items-center gap-1 text-sky-300 font-bold">
-                <Sparkles size={11} className="text-amber-400" />
+                <Radio size={11} className="text-emerald-400 animate-pulse" />
                 Live GPS Active
               </span>
               <span className="text-emerald-400 font-bold">Encrypted Telemetry</span>

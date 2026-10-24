@@ -11,7 +11,6 @@ import {
   Star, 
   Zap, 
   CheckCircle2, 
-  Sparkles, 
   Lock, 
   ChevronRight, 
   ChevronLeft 
@@ -75,7 +74,7 @@ const SLIDES = [
     image: "/slide_escrow_vault_unique.jpg",
     badges: [
       { label: "Escrow Deposit Lock", icon: Lock, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
-      { label: "Inspection Required", icon: Sparkles, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
+      { label: "Inspection Required", icon: CheckCircle2, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
       { label: "100% Recourse Guarantee", icon: ShieldCheck, color: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
     ],
   },

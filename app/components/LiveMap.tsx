@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import "leaflet/dist/leaflet.css";
 import { ESRI_TILE_PROVIDERS, calculateDistanceKm, formatEta } from "@/lib/mapConfig";
 import InMapChat from "@/app/components/InMapChat";
-import { Radio, ShieldCheck, Sparkles } from "lucide-react";
+import { Radio, ShieldCheck } from "lucide-react";
 
 // Fix for default marker icons in Leaflet with Next.js
 delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })._getIconUrl;
@@ -380,7 +380,7 @@ export default function LiveMap({
       {/* Bottom Dispatch Indicator Bar */}
       <div className="absolute bottom-3 left-3 z-[1000]">
         <span className="rounded-full bg-slate-900/90 px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider text-sky-300 border border-white/10 backdrop-blur-md shadow-xl flex items-center gap-1.5">
-          <Sparkles size={12} className="text-amber-400" />
+          <Radio size={12} className="text-emerald-400 animate-pulse" />
           {interactive
             ? targetPos
               ? "Location Pinned · Esri ArcGIS HD"

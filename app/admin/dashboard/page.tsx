@@ -19,7 +19,7 @@ import {
   ShieldCheck, 
   DollarSign, 
   Wallet, 
-  Sparkles 
+  Award 
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Logo from "@/app/components/Logo";
@@ -832,7 +832,7 @@ export default function AdminDashboard() {
                                 <td className="p-4">
                                   {isElite ? (
                                     <span className="inline-flex items-center gap-1 text-[10px] font-black text-amber-900 bg-amber-400/20 px-2.5 py-1 rounded-full border border-amber-400/50">
-                                      <Sparkles size={11} className="text-amber-600" /> ★ Elite (₦3.5k)
+                                      <Award size={11} className="text-amber-600" /> ★ Elite (₦3.5k)
                                     </span>
                                   ) : (
                                     <span className="inline-flex items-center gap-1 text-[10px] font-black text-sky-800 bg-sky-50 px-2.5 py-1 rounded-full border border-sky-200">
@@ -936,7 +936,7 @@ export default function AdminDashboard() {
 
                   <motion.div variants={itemVariants} className="p-6 border border-purple-200 bg-purple-50/50 rounded-2xl relative overflow-hidden shadow-sm">
                     <div className="absolute top-0 right-0 p-3.5 bg-purple-100 text-purple-700 border-b border-l border-purple-200 rounded-bl-3xl">
-                      <Sparkles size={18} />
+                      <ShoppingBag size={18} />
                     </div>
                     <p className="text-[10px] font-black uppercase tracking-widest text-purple-700 mb-1">Store Orders GMV</p>
                     <p className="text-3xl font-heading font-black text-purple-950">₦{stats.storeRevenue.toLocaleString()}</p>

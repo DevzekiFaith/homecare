@@ -17,7 +17,6 @@ import {
   RefreshCw,
   Settings,
   X,
-  Sparkles,
   ArrowLeft
 } from "lucide-react";
 import {
@@ -585,7 +584,7 @@ export default function AdminLockScreen({ onUnlock }: AdminLockScreenProps) {
             {/* Status Readout */}
             <div className="text-center space-y-1">
               <h3 className="text-xs font-bold text-indigo-300 uppercase tracking-widest flex items-center justify-center gap-1.5">
-                <Sparkles size={14} /> {faceScanStatus}
+                <ShieldCheck size={14} /> {faceScanStatus}
               </h3>
               {isScanningFace && (
                 <div className="w-48 mx-auto bg-slate-800 rounded-full h-1.5 mt-2 overflow-hidden">

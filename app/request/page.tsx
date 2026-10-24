@@ -9,7 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 import SurgeBadge from "@/app/components/SurgeBadge";
 import type { SurgeResult } from "@/lib/surge";
 
-import { Wrench, Zap, Hammer, Armchair, Snowflake, Paintbrush, PenTool, Camera, X, Loader2, ShoppingBag, Copy, Check, ArrowLeft, UserCheck, Star, ShieldCheck, Phone, MessageSquare, CheckCircle2, Users, Navigation, MapPin, Clock, Sparkles } from "lucide-react";
+import { Wrench, Zap, Hammer, Armchair, Snowflake, Paintbrush, PenTool, Camera, X, Loader2, ShoppingBag, Copy, Check, ArrowLeft, UserCheck, Star, ShieldCheck, Phone, MessageSquare, CheckCircle2, Users, Navigation, MapPin, Clock } from "lucide-react";
 import { toast } from "sonner";
 import ErrorAlert from "@/app/components/ErrorAlert";
 import ModernDatePicker from "@/app/components/ModernDatePicker";

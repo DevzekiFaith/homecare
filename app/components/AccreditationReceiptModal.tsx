@@ -8,7 +8,7 @@ import {
   CheckCircle2, 
   Clock, 
   ShieldCheck, 
-  Sparkles, 
+  Award, 
   MessageCircle, 
   Building2, 
   CreditCard,
@@ -201,7 +201,7 @@ export default function AccreditationReceiptModal({
               <div className="grid grid-cols-12 items-center text-xs">
                 <div className="col-span-8">
                   <div className="flex items-center gap-1.5">
-                    {isElite && <Sparkles size={13} className="text-amber-500 shrink-0" />}
+                    {isElite && <Award size={13} className="text-amber-500 shrink-0" />}
                     <p className="font-black text-slate-900">
                       {isElite ? "Elite Pro Accelerator (Top inDrive Ranking Boost)" : "Starter Pro Accreditation + Master Handbook"}
                     </p>

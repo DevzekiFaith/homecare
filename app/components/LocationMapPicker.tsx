@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { MapPin, Search, Loader2, CheckCircle2, X, Sparkles } from "lucide-react";
+import { MapPin, Search, Loader2, CheckCircle2, X } from "lucide-react";
 
 // ── Data Models ────────────────────────────────────────────────
 export interface AreaPoint {
@@ -327,7 +327,7 @@ export default function LocationMapPicker({
             <div className="absolute z-50 mt-2 w-full rounded-2xl border-2 border-sky-500/20 bg-white/95 backdrop-blur-md shadow-2xl p-2.5 space-y-2 max-h-80 overflow-y-auto">
               <div className="px-2 py-1 flex items-center justify-between text-[11px] font-black uppercase tracking-wider text-sky-800 bg-sky-50 rounded-lg border border-sky-100">
                 <span className="flex items-center gap-1.5">
-                  <Sparkles size={13} className="text-sky-600" /> Suggested Locations
+                  <MapPin size={13} className="text-sky-600" /> Suggested Locations
                 </span>
                 <span className="text-[10px] bg-sky-600 text-white font-bold px-2 py-0.5 rounded-full">
                   {suggestions.length} found

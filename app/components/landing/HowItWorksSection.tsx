@@ -11,7 +11,6 @@ import {
   ArrowRight, 
   CheckCircle2, 
   Lock, 
-  Sparkles, 
   ChevronLeft, 
   ChevronRight 
 } from "lucide-react";
@@ -111,7 +110,7 @@ const PROCESS_STEPS = [
     badgeRole: "Funds Released Upon Approval",
     badges: [
       { label: "Customer Approval", icon: ShieldCheck, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
-      { label: "Quality Tested", icon: Sparkles, color: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
+      { label: "Quality Tested", icon: CheckCircle2, color: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
     ],
   },
   {

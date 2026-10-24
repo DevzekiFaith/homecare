@@ -12,7 +12,6 @@ import {
   AlertCircle, 
   Phone, 
   UserCheck, 
-  Sparkles,
   Trash2,
   Award,
   Zap
@@ -425,7 +424,7 @@ export default function WorkerTable({ initialWorkers }: { initialWorkers: Worker
                         <div>
                           {isElite ? (
                             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400/20 text-amber-900 text-[10px] font-black border border-amber-400/50">
-                              <Sparkles size={11} className="text-amber-600" /> ★ Elite (₦3.5k)
+                              <Award size={11} className="text-amber-600" /> ★ Elite (₦3.5k)
                             </span>
                           ) : (
                             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-sky-50 text-sky-800 text-[10px] font-black border border-sky-200">

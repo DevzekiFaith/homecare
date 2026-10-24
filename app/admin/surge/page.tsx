@@ -13,7 +13,7 @@ import {
   Paintbrush, 
   Hammer, 
   Snowflake, 
-  Sparkles,
+  Droplets,
   ShieldCheck,
   Percent,
   SlidersHorizontal,
@@ -31,7 +31,7 @@ function getServiceIcon(type: string) {
   if (t.includes("elect")) return Zap;
   if (t.includes("carpen") || t.includes("furn")) return Hammer;
   if (t.includes("ac") || t.includes("fridge") || t.includes("cool")) return Snowflake;
-  if (t.includes("clean")) return Sparkles;
+  if (t.includes("clean")) return Droplets;
   return Wrench;
 }
 

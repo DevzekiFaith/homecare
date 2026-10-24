@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, BookOpen, CheckCircle2, ShieldCheck, Star, Zap, Award, Download, Printer, Lock, ThumbsUp, AlertTriangle, Sparkles } from "lucide-react";
+import { ArrowLeft, BookOpen, CheckCircle2, ShieldCheck, Star, Zap, Award, Download, Printer, Lock, ThumbsUp, AlertTriangle } from "lucide-react";
 import Logo from "@/app/components/Logo";
 
 export default function ProHandbookPage() {
@@ -170,7 +170,7 @@ export default function ProHandbookPage() {
             <div className="p-6 rounded-3xl bg-slate-900 text-white space-y-4">
               <div className="flex items-center justify-between gap-3 flex-wrap">
                 <div className="flex items-center gap-2 text-amber-400 font-black text-sm uppercase">
-                  <Sparkles size={18} />
+                  <Award size={18} />
                   <span>How to Earn More on HomeCare</span>
                 </div>
                 <span className="text-[10px] font-black uppercase tracking-wider bg-amber-400/20 text-amber-300 border border-amber-400/30 px-3 py-1 rounded-full">

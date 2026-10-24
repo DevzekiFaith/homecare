@@ -8,7 +8,6 @@ import {
   X, 
   ShieldAlert, 
   CheckCircle2, 
-  Sparkles,
   Wrench,
   Clock,
   ShieldCheck
@@ -155,7 +154,7 @@ export default function EducationalResourcesSection() {
           <div className="max-w-2xl">
             <div className="flex items-center gap-2 mb-3">
               <span className="text-xs font-bold uppercase tracking-wider text-sky-600 bg-sky-50 border border-sky-100 px-3.5 py-1.5 rounded-full inline-flex items-center gap-1.5 shadow-2xs">
-                <Sparkles size={13} />
+                <BookOpen size={13} />
                 <span>Home Maintenance Knowledge Hub</span>
               </span>
             </div>

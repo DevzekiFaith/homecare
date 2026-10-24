@@ -13,8 +13,7 @@ import {
   ChevronLeft, 
   ChevronRight, 
   Star, 
-  ThumbsUp, 
-  Sparkles 
+  ThumbsUp
 } from "lucide-react";
 import Link from "next/link";
 
@@ -87,7 +86,7 @@ const VERIFICATION_STEPS = [
     badges: [
       { label: "SLA Compliant", icon: ShieldCheck, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
       { label: "Zero Tolerance", icon: Lock, color: "bg-rose-500/20 text-rose-300 border-rose-500/30" },
-      { label: "Escrow Protected", icon: Sparkles, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
+      { label: "Escrow Protected", icon: CheckCircle2, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
     ],
   },
 ];

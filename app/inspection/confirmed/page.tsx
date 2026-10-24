@@ -16,7 +16,6 @@ import {
   Award,
   ArrowLeft,
   ExternalLink,
-  Sparkles,
   UserCheck,
   Activity,
   Check,
@@ -226,7 +225,7 @@ function InspectionConfirmedContent() {
 
           <div className="space-y-3">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-500/10 border border-sky-400/20 text-sky-300 text-xs font-bold uppercase tracking-wider">
-              <Sparkles size={14} className="text-sky-400" />
+              <CheckCircle2 size={14} className="text-sky-400" />
               <span>Inspection Booking Confirmed</span>
             </div>
             <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white uppercase">

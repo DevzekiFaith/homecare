@@ -16,7 +16,6 @@ import {
   Loader2,
   ShieldCheck,
   MapPin,
-  Sparkles,
   ArrowLeft,
 } from "lucide-react";
 import { toast } from "sonner";

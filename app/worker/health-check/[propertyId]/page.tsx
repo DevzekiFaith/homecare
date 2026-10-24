@@ -23,7 +23,6 @@ import {
   ArrowRight,
   ArrowLeft,
   Loader2,
-  Sparkles,
   Zap,
   Wrench,
   Droplets,

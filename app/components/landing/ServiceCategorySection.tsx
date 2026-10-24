@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { 
   Wrench, 
-  Sparkles, 
+  Truck, 
   Home, 
   Zap, 
   Droplet, 
@@ -38,7 +38,7 @@ const CATEGORY_SLIDES = [
     badges: [
       { label: "NIN Verified", icon: ShieldCheck, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
       { label: "24/7 Response", icon: Zap, color: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
-      { label: "15-Min Match", icon: Sparkles, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
+      { label: "15-Min Match", icon: Zap, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
     ],
     link: "/request?category=electrical",
   },
@@ -95,7 +95,7 @@ const CATEGORY_SLIDES = [
     badges: [
       { label: "Anti-Damp Seal", icon: Paintbrush, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
       { label: "POP & Tiling", icon: CheckCircle2, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
-      { label: "Clean Finish", icon: Sparkles, color: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
+      { label: "Clean Finish", icon: CheckCircle2, color: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
     ],
     link: "/request?category=painting",
   },
@@ -131,7 +131,7 @@ const CATEGORY_SLIDES = [
     proName: "Express All-Round Handyman",
     proRole: "Rapid Home Fixture Repairs",
     badges: [
-      { label: "Same-Day Dispatch", icon: Sparkles, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
+      { label: "Same-Day Dispatch", icon: Truck, color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
       { label: "Multi-Skilled Pro", icon: UserCheck, color: "bg-sky-500/20 text-sky-300 border-sky-500/30" },
       { label: "Upfront Pricing", icon: Tag, color: "bg-purple-500/20 text-purple-300 border-purple-500/30" },
     ],

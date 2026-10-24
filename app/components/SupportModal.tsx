@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, X, Send, CheckCircle2, Loader2, Sparkles, Phone, MessageSquare } from "lucide-react";
+import { Mail, X, Send, CheckCircle2, Loader2, Phone, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 
 export default function SupportModal() {

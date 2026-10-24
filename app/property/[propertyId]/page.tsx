@@ -37,7 +37,6 @@ import {
   Lock,
   ChevronRight,
   ExternalLink,
-  Sparkles,
   Zap,
   Droplets,
   Snowflake,
@@ -595,7 +594,7 @@ export default function PropertyCarePage() {
                 href={`/inspection?property_id=${property.property_id}&address=${encodeURIComponent(property.address)}`}
                 className="h-12 px-6 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white font-bold text-xs uppercase tracking-widest flex items-center gap-2 transition-all cursor-pointer"
               >
-                <Sparkles size={15} className="text-cyan-300" />
+                <Activity size={15} className="text-cyan-300" />
                 <span>Book Health Check</span>
               </Link>
             </div>
