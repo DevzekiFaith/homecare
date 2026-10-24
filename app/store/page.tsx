@@ -220,7 +220,7 @@ export default function StorePage() {
               {/* Cart Header Trigger */}
               <button
                 onClick={() => setIsCartOpen(true)}
-                className="relative flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full bg-gradient-to-r from-sky-400 to-cyan-300 hover:from-sky-300 hover:to-cyan-200 text-slate-950 text-[11px] font-black uppercase tracking-widest transition-all shadow-lg shadow-sky-400/25 hover:scale-105 active:scale-95 cursor-pointer"
+                className="relative flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full bg-sky-600 hover:bg-sky-500 text-white text-[11px] font-black uppercase tracking-widest transition-all shadow-lg shadow-sky-600/30 hover:scale-105 active:scale-95 cursor-pointer"
               >
                 <ShoppingCart size={15} />
                 {cartCount > 0 ? (
@@ -229,7 +229,7 @@ export default function StorePage() {
                   <span>Cart</span>
                 )}
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-slate-950 text-white text-[9px] font-extrabold ring-2 ring-cyan-300 animate-in zoom-in">
+                  <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-white text-sky-900 text-[9px] font-black ring-2 ring-sky-600 animate-in zoom-in">
                     {cartCount}
                   </span>
                 )}
