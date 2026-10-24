@@ -12,7 +12,8 @@ import {
   Building2,
   CreditCard,
   Clock,
-  Sparkles
+  Sparkles,
+  Tag
 } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { createClient } from "@/lib/supabase/client";
@@ -25,13 +26,25 @@ import {
 } from "@/lib/store-data";
 
 function CheckoutContent() {
-  const { cartItems, cartTotal, cartCount, clearCart, mounted } = useCart();
+  const { 
+    cartItems, 
+    cartTotal, 
+    cartCount, 
+    clearCart, 
+    mounted, 
+    couponCode, 
+    discount, 
+    applyCoupon, 
+    removeCoupon 
+  } = useCart();
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const supabase = createClient();
   const [user, setUser] = useState<User | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<"flutterwave" | "transfer">("flutterwave");
+  const [voucherInput, setVoucherInput] = useState("");
 
   // State selection from URL param or saved preference
   const urlState = searchParams?.get("state");
@@ -95,7 +108,7 @@ function CheckoutContent() {
 
   const isFreeDelivery = cartTotal >= FREE_DELIVERY_THRESHOLD;
   const deliveryFee = isFreeDelivery ? 0 : deliveryInfo.deliveryFee;
-  const grandTotal = cartTotal + deliveryFee;
+  const grandTotal = Math.max(0, cartTotal - discount) + deliveryFee;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -112,6 +125,18 @@ function CheckoutContent() {
     }
   };
 
+  const handleApplyVoucher = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!voucherInput.trim()) return;
+    const res = applyCoupon(voucherInput);
+    if (res.success) {
+      toast.success("Voucher Applied!", { description: res.message });
+      setVoucherInput("");
+    } else {
+      toast.error(res.message);
+    }
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (submitting) return;
@@ -124,6 +149,7 @@ function CheckoutContent() {
     setSubmitting(true);
     const orderRef = `HC-${Date.now().toString(36).toUpperCase()}`;
     const fullAddress = `${formData.address}${formData.cityOrArea ? `, ${formData.cityOrArea}` : ""}, ${selectedState}`;
+    const voucherNote = couponCode && discount > 0 ? ` [Voucher: ${couponCode} (-₦${discount.toLocaleString()})]` : "";
 
     try {
       // 1. Insert order record into database with a 4s timeout
@@ -133,7 +159,7 @@ function CheckoutContent() {
         customer_email: formData.email,
         customer_phone: formData.phone,
         delivery_address: fullAddress,
-        notes: formData.notes ? `[State: ${selectedState}] ${formData.notes}` : `[State: ${selectedState}]`,
+        notes: formData.notes ? `[State: ${selectedState}]${voucherNote} ${formData.notes}` : `[State: ${selectedState}]${voucherNote}`,
         items: cartItems.map((item) => ({
           id: item.product.id,
           name: item.product.name,
@@ -451,7 +477,7 @@ function CheckoutContent() {
 
             {/* Right: Order Summary (5 cols) */}
             <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
-              <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+              <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-5">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                   <h2 className="text-xs font-extrabold uppercase tracking-widest text-slate-400">
                     Order Summary
@@ -462,7 +488,7 @@ function CheckoutContent() {
                 </div>
 
                 {/* Items List */}
-                <div className="space-y-3.5 max-h-[280px] overflow-y-auto pr-1">
+                <div className="space-y-3.5 max-h-[260px] overflow-y-auto pr-1">
                   {cartItems.map((item) => (
                     <div key={item.product.id} className="flex items-center gap-3.5">
                       <div className="relative w-14 h-14 rounded-2xl overflow-hidden bg-slate-100 shrink-0 border border-slate-200">
@@ -501,18 +527,70 @@ function CheckoutContent() {
                   </div>
                 )}
 
+                {/* Voucher Code Form */}
+                <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200/80">
+                  {couponCode && discount > 0 ? (
+                    <div className="flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-1.5 font-bold text-emerald-800">
+                        <Tag size={13} className="text-emerald-600" />
+                        <span>Voucher <strong>{couponCode}</strong> applied (-₦{discount.toLocaleString()})</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={removeCoupon}
+                        className="text-[10px] font-extrabold uppercase text-rose-600 hover:underline cursor-pointer"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-1.5">
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={voucherInput}
+                          onChange={(e) => setVoucherInput(e.target.value)}
+                          placeholder="Have a voucher? (e.g. WELCOME2500)"
+                          className="flex-1 px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs uppercase font-mono placeholder:normal-case placeholder:font-sans outline-none focus:border-sky-500"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleApplyVoucher}
+                          className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold uppercase tracking-wider cursor-pointer"
+                        >
+                          Apply
+                        </button>
+                      </div>
+                      <p className="text-[10px] text-slate-400">
+                        Use voucher <strong>WELCOME2500</strong> for ₦2,500 off orders from ₦25,000.
+                      </p>
+                    </div>
+                  )}
+                </div>
+
                 {/* Price Breakdown */}
                 <div className="space-y-2.5 border-t border-slate-100 pt-4 text-xs font-semibold text-slate-600">
                   <div className="flex justify-between">
                     <span>Appliance Subtotal</span>
                     <span className="font-bold text-slate-900">₦{cartTotal.toLocaleString()}</span>
                   </div>
+
+                  {discount > 0 && (
+                    <div className="flex justify-between text-emerald-700 font-bold">
+                      <span className="flex items-center gap-1">
+                        <Tag size={12} /> Voucher Discount ({couponCode})
+                      </span>
+                      <span>-₦{discount.toLocaleString()}</span>
+                    </div>
+                  )}
+
                   <div className="flex justify-between">
                     <span>Shipping to {selectedState}</span>
                     <span className={`font-bold ${deliveryFee === 0 ? "text-emerald-600" : "text-slate-900"}`}>
                       {deliveryFee === 0 ? "FREE" : `₦${deliveryFee.toLocaleString()}`}
                     </span>
                   </div>
+
                   <div className="flex justify-between border-t border-slate-100 pt-3 text-sm font-extrabold text-slate-900">
                     <span>Grand Total</span>
                     <span className="text-xl font-black text-sky-600 font-heading">

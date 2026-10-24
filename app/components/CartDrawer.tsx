@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useCart } from "@/lib/cart";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,9 +15,11 @@ import {
   ArrowRight,
   PackageOpen,
   Sparkles,
-  Truck
+  Truck,
+  Tag
 } from "lucide-react";
 import { FREE_DELIVERY_THRESHOLD } from "@/lib/store-data";
+import { toast } from "sonner";
 
 const ESTIMATED_BASE_DELIVERY = 2000;
 
@@ -31,11 +34,29 @@ export default function CartDrawer() {
     cartCount,
     isCartOpen,
     setIsCartOpen,
+    couponCode,
+    discount,
+    applyCoupon,
+    removeCoupon,
   } = useCart();
 
+  const [inputCoupon, setInputCoupon] = useState("");
   const isFreeDelivery = cartTotal >= FREE_DELIVERY_THRESHOLD;
   const deliveryFee = isFreeDelivery ? 0 : ESTIMATED_BASE_DELIVERY;
+  const finalTotal = Math.max(0, cartTotal - discount) + deliveryFee;
   const progressPercent = Math.min(100, Math.round((cartTotal / FREE_DELIVERY_THRESHOLD) * 100));
+
+  const handleApplyCoupon = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputCoupon.trim()) return;
+    const res = applyCoupon(inputCoupon);
+    if (res.success) {
+      toast.success("Voucher Applied!", { description: res.message });
+      setInputCoupon("");
+    } else {
+      toast.error(res.message);
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -235,6 +256,42 @@ export default function CartDrawer() {
             {/* Footer / Summary */}
             {cartItems.length > 0 && (
               <div className="border-t border-slate-200 p-4 sm:p-6 pb-8 sm:pb-6 space-y-4 bg-white shadow-lg">
+                
+                {/* Voucher Code Box */}
+                <div className="bg-slate-50 p-2.5 rounded-2xl border border-slate-200/80">
+                  {couponCode && discount > 0 ? (
+                    <div className="flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-1.5 font-bold text-emerald-800">
+                        <Tag size={13} className="text-emerald-600" />
+                        <span>Voucher <strong>{couponCode}</strong> applied (-₦{discount.toLocaleString()})</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={removeCoupon}
+                        className="text-[10px] font-extrabold uppercase text-rose-600 hover:underline cursor-pointer"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleApplyCoupon} className="flex gap-2">
+                      <input
+                        type="text"
+                        value={inputCoupon}
+                        onChange={(e) => setInputCoupon(e.target.value)}
+                        placeholder="Voucher code (e.g. WELCOME2500)"
+                        className="flex-1 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs uppercase font-mono placeholder:normal-case placeholder:font-sans outline-none focus:border-sky-500"
+                      />
+                      <button
+                        type="submit"
+                        className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold uppercase tracking-wider cursor-pointer"
+                      >
+                        Apply
+                      </button>
+                    </form>
+                  )}
+                </div>
+
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-xs sm:text-sm">
                     <span className="text-slate-500 font-medium">Subtotal</span>
@@ -242,19 +299,31 @@ export default function CartDrawer() {
                       ₦{cartTotal.toLocaleString()}
                     </span>
                   </div>
+
+                  {discount > 0 && (
+                    <div className="flex items-center justify-between text-xs sm:text-sm text-emerald-700 font-bold">
+                      <span className="flex items-center gap-1">
+                        <Tag size={12} /> Voucher ({couponCode})
+                      </span>
+                      <span>-₦{discount.toLocaleString()}</span>
+                    </div>
+                  )}
+
                   <div className="flex items-center justify-between text-xs sm:text-sm">
                     <span className="text-slate-500 font-medium">Delivery</span>
                     <span className={`font-bold ${deliveryFee === 0 ? "text-emerald-600" : "text-slate-900"}`}>
                       {deliveryFee === 0 ? "FREE" : `₦${deliveryFee.toLocaleString()}`}
                     </span>
                   </div>
+
                   <div className="h-px bg-slate-200 my-2" />
+                  
                   <div className="flex items-center justify-between">
                     <span className="text-xs sm:text-sm font-extrabold text-slate-900">
                       Estimated Total
                     </span>
                     <span suppressHydrationWarning className="text-lg sm:text-xl font-black text-sky-600 font-heading">
-                      ₦{(cartTotal + deliveryFee).toLocaleString()}
+                      ₦{finalTotal.toLocaleString()}
                     </span>
                   </div>
                 </div>
