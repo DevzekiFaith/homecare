@@ -1,35 +1,54 @@
 "use client";
 
-import { useState, FormEvent, useEffect, useRef } from "react";
+import { useState, FormEvent, useEffect, useRef, useMemo, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   ArrowLeft,
   Loader2,
   ShieldCheck,
   Zap,
   Building2,
-  CheckCircle2,
-  ExternalLink,
   CreditCard,
-  Banknote,
+  Clock,
+  Sparkles
 } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-import { PAYMENT_ACCOUNT } from "@/lib/payment-details";
 import { User } from "@supabase/supabase-js";
+import { 
+  NIGERIA_STATES_DELIVERY, 
+  FREE_DELIVERY_THRESHOLD, 
+  getEstimatedDeliveryDates 
+} from "@/lib/store-data";
 
-const DELIVERY_FEE = 2500;
-
-export default function CheckoutPage() {
+function CheckoutContent() {
   const { cartItems, cartTotal, cartCount, clearCart, mounted } = useCart();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClient();
   const [user, setUser] = useState<User | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<"flutterwave" | "transfer">("flutterwave");
+
+  // State selection from URL param or saved preference
+  const urlState = searchParams?.get("state");
+  const [selectedState, setSelectedState] = useState<string>("Lagos");
+
+  useEffect(() => {
+    if (urlState && NIGERIA_STATES_DELIVERY[urlState]) {
+      setSelectedState(urlState);
+    } else if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("homecare_selected_state");
+        if (saved && NIGERIA_STATES_DELIVERY[saved]) {
+          setSelectedState(saved);
+        }
+      } catch {}
+    }
+  }, [urlState]);
 
   const orderPlacedRef = useRef(false);
   
@@ -38,6 +57,7 @@ export default function CheckoutPage() {
     email: "",
     phone: "",
     address: "",
+    cityOrArea: "",
     notes: "",
   });
 
@@ -68,11 +88,28 @@ export default function CheckoutPage() {
     }
   }, [mounted, cartCount, router]);
 
-  const grandTotal = cartTotal + DELIVERY_FEE;
+  // Delivery calculation based on state and subtotal threshold
+  const deliveryInfo = useMemo(() => {
+    return getEstimatedDeliveryDates(selectedState);
+  }, [selectedState]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const isFreeDelivery = cartTotal >= FREE_DELIVERY_THRESHOLD;
+  const deliveryFee = isFreeDelivery ? 0 : deliveryInfo.deliveryFee;
+  const grandTotal = cartTotal + deliveryFee;
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newState = e.target.value;
+    setSelectedState(newState);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("homecare_selected_state", newState);
+      } catch {}
+    }
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -86,6 +123,7 @@ export default function CheckoutPage() {
 
     setSubmitting(true);
     const orderRef = `HC-${Date.now().toString(36).toUpperCase()}`;
+    const fullAddress = `${formData.address}${formData.cityOrArea ? `, ${formData.cityOrArea}` : ""}, ${selectedState}`;
 
     try {
       // 1. Insert order record into database with a 4s timeout
@@ -94,8 +132,8 @@ export default function CheckoutPage() {
         customer_name: formData.fullName,
         customer_email: formData.email,
         customer_phone: formData.phone,
-        delivery_address: formData.address,
-        notes: formData.notes || null,
+        delivery_address: fullAddress,
+        notes: formData.notes ? `[State: ${selectedState}] ${formData.notes}` : `[State: ${selectedState}]`,
         items: cartItems.map((item) => ({
           id: item.product.id,
           name: item.product.name,
@@ -104,7 +142,7 @@ export default function CheckoutPage() {
           image: item.product.image,
         })),
         subtotal: cartTotal,
-        delivery_fee: DELIVERY_FEE,
+        delivery_fee: deliveryFee,
         total: grandTotal,
         status: "pending_payment",
         user_id: user?.id || null,
@@ -120,7 +158,7 @@ export default function CheckoutPage() {
 
       // 2. Handle Payment Method
       if (paymentMethod === "transfer") {
-        toast.success("Order received! Redirecting to payment details...");
+        toast.success("Order confirmed! Please complete your transfer.");
         router.push(`/store/order-confirmation?ref=${orderRef}&total=${grandTotal}`);
         return;
       }
@@ -167,7 +205,7 @@ export default function CheckoutPage() {
         clearTimeout(flwTimeout);
         toast.dismiss("checkout-flw");
         console.warn("Flutterwave timeout/offline, falling back to bank transfer:", flwErr);
-        toast.info("Order saved! Showing payment transfer account.");
+        toast.info("Order saved! Showing payment transfer details.");
         router.push(`/store/order-confirmation?ref=${orderRef}&total=${grandTotal}`);
         return;
       }
@@ -175,7 +213,7 @@ export default function CheckoutPage() {
       console.error("Checkout submission error:", err);
       orderPlacedRef.current = true;
       clearCart();
-      toast.info("Order confirmed! Please complete your transfer.");
+      toast.info("Order placed! Showing payment account.");
       router.push(`/store/order-confirmation?ref=${orderRef}&total=${grandTotal}`);
     } finally {
       setSubmitting(false);
@@ -192,8 +230,8 @@ export default function CheckoutPage() {
 
   return (
     <div className="relative min-h-screen bg-slate-50 text-slate-900 antialiased overflow-hidden">
-      {/* Royal Blue Hero Banner */}
-      <section className="relative bg-gradient-to-br from-sky-600 via-blue-600 to-blue-800 text-white pt-10 pb-14 md:pb-16 px-4 sm:px-6 rounded-b-[36px] md:rounded-b-[48px] shadow-2xl shadow-blue-900/15 overflow-hidden">
+      {/* Banner */}
+      <section className="relative bg-gradient-to-br from-sky-600 via-blue-600 to-blue-800 text-white pt-8 pb-12 md:pb-14 px-4 sm:px-6 rounded-b-[36px] md:rounded-b-[48px] shadow-2xl shadow-blue-900/15 overflow-hidden">
         <div className="absolute -top-24 -left-24 w-80 h-80 bg-sky-400/20 rounded-full blur-[90px] pointer-events-none" />
         <div className="absolute top-1/2 -right-24 w-80 h-80 bg-cyan-300/15 rounded-full blur-[100px] pointer-events-none" />
 
@@ -209,7 +247,7 @@ export default function CheckoutPage() {
             Secure <span className="text-cyan-200">Checkout</span>
           </h1>
           <p className="mt-1 text-sm sm:text-base text-sky-100/90 font-medium">
-            Fast escrow checkout powered by Flutterwave with nationwide delivery.
+            Fast escrow checkout with verified nationwide delivery across Nigeria.
           </p>
         </div>
       </section>
@@ -222,13 +260,18 @@ export default function CheckoutPage() {
             {/* Left: Customer Info & Payment Selector (7 cols) */}
             <div className="lg:col-span-7 space-y-6">
               
-              {/* Customer Contact Card */}
+              {/* Customer Contact & Delivery Destination Card */}
               <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-4">
-                <h2 className="text-xs font-extrabold uppercase tracking-widest text-slate-400">
-                  1. Delivery & Contact Details
-                </h2>
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                  <h2 className="text-xs font-extrabold uppercase tracking-widest text-slate-400">
+                    1. Destination & Contact Details
+                  </h2>
+                  <span className="text-[10px] font-bold text-sky-700 bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-100">
+                    Step 1 of 2
+                  </span>
+                </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                   <div className="space-y-1.5 sm:col-span-2">
                     <label className="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700">
                       Full Name *
@@ -273,30 +316,69 @@ export default function CheckoutPage() {
                     />
                   </div>
 
+                  {/* State Selection Dropdown */}
                   <div className="space-y-1.5 sm:col-span-2">
                     <label className="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700">
-                      Delivery Address *
+                      Destination State in Nigeria *
+                    </label>
+                    <select
+                      value={selectedState}
+                      onChange={handleStateChange}
+                      className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3.5 text-sm font-bold text-slate-900 outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all shadow-2xs cursor-pointer"
+                    >
+                      {Object.keys(NIGERIA_STATES_DELIVERY).map((st) => (
+                        <option key={st} value={st}>
+                          {st} ({NIGERIA_STATES_DELIVERY[st].minDays}-{NIGERIA_STATES_DELIVERY[st].maxDays} days · ₦{NIGERIA_STATES_DELIVERY[st].deliveryFee.toLocaleString()} shipping)
+                        </option>
+                      ))}
+                    </select>
+
+                    {/* Live delivery estimate pill */}
+                    <div className="flex items-center gap-2 mt-2 px-3.5 py-2 rounded-xl bg-sky-50 border border-sky-100 text-xs text-sky-800">
+                      <Clock size={14} className="text-sky-600 shrink-0" />
+                      <span>
+                        Estimated Delivery: <strong>{deliveryInfo.rangeString}</strong> via {deliveryInfo.stateData.couriers[0]}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <label className="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700">
+                      Street Address & Building No. *
                     </label>
                     <input
                       required
                       name="address"
                       value={formData.address}
                       onChange={handleInputChange}
-                      placeholder="Street, Estate / Area, City, State"
+                      placeholder="e.g. 14 Admiralty Way, Block B"
                       className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3.5 text-sm font-semibold text-slate-900 placeholder:text-slate-400 outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all shadow-2xs"
                     />
                   </div>
 
                   <div className="space-y-1.5 sm:col-span-2">
                     <label className="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700">
-                      Special Delivery Notes (Optional)
+                      Area / City / Landmark
+                    </label>
+                    <input
+                      name="cityOrArea"
+                      value={formData.cityOrArea}
+                      onChange={handleInputChange}
+                      placeholder="e.g. Lekki Phase 1, near Ebeano Supermarket"
+                      className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3.5 text-sm font-semibold text-slate-900 placeholder:text-slate-400 outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all shadow-2xs"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <label className="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700">
+                      Special Delivery Instructions (Optional)
                     </label>
                     <textarea
                       name="notes"
                       value={formData.notes}
                       onChange={handleInputChange}
                       rows={2}
-                      placeholder="Any landmark, building number, or preferred delivery timing..."
+                      placeholder="Gate instructions, best time to deliver, or alternate recipient..."
                       className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-900 placeholder:text-slate-400 outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all resize-none shadow-2xs"
                     />
                   </div>
@@ -310,12 +392,12 @@ export default function CheckoutPage() {
                     2. Payment Method
                   </h2>
                   <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                    🔒 256-bit Encrypted
+                    🔒 Escrow Protected
                   </span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                  {/* Flutterwave Card / USSD (Primary No. 1) */}
+                  {/* Flutterwave Card / USSD (Primary) */}
                   <button
                     type="button"
                     onClick={() => setPaymentMethod("flutterwave")}
@@ -328,10 +410,10 @@ export default function CheckoutPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <CreditCard size={18} className={paymentMethod === "flutterwave" ? "text-sky-600" : "text-slate-400"} />
-                        <span className="font-extrabold text-xs text-slate-900">Flutterwave Gateway</span>
+                        <span className="font-extrabold text-xs text-slate-900">Flutterwave Instant Gateway</span>
                       </div>
                       <span className="text-[9px] font-black uppercase tracking-wider bg-sky-600 text-white px-2 py-0.5 rounded-full">
-                        Primary (No. 1)
+                        Instant
                       </span>
                     </div>
                     <p className="text-[11px] text-slate-600 leading-relaxed">
@@ -339,7 +421,7 @@ export default function CheckoutPage() {
                     </p>
                   </button>
 
-                  {/* Direct Bank Transfer (Alternative / Backup) */}
+                  {/* Direct Bank Transfer */}
                   <button
                     type="button"
                     onClick={() => setPaymentMethod("transfer")}
@@ -352,14 +434,14 @@ export default function CheckoutPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Building2 size={18} className={paymentMethod === "transfer" ? "text-sky-600" : "text-slate-400"} />
-                        <span className="font-extrabold text-xs text-slate-900">Bank Transfer (Globus)</span>
+                        <span className="font-extrabold text-xs text-slate-900">Direct Bank Transfer</span>
                       </div>
                       <span className="text-[9px] font-black uppercase tracking-wider bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full">
-                        Alternative
+                        Direct NIP
                       </span>
                     </div>
                     <p className="text-[11px] text-slate-500 leading-relaxed">
-                      Manual bank transfer to Mindvest Global Resources Ltd (Globus Bank 1000501179).
+                      Manual bank transfer to Mindvest Global Resources Ltd (Globus Bank). Account details shown on the next screen.
                     </p>
                   </button>
                 </div>
@@ -380,7 +462,7 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* Items List */}
-                <div className="space-y-3.5 max-h-[300px] overflow-y-auto pr-1">
+                <div className="space-y-3.5 max-h-[280px] overflow-y-auto pr-1">
                   {cartItems.map((item) => (
                     <div key={item.product.id} className="flex items-center gap-3.5">
                       <div className="relative w-14 h-14 rounded-2xl overflow-hidden bg-slate-100 shrink-0 border border-slate-200">
@@ -407,6 +489,18 @@ export default function CheckoutPage() {
                   ))}
                 </div>
 
+                {/* Free Shipping Notice */}
+                {isFreeDelivery ? (
+                  <div className="flex items-center gap-2 p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 font-bold">
+                    <Sparkles size={16} className="text-emerald-600 shrink-0" />
+                    <span>Free Shipping Applied (Orders over ₦100k)</span>
+                  </div>
+                ) : (
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 text-[11px] text-slate-500">
+                    Add <strong>₦{(FREE_DELIVERY_THRESHOLD - cartTotal).toLocaleString()}</strong> more to qualify for <strong>FREE DELIVERY</strong>!
+                  </div>
+                )}
+
                 {/* Price Breakdown */}
                 <div className="space-y-2.5 border-t border-slate-100 pt-4 text-xs font-semibold text-slate-600">
                   <div className="flex justify-between">
@@ -414,12 +508,16 @@ export default function CheckoutPage() {
                     <span className="font-bold text-slate-900">₦{cartTotal.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Priority Dispatch & Handling</span>
-                    <span className="font-bold text-slate-900">₦{DELIVERY_FEE.toLocaleString()}</span>
+                    <span>Shipping to {selectedState}</span>
+                    <span className={`font-bold ${deliveryFee === 0 ? "text-emerald-600" : "text-slate-900"}`}>
+                      {deliveryFee === 0 ? "FREE" : `₦${deliveryFee.toLocaleString()}`}
+                    </span>
                   </div>
                   <div className="flex justify-between border-t border-slate-100 pt-3 text-sm font-extrabold text-slate-900">
                     <span>Grand Total</span>
-                    <span className="text-xl font-black text-sky-600">₦{grandTotal.toLocaleString()}</span>
+                    <span className="text-xl font-black text-sky-600 font-heading">
+                      ₦{grandTotal.toLocaleString()}
+                    </span>
                   </div>
                 </div>
 
@@ -444,7 +542,7 @@ export default function CheckoutPage() {
 
                 <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                   <ShieldCheck size={14} className="text-emerald-600" />
-                  <span>100% Escrow Protection Guaranteed</span>
+                  <span>CarePay Escrow Protection Guaranteed</span>
                 </div>
               </div>
             </div>
@@ -453,5 +551,17 @@ export default function CheckoutPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <Loader2 className="animate-spin text-sky-600" size={32} />
+      </div>
+    }>
+      <CheckoutContent />
+    </Suspense>
   );
 }

@@ -3,6 +3,7 @@ export interface Product {
   name: string;
   description: string;
   price: number;
+  originalPrice?: number;
   image: string;
   category: "Power & Protection" | "Fans & Cooling" | "Water Automation" | "Security & Access" | "Smart Lighting" | "Kitchen Essentials";
   serviceLink: string[];
@@ -10,8 +11,17 @@ export interface Product {
   reviewCount?: number;
   badge?: "Best Seller" | "New" | "Hot Deal" | "Essential";
   stock?: number;
+  soldCount?: number;
   sourceOrigin?: string;
+  storeName?: string;
+  storeRating?: number;
+  storeSales?: string;
+  storeFollowers?: string;
+  storePositiveFeedback?: string;
   warrantyMonths?: number;
+  highlights?: string[];
+  specs?: Record<string, string>;
+  modelNumber?: string;
 }
 
 export const PRODUCTS: Product[] = [

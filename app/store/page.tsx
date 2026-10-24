@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { PRODUCTS, Product } from "@/lib/products";
+import { PRODUCTS } from "@/lib/products";
 import ProductCard from "@/app/components/ProductCard";
 import {
   Search,
@@ -12,13 +12,13 @@ import {
   ShieldCheck,
   Truck,
   Wrench,
-  Sparkles,
   Zap,
   SlidersHorizontal,
   Compass,
+  X
 } from "lucide-react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useCart } from "@/lib/cart";
 
 type SortOption = "default" | "price-asc" | "price-desc" | "rating" | "newest";
@@ -118,7 +118,7 @@ export default function StorePage() {
               {/* Cart Header Button */}
               <button
                 onClick={() => setIsCartOpen(true)}
-                className="relative flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full bg-sky-400 hover:bg-sky-300 text-blue-950 text-[11px] font-extrabold uppercase tracking-widest transition-all shadow-lg shadow-sky-400/25 hover:scale-105 active:scale-95"
+                className="relative flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full bg-sky-400 hover:bg-sky-300 text-blue-950 text-[11px] font-extrabold uppercase tracking-widest transition-all shadow-lg shadow-sky-400/25 hover:scale-105 active:scale-95 cursor-pointer"
               >
                 <ShoppingCart size={15} />
                 {cartCount > 0 ? (
@@ -138,14 +138,14 @@ export default function StorePage() {
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div>
               <div className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-sky-200 bg-white/10 px-3.5 py-1.5 rounded-full border border-white/20 mb-3">
-                <Sparkles size={12} className="text-cyan-300" />
-                <span>Affordable Smart Living · Built for Nigerian Homes</span>
+                <Zap size={12} className="text-cyan-300 fill-cyan-300" />
+                <span>Smart Living · Built for Nigerian Homes</span>
               </div>
-              <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white uppercase">
+              <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white uppercase font-heading">
                 HomeCare <span className="text-cyan-200">Smart Store</span>
               </h1>
               <p className="mt-2 text-sm sm:text-base text-sky-100/90 font-medium max-w-2xl leading-relaxed">
-                Essential surge protectors, rechargeable solar fans, automatic water pump controllers, biometric locks, smart switches, and daily kitchen gear with pro installation support.
+                Essential surge protectors, rechargeable fans, automatic water tank monitors, biometric locks, smart switches, and kitchen gear with certified installation support.
               </p>
             </div>
 
@@ -170,7 +170,7 @@ export default function StorePage() {
             </div>
             <div className="flex items-center gap-2">
               <ShieldCheck size={16} className="text-cyan-300 shrink-0" />
-              <span>Up to 36m Warranty</span>
+              <span>Up to 24m Warranty</span>
             </div>
             <div className="flex items-center gap-2">
               <Wrench size={16} className="text-cyan-300 shrink-0" />
@@ -188,7 +188,7 @@ export default function StorePage() {
       <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-12 py-8 sm:py-10 pb-36 relative z-10 space-y-6">
         
         {/* Search & Sort Row */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
           <div className="relative flex-1 max-w-xl">
             <Search
               className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
@@ -196,57 +196,32 @@ export default function StorePage() {
             />
             <input
               type="text"
-              placeholder="Search smart appliances (refrigerators, AC, locks, blenders, plugs)..."
+              placeholder="Search appliances (surge protectors, blenders, water heaters, locks)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-2xl border border-slate-200 bg-white pl-12 pr-6 py-3.5 text-sm text-slate-800 outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 shadow-xs transition-all"
+              className="w-full rounded-2xl border border-slate-200 bg-white pl-11 sm:pl-12 pr-10 py-3 sm:py-3.5 text-xs sm:text-sm text-slate-800 outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 shadow-xs transition-all"
             />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              >
+                <X size={16} />
+              </button>
+            )}
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
-            {/* Price Filter Chips */}
-            <div className="hidden lg:flex items-center gap-1.5 bg-white p-1 rounded-2xl border border-slate-200 shadow-xs text-xs font-bold text-slate-600">
-              <button
-                onClick={() => setPriceFilter("all")}
-                className={`px-3 py-1.5 rounded-xl transition-colors ${
-                  priceFilter === "all" ? "bg-sky-600 text-white" : "hover:bg-slate-100"
-                }`}
-              >
-                All Prices
-              </button>
-              <button
-                onClick={() => setPriceFilter("under50k")}
-                className={`px-3 py-1.5 rounded-xl transition-colors ${
-                  priceFilter === "under50k" ? "bg-sky-600 text-white" : "hover:bg-slate-100"
-                }`}
-              >
-                &lt; ₦50k
-              </button>
-              <button
-                onClick={() => setPriceFilter("50k-150k")}
-                className={`px-3 py-1.5 rounded-xl transition-colors ${
-                  priceFilter === "50k-150k" ? "bg-sky-600 text-white" : "hover:bg-slate-100"
-                }`}
-              >
-                ₦50k - ₦150k
-              </button>
-              <button
-                onClick={() => setPriceFilter("above150k")}
-                className={`px-3 py-1.5 rounded-xl transition-colors ${
-                  priceFilter === "above150k" ? "bg-sky-600 text-white" : "hover:bg-slate-100"
-                }`}
-              >
-                &gt; ₦150k
-              </button>
-            </div>
-
+          <div className="flex items-center justify-between sm:justify-start gap-2 sm:gap-3">
             {/* Sort selector */}
-            <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-slate-200 bg-white text-[11px] font-bold uppercase tracking-widest text-slate-700 shadow-xs">
-              <ArrowUpDown size={13} className="text-sky-600" />
+            <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl border border-slate-200 bg-white text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-slate-700 shadow-xs w-full sm:w-auto justify-between sm:justify-start">
+              <div className="flex items-center gap-1.5 text-sky-700">
+                <ArrowUpDown size={13} />
+                <span className="text-[10px] text-slate-400 font-bold hidden xs:inline">Sort:</span>
+              </div>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="bg-transparent outline-none text-slate-800 cursor-pointer appearance-none pr-4 text-xs font-bold"
+                className="bg-transparent outline-none text-slate-800 cursor-pointer pr-2 text-[11px] sm:text-xs font-bold"
               >
                 <option value="default">Featured</option>
                 <option value="price-asc">Price: Low → High</option>
@@ -258,8 +233,45 @@ export default function StorePage() {
           </div>
         </div>
 
+        {/* Price Filter Chips */}
+        <div className="flex overflow-x-auto pb-1.5 sm:pb-0 gap-1.5 sm:gap-2 scrollbar-none items-center text-xs font-bold text-slate-600">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 shrink-0 mr-1 hidden sm:inline">Price:</span>
+          <button
+            onClick={() => setPriceFilter("all")}
+            className={`px-3 py-1.5 rounded-xl text-[11px] font-extrabold transition-all shrink-0 cursor-pointer ${
+              priceFilter === "all" ? "bg-sky-600 text-white shadow-xs" : "bg-white border border-slate-200 hover:bg-slate-50 text-slate-700"
+            }`}
+          >
+            All Prices
+          </button>
+          <button
+            onClick={() => setPriceFilter("under50k")}
+            className={`px-3 py-1.5 rounded-xl text-[11px] font-extrabold transition-all shrink-0 cursor-pointer ${
+              priceFilter === "under50k" ? "bg-sky-600 text-white shadow-xs" : "bg-white border border-slate-200 hover:bg-slate-50 text-slate-700"
+            }`}
+          >
+            &lt; ₦50k
+          </button>
+          <button
+            onClick={() => setPriceFilter("50k-150k")}
+            className={`px-3 py-1.5 rounded-xl text-[11px] font-extrabold transition-all shrink-0 cursor-pointer ${
+              priceFilter === "50k-150k" ? "bg-sky-600 text-white shadow-xs" : "bg-white border border-slate-200 hover:bg-slate-50 text-slate-700"
+            }`}
+          >
+            ₦50k - ₦150k
+          </button>
+          <button
+            onClick={() => setPriceFilter("above150k")}
+            className={`px-3 py-1.5 rounded-xl text-[11px] font-extrabold transition-all shrink-0 cursor-pointer ${
+              priceFilter === "above150k" ? "bg-sky-600 text-white shadow-xs" : "bg-white border border-slate-200 hover:bg-slate-50 text-slate-700"
+            }`}
+          >
+            &gt; ₦150k
+          </button>
+        </div>
+
         {/* Category Pills */}
-        <div className="flex overflow-x-auto pb-2 sm:pb-0 sm:flex-wrap gap-2 scrollbar-none">
+        <div className="flex overflow-x-auto pb-2 sm:pb-0 sm:flex-wrap gap-1.5 sm:gap-2 scrollbar-none">
           {categories.map((category) => {
             const count = categoryCounts[category] || 0;
             const isSelected = selectedCategory === category;
@@ -267,7 +279,7 @@ export default function StorePage() {
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-4 sm:px-5 py-2.5 rounded-2xl text-[11px] font-extrabold uppercase tracking-wider transition-all shrink-0 cursor-pointer flex items-center gap-2 ${
+                className={`px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-2xl text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider transition-all shrink-0 cursor-pointer flex items-center gap-1.5 sm:gap-2 ${
                   isSelected
                     ? "bg-sky-600 text-white shadow-md shadow-sky-600/25 scale-[1.02]"
                     : "bg-white text-slate-600 border border-slate-200 hover:border-sky-300 hover:bg-sky-50 shadow-xs"
@@ -298,7 +310,7 @@ export default function StorePage() {
                 setSelectedCategory("All");
                 setPriceFilter("all");
               }}
-              className="text-sky-600 hover:underline font-extrabold uppercase text-[10px] tracking-wider"
+              className="text-sky-700 hover:underline font-extrabold uppercase text-[10px] tracking-wider cursor-pointer"
             >
               Reset Filters
             </button>
@@ -314,7 +326,7 @@ export default function StorePage() {
 
         {filteredProducts.length === 0 && (
           <div className="py-20 text-center bg-white rounded-3xl border border-slate-200 p-8 shadow-xs">
-            <div className="w-14 h-14 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center mx-auto mb-3">
+            <div className="w-14 h-14 rounded-2xl bg-sky-50 text-sky-700 flex items-center justify-center mx-auto mb-3">
               <SlidersHorizontal size={24} />
             </div>
             <h3 className="text-base font-extrabold text-slate-900">No matching products found</h3>
@@ -327,7 +339,7 @@ export default function StorePage() {
                 setSelectedCategory("All");
                 setPriceFilter("all");
               }}
-              className="mt-4 px-5 py-2.5 rounded-full bg-sky-600 text-white text-xs font-bold uppercase tracking-wider hover:bg-sky-700 transition-colors shadow-xs"
+              className="mt-4 px-5 py-2.5 rounded-full bg-sky-600 text-white text-xs font-bold uppercase tracking-wider hover:bg-sky-700 transition-colors shadow-xs cursor-pointer"
             >
               Clear All Filters
             </button>
@@ -339,15 +351,15 @@ export default function StorePage() {
           <motion.div
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="fixed bottom-6 left-4 right-4 z-[55] md:hidden"
+            className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom,0px))] left-3 right-3 sm:left-4 sm:right-4 z-[55] md:hidden"
           >
             <button
               onClick={() => setIsCartOpen(true)}
-              className="w-full flex items-center justify-between px-6 py-4 rounded-2xl bg-sky-600 text-white shadow-xl shadow-sky-600/40 active:scale-[0.98] transition-transform"
+              className="w-full flex items-center justify-between px-5 sm:px-6 py-3.5 sm:py-4 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white shadow-xl shadow-sky-950/30 active:scale-[0.98] transition-transform font-bold cursor-pointer"
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2.5">
                 <ShoppingCart size={18} />
-                <span className="text-[11px] font-bold uppercase tracking-widest">
+                <span className="text-[11px] font-extrabold uppercase tracking-widest">
                   {cartCount} item{cartCount !== 1 ? "s" : ""} in cart
                 </span>
               </div>
