@@ -91,6 +91,15 @@ export default function Footer() {
                 </a>
               </li>
               <li>
+                <a 
+                  href="mailto:lightwavesupport@gmail.com" 
+                  className="hover:text-white transition-colors flex items-center gap-2"
+                >
+                  <Mail size={14} className="text-cyan-400" />
+                  <span>lightwavesupport@gmail.com</span>
+                </a>
+              </li>
+              <li>
                 <Link href="/admin" className="text-cyan-400 hover:text-cyan-300 font-bold transition-colors">
                   🔒 Admin Portal
                 </Link>

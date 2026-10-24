@@ -64,11 +64,7 @@ export default function ProductDetailPage({ params }: PageProps) {
     return includeInstallation ? product.price + installationFee : product.price;
   }, [product, includeInstallation]);
 
-  const effectiveOriginalPrice = useMemo(() => {
-    if (!product) return 0;
-    const baseOriginal = product.originalPrice || Math.round((product.price * 1.52) / 500) * 500;
-    return includeInstallation ? baseOriginal + installationFee : baseOriginal;
-  }, [product, includeInstallation]);
+
 
   // Store metadata
   const storeMetadata = useMemo(() => {
@@ -110,7 +106,6 @@ export default function ProductDetailPage({ params }: PageProps) {
   }
 
   const basePrice = product.price;
-  const baseOriginalPrice = product.originalPrice || Math.round((product.price * 1.52) / 500) * 500;
 
   // Direct 1-click installation toggle that adds/updates installation in the cart or toggles selection on page
   const handleToggleInstallation = (targetVal?: boolean, bundleIfEmpty: boolean = false) => {
@@ -366,7 +361,6 @@ export default function ProductDetailPage({ params }: PageProps) {
             <FlashDeal
               price={effectivePrice}
               appliancePrice={basePrice}
-              originalPrice={baseOriginalPrice}
               soldCount={product.soldCount || (product.reviewCount ? product.reviewCount * 4 : 1420)}
               stock={product.stock || 25}
               includeInstallation={includeInstallation}

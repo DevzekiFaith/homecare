@@ -113,12 +113,6 @@ function CheckoutContent() {
   const deliveryFee = isFreeDelivery ? 0 : deliveryInfo.deliveryFee;
   const grandTotal = Math.max(0, cartTotal - discount) + deliveryFee;
 
-  const totalMarketSavings = useMemo(() => {
-    return cartItems.reduce((acc, item) => {
-      const orig = item.product.originalPrice || Math.round((item.product.price * 1.5) / 500) * 500;
-      return acc + Math.max(0, orig - item.product.price) * item.quantity;
-    }, 0);
-  }, [cartItems]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -657,15 +651,6 @@ function CheckoutContent() {
                     </span>
                   </div>
 
-                  {totalMarketSavings > 0 && (
-                    <div className="flex items-center justify-between text-[11px] text-emerald-800 font-extrabold bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200/80">
-                      <span className="flex items-center gap-1.5">
-                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 animate-pulse" />
-                        Direct Factory Savings
-                      </span>
-                      <span>-₦{totalMarketSavings.toLocaleString()} vs Retail</span>
-                    </div>
-                  )}
 
                   <div className="flex justify-between border-t border-slate-100 pt-3 text-sm font-extrabold text-slate-900">
                     <span>Grand Total</span>

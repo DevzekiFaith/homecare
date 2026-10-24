@@ -408,6 +408,8 @@ function OrderConfirmationContent() {
         <p className="text-center text-[10px] text-zinc-600 mt-8 leading-relaxed">
           Having issues? Contact us via WhatsApp or email at{" "}
           <a href="mailto:support@homecare.com.ng" className="text-sky-600 font-bold hover:underline">support@homecare.com.ng</a>
+          {" "}or{" "}
+          <a href="mailto:lightwavesupport@gmail.com" className="text-sky-600 font-bold hover:underline">lightwavesupport@gmail.com</a>
         </p>
       </div>
     </div>

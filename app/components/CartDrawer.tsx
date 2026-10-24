@@ -48,6 +48,7 @@ export default function CartDrawer() {
   } = useCart();
 
   const [inputCoupon, setInputCoupon] = useState("");
+  const [showCouponInput, setShowCouponInput] = useState(false);
   const isFreeDelivery = cartTotal >= FREE_DELIVERY_THRESHOLD;
   const deliveryFee = isFreeDelivery ? 0 : ESTIMATED_BASE_DELIVERY;
   const finalTotal = Math.max(0, cartTotal - discount) + deliveryFee;
@@ -58,12 +59,6 @@ export default function CartDrawer() {
     (p) => !cartItems.some((item) => item.product.id === p.id) && p.price <= 15000
   ).slice(0, 4);
 
-  // Total customer savings compared to open market retail
-  const totalMarketSavings = cartItems.reduce((acc, item) => {
-    const orig = item.product.originalPrice || Math.round((item.product.price * 1.5) / 500) * 500;
-    return acc + Math.max(0, orig - item.product.price) * item.quantity;
-  }, 0);
-
   const handleApplyCoupon = (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputCoupon.trim()) return;
@@ -71,6 +66,7 @@ export default function CartDrawer() {
     if (res.success) {
       toast.success("Voucher Applied!", { description: res.message });
       setInputCoupon("");
+      setShowCouponInput(false);
     } else {
       toast.error(res.message);
     }
@@ -88,7 +84,7 @@ export default function CartDrawer() {
     removeFromCart(productId);
     toast.info("Removed from Cart", {
       description: `${productName} was removed.`,
-      duration: 2500,
+      duration: 2000,
     });
   };
 
@@ -114,45 +110,56 @@ export default function CartDrawer() {
             className="fixed right-0 top-0 bottom-0 z-[80] w-full sm:max-w-md h-[100dvh] bg-white border-l border-slate-200 flex flex-col shadow-2xl"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 sm:p-6 border-b border-slate-200">
-              <div className="flex items-center gap-2.5 sm:gap-3">
-                <ShoppingBag size={20} className="text-sky-600" />
-                <h2 className="text-base sm:text-lg font-heading font-extrabold text-slate-900">
+            <div className="flex items-center justify-between p-3.5 sm:p-4 border-b border-slate-200 shrink-0">
+              <div className="flex items-center gap-2">
+                <ShoppingBag size={18} className="text-sky-600" />
+                <h2 className="text-sm sm:text-base font-heading font-extrabold text-slate-900">
                   Shopping Cart
                 </h2>
                 {cartCount > 0 && (
-                  <span className="px-2.5 py-0.5 rounded-full bg-sky-50 border border-sky-200 text-[10px] font-black text-sky-700">
+                  <span className="px-2 py-0.5 rounded-full bg-sky-50 border border-sky-200 text-[10px] font-black text-sky-700">
                     {cartCount} {cartCount === 1 ? "item" : "items"}
                   </span>
                 )}
               </div>
-              <button
-                onClick={() => setIsCartOpen(false)}
-                className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-500 hover:text-slate-900 transition-all cursor-pointer"
-              >
-                <X size={18} />
-              </button>
+              <div className="flex items-center gap-2">
+                {cartItems.length > 0 && (
+                  <button
+                    onClick={clearCart}
+                    className="text-[10px] font-bold uppercase tracking-wider text-slate-400 hover:text-rose-600 transition-colors px-1 cursor-pointer"
+                    title="Clear Cart"
+                  >
+                    Clear All
+                  </button>
+                )}
+                <button
+                  onClick={() => setIsCartOpen(false)}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-500 hover:text-slate-900 transition-all cursor-pointer"
+                >
+                  <X size={16} />
+                </button>
+              </div>
             </div>
 
-            {/* Free Shipping Progress Indicator */}
+            {/* Free Shipping Progress Bar */}
             {cartItems.length > 0 && (
-              <div className="px-4 sm:px-6 py-3 bg-sky-50/70 border-b border-sky-100">
-                <div className="flex items-center justify-between text-xs font-bold text-slate-700 mb-1.5">
-                  <span className="flex items-center gap-1.5 text-sky-900">
-                    <Truck size={14} className="text-sky-600" />
+              <div className="px-4 py-2 bg-sky-50/70 border-b border-sky-100 shrink-0">
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-700 mb-1">
+                  <span className="flex items-center gap-1.5 text-sky-900 truncate">
+                    <Truck size={13} className="text-sky-600 shrink-0" />
                     {isFreeDelivery ? (
-                      <strong className="text-emerald-700 font-extrabold flex items-center gap-1">
-                        <CheckCircle2 size={13} className="text-emerald-600 shrink-0" /> You unlocked Free Nigerian Delivery!
-                      </strong>
+                      <span className="text-emerald-700 font-extrabold flex items-center gap-1 truncate">
+                        <CheckCircle2 size={12} className="text-emerald-600 shrink-0" /> Free Nigerian Delivery Unlocked!
+                      </span>
                     ) : (
-                      <span>
-                        Add <strong>₦{(FREE_DELIVERY_THRESHOLD - cartTotal).toLocaleString()}</strong> for Free Delivery
+                      <span className="truncate">
+                        Add <strong className="text-sky-900">₦{(FREE_DELIVERY_THRESHOLD - cartTotal).toLocaleString()}</strong> for Free Delivery
                       </span>
                     )}
                   </span>
-                  <span className="text-[10px] font-black text-sky-800">{progressPercent}%</span>
+                  <span className="text-[10px] font-black text-sky-800 shrink-0 ml-1">{progressPercent}%</span>
                 </div>
-                <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
+                <div className="h-1.5 w-full bg-slate-200/80 rounded-full overflow-hidden">
                   <div
                     className={`h-full transition-all duration-500 ${
                       isFreeDelivery ? "bg-emerald-600" : "bg-sky-600"
@@ -163,14 +170,11 @@ export default function CartDrawer() {
 
                 {/* 1-Tap Free Shipping Add-ons Shelf */}
                 {!isFreeDelivery && freeShippingAddons.length > 0 && (
-                  <div className="mt-2.5 pt-2 border-t border-sky-100/90">
-                    <div className="flex items-center justify-between text-[10px] font-bold text-sky-900 mb-1.5">
+                  <div className="mt-2 pt-1.5 border-t border-sky-100/90">
+                    <div className="flex items-center justify-between text-[9.5px] font-bold text-sky-900 mb-1">
                       <span className="flex items-center gap-1 font-extrabold uppercase tracking-wider text-sky-800">
-                        <Zap size={11} className="text-amber-500 fill-amber-500" />
-                        Add to Unlock Free Shipping:
-                      </span>
-                      <span className="text-[9.5px] font-extrabold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200/60">
-                        Save ₦2,000 Delivery
+                        <Zap size={10} className="text-amber-500 fill-amber-500" />
+                        Quick Add for Free Delivery:
                       </span>
                     </div>
 
@@ -185,10 +189,10 @@ export default function CartDrawer() {
                               description: `${addon.name} (₦${addon.price.toLocaleString()}) added!`,
                             });
                           }}
-                          className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white hover:bg-sky-50 border border-sky-200/90 text-[10px] text-slate-800 font-bold shrink-0 transition-all shadow-2xs hover:border-sky-400 group cursor-pointer"
+                          className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white hover:bg-sky-50 border border-sky-200/90 text-[9.5px] text-slate-800 font-bold shrink-0 transition-all shadow-2xs hover:border-sky-400 group cursor-pointer"
                         >
-                          <Plus size={11} className="text-sky-600 group-hover:scale-125 transition-transform" />
-                          <span className="truncate max-w-[120px] text-slate-700 font-semibold">{addon.name}</span>
+                          <Plus size={10} className="text-sky-600 group-hover:scale-125 transition-transform" />
+                          <span className="truncate max-w-[110px] text-slate-700 font-semibold">{addon.name}</span>
                           <span className="text-sky-700 font-black shrink-0">+₦{addon.price.toLocaleString()}</span>
                         </button>
                       ))}
@@ -198,146 +202,99 @@ export default function CartDrawer() {
               </div>
             )}
 
-            {/* HomeCare Certified Installation Banner with Brand Logo */}
-            {cartItems.length > 0 && (
-              <div className="mx-4 sm:mx-6 mt-3 p-3 bg-gradient-to-r from-slate-900 to-sky-950 rounded-2xl border border-sky-900/40 text-white flex items-center justify-between gap-3 shadow-md">
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="relative w-8 h-8 rounded-xl bg-white p-1 border border-white/20 shrink-0 flex items-center justify-center shadow-xs">
-                    <Image
-                      src="/hclogo.png"
-                      alt="HomeCare Brand Logo"
-                      width={22}
-                      height={22}
-                      className="object-contain rounded-md"
-                    />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-[11px] font-black uppercase text-white truncate">
-                      Home<span className="text-cyan-300">Care</span>™ Certified Installation
-                    </p>
-                    <p className="text-[9px] text-sky-200/70 font-medium leading-tight truncate">
-                      240V NEPA surge testing &amp; escrow guarantee available.
-                    </p>
-                  </div>
-                </div>
-
-                <Link
-                  href="/request"
-                  onClick={() => setIsCartOpen(false)}
-                  className="px-2.5 py-1 rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 text-[9px] font-black uppercase tracking-wider shrink-0 transition-colors"
-                >
-                  Book Pro
-                </Link>
-              </div>
-            )}
-
-            {/* Cart Items List */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3 sm:space-y-4 bg-slate-50">
+            {/* Cart Items List - Full Scroll View */}
+            <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2.5 bg-slate-50">
               {cartItems.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center pb-16">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white border border-slate-200 flex items-center justify-center mb-4 sm:mb-6 shadow-xs">
+                  <div className="w-16 h-16 rounded-full bg-white border border-slate-200 flex items-center justify-center mb-4 shadow-xs">
                     <PackageOpen
                       size={28}
                       className="text-sky-600"
                       strokeWidth={1.5}
                     />
                   </div>
-                  <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-1.5 sm:mb-2">
+                  <h3 className="text-base font-bold text-slate-900 mb-1.5">
                     Your cart is empty
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-500 max-w-xs mb-5 sm:mb-6 leading-relaxed">
+                  <p className="text-xs text-slate-500 max-w-xs mb-5 leading-relaxed">
                     Browse our smart appliances store and add products to your cart.
                   </p>
                   <Link
                     href="/store"
                     onClick={() => setIsCartOpen(false)}
-                    className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-xs font-black uppercase tracking-widest bg-sky-600 hover:bg-sky-700 text-white shadow-lg shadow-sky-600/30 transition-all cursor-pointer"
+                    className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-xs font-black uppercase tracking-widest bg-sky-600 hover:bg-sky-700 text-white shadow-lg shadow-sky-600/30 transition-all cursor-pointer"
                   >
                     <span>Browse Smart Store</span> <ArrowRight size={14} />
                   </Link>
                 </div>
               ) : (
-                <>
-                  <AnimatePresence mode="popLayout">
-                    {cartItems.map((item) => (
-                      <motion.div
-                        key={item.product.id}
-                        layout
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.9, x: 50 }}
-                        className="p-3.5 rounded-2xl border border-slate-200 bg-white hover:border-sky-300 transition-all shadow-2xs space-y-2.5"
-                      >
-                        <div className="flex gap-3 sm:gap-4">
-                          {/* Thumbnail */}
-                          <div className="relative w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-xl overflow-hidden bg-slate-50 border border-slate-200">
-                            <Image
-                              src={item.product.image}
-                              alt={item.product.name}
-                              fill
-                              className="object-cover"
-                              sizes="80px"
-                              unoptimized
-                            />
+                <AnimatePresence mode="popLayout">
+                  {cartItems.map((item) => (
+                    <motion.div
+                      key={item.product.id}
+                      layout
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9, x: 50 }}
+                      className="p-2.5 sm:p-3 rounded-2xl border border-slate-200/90 bg-white hover:border-sky-300 transition-all shadow-2xs space-y-2"
+                    >
+                      <div className="flex gap-2.5 sm:gap-3 items-center">
+                        {/* Thumbnail */}
+                        <div className="relative w-14 h-14 sm:w-16 sm:h-16 shrink-0 rounded-xl overflow-hidden bg-slate-50 border border-slate-200">
+                          <Image
+                            src={item.product.image}
+                            alt={item.product.name}
+                            fill
+                            className="object-cover"
+                            sizes="64px"
+                            unoptimized
+                          />
+                        </div>
+
+                        {/* Product Info */}
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-xs sm:text-sm font-bold text-slate-900 line-clamp-1 leading-snug">
+                            {item.product.name}
+                          </h4>
+                          <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
+                            <span className="text-[9px] text-sky-600 font-bold uppercase tracking-wider">
+                              {item.product.category}
+                            </span>
+                            {item.withInstallation && (
+                              <span className="text-[8.5px] font-black uppercase tracking-tight text-emerald-800 bg-emerald-50 px-1 py-0.2 rounded border border-emerald-200">
+                                + Pro Install
+                              </span>
+                            )}
                           </div>
 
-                          {/* Info */}
-                          <div className="flex-1 min-w-0 flex flex-col justify-between">
-                            <div>
-                              <h4 className="text-xs sm:text-sm font-bold text-slate-900 line-clamp-2 leading-snug">
-                                {item.product.name}
-                              </h4>
-                              <div className="flex items-center gap-1.5 flex-wrap mt-1">
-                                <span className="text-[9px] sm:text-[10px] text-sky-600 font-bold uppercase tracking-wider">
-                                  {item.product.category}
-                                </span>
-                                {item.withInstallation && (
-                                  <span className="text-[9px] font-black uppercase tracking-tight text-emerald-800 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
-                                    + Pro Install
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                            <div className="mt-1.5">
-                              <div className="flex items-baseline gap-1.5 flex-wrap">
-                                <p suppressHydrationWarning className="text-xs sm:text-sm font-black text-slate-900 font-heading">
-                                  <span className="text-sky-600 text-[11px] mr-0.5 font-bold">
-                                    ₦
-                                  </span>
-                                  {(
-                                    (item.product.price + (item.withInstallation ? (item.installationFee || 7500) : 0)) * item.quantity
-                                  ).toLocaleString()}
-                                </p>
-                                {item.product.originalPrice && item.product.originalPrice > item.product.price && (
-                                  <span className="text-[10px] text-slate-400 line-through font-semibold">
-                                    ₦{(item.product.originalPrice * item.quantity).toLocaleString()}
-                                  </span>
-                                )}
-                              </div>
-                              {item.quantity > 1 && (
-                                <p className="text-[9px] text-slate-400 font-medium">
-                                  ₦{(item.product.price + (item.withInstallation ? (item.installationFee || 7500) : 0)).toLocaleString()} each
-                                </p>
-                              )}
-                              {item.withInstallation && (
-                                <p className="text-[9px] text-slate-500 font-medium mt-0.5">
-                                  Appliance: ₦{(item.product.price * item.quantity).toLocaleString()} + Install: ₦{((item.installationFee || 7500) * item.quantity).toLocaleString()}
-                                </p>
-                              )}
-                            </div>
+                          <div className="mt-1 flex items-baseline justify-between gap-1">
+                            <p suppressHydrationWarning className="text-xs sm:text-sm font-black text-slate-900 font-heading">
+                              <span className="text-sky-600 text-[11px] mr-0.5 font-bold">
+                                ₦
+                              </span>
+                              {(
+                                (item.product.price + (item.withInstallation ? (item.installationFee || 7500) : 0)) * item.quantity
+                              ).toLocaleString()}
+                            </p>
+                            {item.quantity > 1 && (
+                              <span className="text-[9px] text-slate-400 font-medium">
+                                ₦{(item.product.price + (item.withInstallation ? (item.installationFee || 7500) : 0)).toLocaleString()} ea
+                              </span>
+                            )}
                           </div>
+                        </div>
 
-                        {/* Controls */}
-                        <div className="flex flex-col items-end justify-between shrink-0 pl-1">
+                        {/* Quantity & Delete Controls */}
+                        <div className="flex flex-col items-end justify-between shrink-0 pl-1 self-stretch">
                           <button
                             onClick={() => handleRemoveItem(item.product.id, item.product.name)}
-                            className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-all cursor-pointer"
-                            title="Remove"
+                            className="flex h-5 w-5 items-center justify-center rounded text-slate-300 hover:text-rose-600 hover:bg-rose-50 transition-all cursor-pointer"
+                            title="Remove item"
                           >
-                            <Trash2 size={13} />
+                            <Trash2 size={12} />
                           </button>
 
-                          <div className="flex items-center gap-1.5 bg-slate-50 p-0.5 rounded-xl border border-slate-200">
+                          <div className="flex items-center gap-1 bg-slate-50 p-0.5 rounded-lg border border-slate-200 mt-auto">
                             <button
                               onClick={() =>
                                 item.quantity === 1
@@ -347,11 +304,11 @@ export default function CartDrawer() {
                                       item.quantity - 1
                                     )
                               }
-                              className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-lg bg-white text-slate-700 hover:text-rose-600 transition-all shadow-2xs cursor-pointer border border-slate-200"
+                              className="flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-md bg-white text-slate-700 hover:text-rose-600 transition-all shadow-2xs cursor-pointer border border-slate-200"
                             >
-                              <Minus size={11} strokeWidth={2.5} />
+                              <Minus size={10} strokeWidth={2.5} />
                             </button>
-                            <span className="w-5 text-center text-xs font-black text-slate-900 tabular-nums">
+                            <span className="w-4 text-center text-xs font-black text-slate-900 tabular-nums">
                               {item.quantity}
                             </span>
                             <button
@@ -361,234 +318,183 @@ export default function CartDrawer() {
                                   item.quantity + 1
                                 )
                               }
-                              className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-lg bg-sky-600 text-white hover:bg-sky-700 transition-all shadow-xs cursor-pointer"
+                              className="flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-md bg-sky-600 text-white hover:bg-sky-700 transition-all shadow-xs cursor-pointer"
                             >
-                              <Plus size={11} strokeWidth={2.5} />
+                              <Plus size={10} strokeWidth={2.5} />
                             </button>
                           </div>
                         </div>
-                        </div>
+                      </div>
 
-                        {/* Interactive Pro Installation Card with 1-Click Toggle */}
-                        <div className={`p-2.5 rounded-xl border transition-all ${
+                      {/* Compact 1-line HomeCare Pro Installation Toggle */}
+                      <div
+                        onClick={() => {
+                          toggleInstallation(item.product.id);
+                          toast.success(
+                            !item.withInstallation
+                              ? "HomeCare™ Certified Installation Added!"
+                              : "Installation Removed from Item"
+                          );
+                        }}
+                        className={`flex items-center justify-between px-2.5 py-1.5 rounded-xl border text-[11px] cursor-pointer transition-colors ${
                           item.withInstallation
-                            ? "bg-sky-50/90 border-sky-300 ring-1 ring-sky-300/40 shadow-2xs"
-                            : "bg-slate-50 border-slate-200/80 hover:border-sky-200"
-                        }`}>
-                          <div className="flex items-center justify-between gap-2">
-                            <div className="flex items-center gap-2 min-w-0">
-                              <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
-                                item.withInstallation
-                                  ? "bg-sky-600 text-white shadow-xs"
-                                  : "bg-white text-slate-500 border border-slate-200"
-                              }`}>
-                                <Wrench size={13} />
-                              </div>
-                              <div className="min-w-0 text-left">
-                                <div className="flex items-center gap-1.5 flex-wrap">
-                                  <span className="text-[11px] font-black uppercase text-slate-900">
-                                    HomeCare™ Installation
-                                  </span>
-                                  <span className={`text-[9px] font-black uppercase px-1.5 py-0.2 rounded-md ${
-                                    item.withInstallation
-                                      ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
-                                      : "bg-slate-200 text-slate-700"
-                                  }`}>
-                                    +₦{((item.installationFee || 7500) * item.quantity).toLocaleString()}
-                                  </span>
-                                </div>
-                                <p className="text-[9.5px] text-slate-500 font-medium leading-snug line-clamp-2 mt-0.5">
-                                  {item.withInstallation
-                                    ? "Verified technician will test & calibrate 240V NEPA surge on delivery."
-                                    : "Add vetted technician to mount, wire and calibrate on delivery."}
-                                </p>
-                              </div>
-                            </div>
-
-                            <button
-                              type="button"
-                              onClick={() => {
-                                toggleInstallation(item.product.id);
-                                toast.success(
-                                  !item.withInstallation
-                                    ? "HomeCare™ Certified Installation Added!"
-                                    : "Installation Removed from Item"
-                                );
-                              }}
-                              className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider shrink-0 transition-all cursor-pointer ${
-                                item.withInstallation
-                                  ? "bg-white hover:bg-rose-50 text-slate-700 hover:text-rose-600 border border-slate-200"
-                                  : "bg-sky-600 hover:bg-sky-700 text-white shadow-xs hover:scale-102"
-                              }`}
-                            >
-                              {item.withInstallation ? "Remove" : "+ Add"}
-                            </button>
-                          </div>
+                            ? "bg-sky-50 border-sky-300 text-sky-900 font-bold"
+                            : "bg-slate-50/80 border-slate-200 text-slate-600 hover:border-sky-300 hover:bg-sky-50/30"
+                        }`}
+                      >
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <Wrench size={12} className={item.withInstallation ? "text-sky-600 shrink-0" : "text-slate-400 shrink-0"} />
+                          <span className="truncate text-[10.5px]">HomeCare™ Installation (+₦{(item.installationFee || 7500).toLocaleString()})</span>
                         </div>
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-
-                  {/* Clear Cart */}
-                  <button
-                    onClick={clearCart}
-                    className="w-full text-center text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-rose-600 transition-colors py-2 cursor-pointer"
-                  >
-                    Clear All Items
-                  </button>
-                </>
+                        <span className={`text-[9.5px] font-black uppercase px-2 py-0.5 rounded-md shrink-0 ml-1.5 ${
+                          item.withInstallation
+                            ? "bg-sky-600 text-white shadow-2xs"
+                            : "bg-white text-slate-600 border border-slate-200"
+                        }`}>
+                          {item.withInstallation ? "Added ✓" : "+ Add"}
+                        </span>
+                      </div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               )}
             </div>
 
-            {/* Footer / Summary */}
+            {/* Compact Bottom Summary & Checkout */}
             {cartItems.length > 0 && (
-              <div className="border-t border-slate-200 p-4 sm:p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))] sm:pb-6 space-y-4 bg-white shadow-lg">
+              <div className="border-t border-slate-200 p-3.5 sm:p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] sm:pb-4 space-y-2.5 bg-white shadow-lg shrink-0">
                 
-                {/* Voucher Code Box */}
-                <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200/80">
+                {/* Collapsible Voucher Bar */}
+                <div className="bg-slate-50 p-2 rounded-xl border border-slate-200/80">
                   {couponCode ? (
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between text-xs">
-                        <div className="flex items-center gap-1.5 font-bold text-emerald-800">
-                          <Tag size={13} className="text-emerald-600" />
-                          <span>
-                            Voucher <strong>{couponCode}</strong> applied {discount > 0 ? `(-₦${discount.toLocaleString()})` : ""}
-                          </span>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={handleRemoveCoupon}
-                          className="text-[10px] font-extrabold uppercase text-rose-600 hover:underline cursor-pointer"
-                        >
-                          Remove
-                        </button>
+                    <div className="flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-1.5 font-bold text-emerald-800">
+                        <Tag size={12} className="text-emerald-600" />
+                        <span className="text-[11px]">
+                          Voucher <strong>{couponCode}</strong> applied {discount > 0 ? `(-₦${discount.toLocaleString()})` : ""}
+                        </span>
                       </div>
-                      {["WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(couponCode) && cartTotal < 15000 && cartTotal > 0 && (
-                        <p className="text-[10px] text-emerald-700 font-medium">
-                          15% off applied (-₦{discount.toLocaleString()}) · Add ₦{(15000 - cartTotal).toLocaleString()} more for full ₦2,500 flat discount!
-                        </p>
-                      )}
-                      {["FREEINSTALL", "INSTALLFREE"].includes(couponCode) && installationTotal === 0 && (
-                        <p className="text-[10px] text-amber-700 font-medium">
-                          Toggle HomeCare™ Installation on any item to waive the ₦7,500 fee!
-                        </p>
-                      )}
+                      <button
+                        type="button"
+                        onClick={handleRemoveCoupon}
+                        className="text-[10px] font-extrabold uppercase text-rose-600 hover:underline cursor-pointer"
+                      >
+                        Remove
+                      </button>
                     </div>
                   ) : (
-                    <div className="space-y-2">
-                      <form onSubmit={handleApplyCoupon} className="flex gap-2">
-                        <input
-                          type="text"
-                          value={inputCoupon}
-                          onChange={(e) => setInputCoupon(e.target.value)}
-                          placeholder="Voucher code (e.g. WELCOME2500)"
-                          className="flex-1 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs uppercase font-mono placeholder:normal-case placeholder:font-sans outline-none focus:border-sky-500"
-                        />
-                        <button
-                          type="submit"
-                          className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold uppercase tracking-wider cursor-pointer"
-                        >
-                          Apply
-                        </button>
-                      </form>
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="text-[10px] text-slate-500 font-medium">Tap to apply:</span>
+                    <div>
+                      {!showCouponInput ? (
                         <button
                           type="button"
-                          onClick={() => {
-                            const res = applyCoupon("WELCOME2500");
-                            if (res.success) toast.success("Voucher Applied!", { description: res.message });
-                          }}
-                          className="px-2 py-0.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-[10px] font-bold cursor-pointer transition-colors"
+                          onClick={() => setShowCouponInput(true)}
+                          className="flex items-center justify-between w-full text-[11px] font-bold text-sky-700 hover:text-sky-800 cursor-pointer"
                         >
-                          🏷️ WELCOME2500 (-₦2,500)
+                          <span className="flex items-center gap-1.5">
+                            <Tag size={12} /> Have a promo code or voucher?
+                          </span>
+                          <span className="text-[10px] font-black uppercase text-sky-600 hover:underline">+ Add</span>
                         </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const res = applyCoupon("SAVE10");
-                            if (res.success) toast.success("Voucher Applied!", { description: res.message });
-                          }}
-                          className="px-2 py-0.5 rounded-full bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 text-[10px] font-bold cursor-pointer transition-colors"
-                        >
-                          🏷️ SAVE10 (-10%)
-                        </button>
-                      </div>
+                      ) : (
+                        <div className="space-y-1.5">
+                          <form onSubmit={handleApplyCoupon} className="flex gap-1.5">
+                            <input
+                              type="text"
+                              value={inputCoupon}
+                              onChange={(e) => setInputCoupon(e.target.value)}
+                              placeholder="e.g. WELCOME2500"
+                              className="flex-1 px-2.5 py-1 rounded-lg border border-slate-200 bg-white text-[11px] uppercase font-mono placeholder:normal-case outline-none focus:border-sky-500"
+                            />
+                            <button
+                              type="submit"
+                              className="px-3 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-[10px] font-bold uppercase tracking-wider cursor-pointer"
+                            >
+                              Apply
+                            </button>
+                          </form>
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const res = applyCoupon("WELCOME2500");
+                                if (res.success) toast.success("Voucher Applied!", { description: res.message });
+                              }}
+                              className="px-2 py-0.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-[9px] font-bold cursor-pointer"
+                            >
+                              🏷️ WELCOME2500 (-₦2,500)
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const res = applyCoupon("SAVE10");
+                                if (res.success) toast.success("Voucher Applied!", { description: res.message });
+                              }}
+                              className="px-2 py-0.5 rounded-full bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 text-[9px] font-bold cursor-pointer"
+                            >
+                              🏷️ SAVE10 (-10%)
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
 
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs sm:text-sm">
-                    <span className="text-slate-500 font-medium">Appliances Subtotal</span>
+                {/* Price Breakdown */}
+                <div className="space-y-1 text-xs">
+                  <div className="flex items-center justify-between text-slate-600">
+                    <span>Appliances Subtotal</span>
                     <span suppressHydrationWarning className="font-bold text-slate-900">
                       ₦{itemsSubtotal.toLocaleString()}
                     </span>
                   </div>
 
                   {installationTotal > 0 && (
-                    <div className="flex items-center justify-between text-xs sm:text-sm text-sky-800 font-bold">
-                      <span className="flex items-center gap-1.5">
-                        <Wrench size={13} className="text-sky-600" />
-                        HomeCare™ Pro Installation
+                    <div className="flex items-center justify-between text-sky-800 font-bold">
+                      <span className="flex items-center gap-1">
+                        <Wrench size={11} className="text-sky-600" /> Pro Installation
                       </span>
                       <span>+₦{installationTotal.toLocaleString()}</span>
                     </div>
                   )}
 
                   {discount > 0 && (
-                    <div className="flex items-center justify-between text-xs sm:text-sm text-emerald-700 font-bold">
+                    <div className="flex items-center justify-between text-emerald-700 font-bold">
                       <span className="flex items-center gap-1">
-                        <Tag size={12} /> Voucher ({couponCode})
+                        <Tag size={11} /> Discount ({couponCode})
                       </span>
                       <span>-₦{discount.toLocaleString()}</span>
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between text-xs sm:text-sm">
-                    <span className="text-slate-500 font-medium">Delivery</span>
+                  <div className="flex items-center justify-between text-slate-600">
+                    <span>Delivery</span>
                     <span className={`font-bold ${deliveryFee === 0 ? "text-emerald-600" : "text-slate-900"}`}>
                       {deliveryFee === 0 ? "FREE" : `₦${deliveryFee.toLocaleString()}`}
                     </span>
                   </div>
 
-                  {totalMarketSavings > 0 && (
-                    <div className="flex items-center justify-between text-[11px] text-emerald-800 font-extrabold bg-emerald-50 px-2.5 py-1.5 rounded-xl border border-emerald-200/70">
-                      <span className="flex items-center gap-1.5">
-                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 animate-pulse" />
-                        Direct Factory Savings
-                      </span>
-                      <span>-₦{totalMarketSavings.toLocaleString()} vs Retail</span>
-                    </div>
-                  )}
-
-                  <div className="h-px bg-slate-200 my-2" />
+                  <div className="h-px bg-slate-200 my-1" />
                   
                   <div className="flex items-center justify-between">
-                    <span className="text-xs sm:text-sm font-extrabold text-slate-900">
+                    <span className="font-extrabold text-slate-900">
                       Estimated Total
                     </span>
-                    <span suppressHydrationWarning className="text-lg sm:text-xl font-black text-sky-600 font-heading">
+                    <span suppressHydrationWarning className="text-base sm:text-lg font-black text-sky-600 font-heading">
                       ₦{finalTotal.toLocaleString()}
                     </span>
                   </div>
                 </div>
 
+                {/* Checkout CTA */}
                 <button
                   onClick={() => {
                     setIsCartOpen(false);
                     router.push("/store/checkout");
                   }}
-                  className="flex items-center justify-center gap-2 w-full h-12 sm:h-13 rounded-2xl bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-sky-600/30 active:scale-[0.98] cursor-pointer"
+                  className="flex items-center justify-center gap-2 w-full h-11 rounded-xl bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white text-xs font-black uppercase tracking-wider transition-all shadow-md shadow-sky-600/25 active:scale-[0.98] cursor-pointer"
                 >
-                  <span>Proceed to Checkout</span> <ArrowRight size={16} />
-                </button>
-
-                <button
-                  onClick={() => setIsCartOpen(false)}
-                  className="w-full text-center text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-sky-600 transition-colors py-1 cursor-pointer"
-                >
-                  Continue Shopping
+                  <span>Proceed to Checkout</span> <ArrowRight size={15} />
                 </button>
               </div>
             )}

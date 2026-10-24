@@ -279,7 +279,7 @@ export function getStoreMetadataForProduct(category: string, sourceOrigin?: stri
         dispatchRate: "99.7% within 24h",
         yearsInNigeria: 4,
         originCountry: "Direct Manufacturer (Surge Protected LED)",
-        verifiedBadge: "Factory Direct",
+        verifiedBadge: "Official Partner",
       };
     case "Water Automation":
       return {

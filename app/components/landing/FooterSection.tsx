@@ -23,9 +23,13 @@ export default function FooterSection() {
               <Mail size={15} className="text-cyan-400" />
               <span>support@homecare.com.ng</span>
             </a>
+            <a href="mailto:lightwavesupport@gmail.com" className="flex items-center gap-2 hover:text-white transition-colors">
+              <Mail size={15} className="text-cyan-400" />
+              <span>lightwavesupport@gmail.com</span>
+            </a>
             <p className="flex items-center gap-2 text-xs font-semibold text-cyan-300">
               <MapPin size={15} className="text-cyan-400 shrink-0" /> 
-              <span>Serving Magboro · Mowe · Ikeja · Lagos · Lekki · Enugu · Abeokuta</span>
+              <span>Nigeria</span>
             </p>
           </div>
         </div>

@@ -40,7 +40,6 @@ interface SpotlightItem {
   tagline: string;
   sweetNote: string;
   badge: string;
-  strikePrice: number;
 }
 
 const SPOTLIGHT_DEVICES: SpotlightItem[] = [
@@ -50,7 +49,6 @@ const SPOTLIGHT_DEVICES: SpotlightItem[] = [
     tagline: "Instant 0.01s Voltage Cutoff",
     sweetNote: "Trips crazy NEPA voltage surges before they blow your fridge, TV, or inverter battery.",
     badge: "Bestseller #1",
-    strikePrice: 13500,
   },
   {
     productId: "sp-power-6",
@@ -58,7 +56,6 @@ const SPOTLIGHT_DEVICES: SpotlightItem[] = [
     tagline: "40,000mAh Power Reserve",
     sweetNote: "Powers MacBooks & phones through prolonged blackout. Remote work essential in Nigeria.",
     badge: "Work Anywhere",
-    strikePrice: 38000,
   },
   {
     productId: "sp-sec-1",
@@ -66,7 +63,6 @@ const SPOTLIGHT_DEVICES: SpotlightItem[] = [
     tagline: "Fingerprint & Card AI Entry",
     sweetNote: "Keyless freedom for your family. No more locked doors, rusty padlocks, or lost key panic.",
     badge: "Security Upgrade",
-    strikePrice: 95000,
   },
 ];
 
@@ -402,9 +398,6 @@ export default function StorePage() {
                       <div className="flex items-baseline gap-2">
                         <span className="text-xl sm:text-2xl font-black text-cyan-300 font-heading">
                           ₦{activeProduct.price.toLocaleString()}
-                        </span>
-                        <span className="text-xs text-sky-300/50 line-through">
-                          ₦{activeSpotlightConfig.strikePrice.toLocaleString()}
                         </span>
                       </div>
                       <span className="text-[10px] font-bold text-emerald-400 flex items-center gap-1">

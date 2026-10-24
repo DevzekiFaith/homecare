@@ -25,7 +25,6 @@ export default function MobileBar({
   includeInstallation = false,
   installationFee = 7500,
 }: MobileBarProps) {
-  const strikePrice = product.originalPrice || Math.round((product.price * 1.52) / 500) * 500;
 
   const handleChat = () => {
     const encoded = encodeURIComponent(
@@ -78,13 +77,9 @@ export default function MobileBar({
         <span className="text-xs sm:text-sm font-black text-slate-900 font-heading">
           ₦{(product.price + (includeInstallation ? installationFee : 0)).toLocaleString()}
         </span>
-        {includeInstallation ? (
+        {includeInstallation && (
           <span className="text-[8px] font-black uppercase tracking-tight text-sky-800">
             + Pro Install
-          </span>
-        ) : (
-          <span className="text-[10px] text-slate-400 line-through">
-            ₦{strikePrice.toLocaleString()}
           </span>
         )}
       </div>

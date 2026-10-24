@@ -26,10 +26,6 @@ export default function ProductCard({
   const cartItem = cartItems.find((item) => item.product.id === product.id);
   const quantity = cartItem?.quantity || 0;
 
-  const originalPrice = product.originalPrice || Math.round((product.price * 1.5) / 500) * 500;
-  const hasDiscount = originalPrice > product.price;
-  const discountPercent = hasDiscount ? Math.round(((originalPrice - product.price) / originalPrice) * 100) : 0;
-  const savings = hasDiscount ? originalPrice - product.price : 0;
 
   const [imgError, setImgError] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
@@ -197,28 +193,7 @@ export default function ProductCard({
               </span>
               {product.price.toLocaleString()}
             </p>
-
-            {hasDiscount && (
-              <span className="text-xs text-slate-400 line-through font-semibold">
-                ₦{originalPrice.toLocaleString()}
-              </span>
-            )}
-
-            {hasDiscount && (
-              <span className="bg-sky-50 text-sky-800 border border-sky-200 text-[10px] font-black px-1.5 py-0.5 rounded-md">
-                -{discountPercent}%
-              </span>
-            )}
           </div>
-
-          {hasDiscount && (
-            <div className="mt-1 flex items-center gap-1.5 text-[10px] text-sky-800 font-bold">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-sky-600 shrink-0" />
-              <span>Direct Factory Supply</span>
-              <span className="text-slate-300">•</span>
-              <span>Save ₦{savings.toLocaleString()} vs Retail</span>
-            </div>
-          )}
         </div>
 
         {/* Booking flow button */}

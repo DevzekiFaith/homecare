@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import {
   Flame,
   Clock,
-  Tag,
   Eye,
   ShoppingBag,
   TrendingDown,
@@ -16,7 +15,6 @@ import {
 
 interface FlashDealProps {
   price: number;
-  originalPrice?: number;
   soldCount?: number;
   stock?: number;
   includeInstallation?: boolean;
@@ -27,7 +25,6 @@ interface FlashDealProps {
 
 export default function FlashDeal({
   price,
-  originalPrice,
   soldCount = 1420,
   stock = 18,
   includeInstallation = false,
@@ -38,10 +35,6 @@ export default function FlashDeal({
   const fee = installationFee;
   const baseAppliancePrice = appliancePrice ?? (includeInstallation ? Math.max(0, price - fee) : price);
   const currentTotalPrice = includeInstallation ? baseAppliancePrice + fee : baseAppliancePrice;
-
-  const baseStrikePrice = originalPrice || Math.round((baseAppliancePrice * 1.52) / 500) * 500;
-  const currentStrikePrice = includeInstallation ? baseStrikePrice + fee : baseStrikePrice;
-  const discountPercent = Math.round(((currentStrikePrice - currentTotalPrice) / currentStrikePrice) * 100);
 
   // Live countdown timer
   const [timeLeft, setTimeLeft] = useState({
@@ -101,7 +94,7 @@ export default function FlashDeal({
               </span>
             </div>
             <p className="text-[10px] text-sky-200/90 font-medium">
-              Direct warehouse price with full Nigerian warranty
+              Official price with full Nigerian warranty
             </p>
           </div>
         </div>
@@ -140,17 +133,6 @@ export default function FlashDeal({
               With Installation
             </span>
           )}
-
-          {/* Strikethrough Original Market Price */}
-          <span className="text-base sm:text-lg font-bold text-slate-400 line-through">
-            ₦{currentStrikePrice.toLocaleString()}
-          </span>
-
-          {/* Discount Percentage Badge */}
-          <span className="bg-sky-50 text-sky-800 border border-sky-200 text-xs font-extrabold px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-2xs">
-            <Tag size={11} className="text-sky-600" />
-            -{discountPercent}% OFF
-          </span>
 
           {/* Best Price (30d) Badge */}
           <span className="text-[11px] font-bold uppercase tracking-wider text-sky-800 bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-200 flex items-center gap-1">
