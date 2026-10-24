@@ -26,6 +26,11 @@ export default function ProductCard({
   const cartItem = cartItems.find((item) => item.product.id === product.id);
   const quantity = cartItem?.quantity || 0;
 
+  const originalPrice = product.originalPrice || Math.round((product.price * 1.5) / 500) * 500;
+  const hasDiscount = originalPrice > product.price;
+  const discountPercent = hasDiscount ? Math.round(((originalPrice - product.price) / originalPrice) * 100) : 0;
+  const savings = hasDiscount ? originalPrice - product.price : 0;
+
   const [imgError, setImgError] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
 
@@ -191,13 +196,38 @@ export default function ProductCard({
       </div>
 
       {/* Price and Actions */}
-      <div className="mt-4 pt-4 border-t border-slate-100 relative z-10">
-        <p suppressHydrationWarning className="text-lg sm:text-xl font-extrabold text-slate-900 mb-3 flex items-start font-heading">
-          <span className="text-sky-600 text-xs sm:text-sm mr-0.5 font-bold mt-1">
-            ₦
-          </span>
-          {product.price.toLocaleString()}
-        </p>
+      <div className="mt-4 pt-3.5 border-t border-slate-100 relative z-10">
+        <div className="mb-2.5">
+          <div className="flex items-baseline gap-2 flex-wrap">
+            <p suppressHydrationWarning className="text-lg sm:text-xl font-extrabold text-slate-900 flex items-start font-heading">
+              <span className="text-sky-600 text-xs sm:text-sm mr-0.5 font-bold mt-1">
+                ₦
+              </span>
+              {product.price.toLocaleString()}
+            </p>
+
+            {hasDiscount && (
+              <span className="text-xs text-slate-400 line-through font-semibold">
+                ₦{originalPrice.toLocaleString()}
+              </span>
+            )}
+
+            {hasDiscount && (
+              <span className="bg-rose-50 text-rose-700 border border-rose-200/80 text-[10px] font-black px-1.5 py-0.5 rounded-md">
+                -{discountPercent}%
+              </span>
+            )}
+          </div>
+
+          {hasDiscount && (
+            <div className="mt-1 flex items-center gap-1.5 text-[10px] text-emerald-700 font-bold">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+              <span>Direct Factory Supply</span>
+              <span className="text-slate-300">•</span>
+              <span>Save ₦{savings.toLocaleString()} vs Retail</span>
+            </div>
+          )}
+        </div>
 
         {/* Booking flow button */}
         {onAddStep && (

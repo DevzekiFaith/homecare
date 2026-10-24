@@ -532,7 +532,7 @@ function CheckoutContent() {
                 {isFreeDelivery ? (
                   <div className="flex items-center gap-2 p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 font-bold">
                     <Truck size={16} className="text-emerald-600 shrink-0" />
-                    <span>Free Shipping Applied (Orders over ₦100k)</span>
+                    <span>Free Shipping Applied (Orders over ₦{FREE_DELIVERY_THRESHOLD.toLocaleString()})</span>
                   </div>
                 ) : (
                   <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 text-[11px] text-slate-500">

@@ -8,7 +8,7 @@ export interface NigeriaStateDelivery {
   popularAreas: string[];
 }
 
-export const FREE_DELIVERY_THRESHOLD = 100000;
+export const FREE_DELIVERY_THRESHOLD = 50000;
 
 export const NIGERIA_STATES_DELIVERY: Record<string, NigeriaStateDelivery> = {
   "Lagos": {
