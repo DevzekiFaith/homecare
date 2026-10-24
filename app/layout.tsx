@@ -173,7 +173,19 @@ export default function RootLayout({
           </RootWrapper>
           <MobileBottomNav />
         </CartProvider>
-        <Toaster position="top-center" richColors />
+        <Toaster 
+          position="top-center" 
+          richColors 
+          closeButton
+          offset="76px"
+          mobileOffset={{ top: "76px", left: "16px", right: "16px" }}
+          style={{ zIndex: 99999 }}
+          toastOptions={{
+            style: {
+              zIndex: 99999,
+            },
+          }}
+        />
         <Analytics />
         {/* PWA service worker registration */}
         <script

@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Sparkles, ShieldCheck, Zap, ShoppingBag } from "lucide-react";
+import { ArrowRight, BadgeCheck, ShoppingBag } from "lucide-react";
 import { PRODUCTS } from "@/lib/products";
 import { useCart } from "@/lib/cart";
+import { toast } from "sonner";
 
 export default function SmartStorePreviewSection() {
   const { addToCart, setIsCartOpen } = useCart();
@@ -22,7 +23,7 @@ export default function SmartStorePreviewSection() {
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
           <div>
             <div className="inline-flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-widest text-sky-700 bg-sky-50 px-3.5 py-1.5 rounded-full border border-sky-200 mb-3">
-              <Sparkles size={12} />
+              <BadgeCheck size={13} className="text-sky-600" />
               <span>Smart Home Store &amp; Installation</span>
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase font-heading tracking-tight text-slate-900">
@@ -102,7 +103,14 @@ export default function SmartStorePreviewSection() {
                   <button
                     onClick={() => {
                       addToCart(product, 1);
-                      setIsCartOpen(true);
+                      toast.success("Added to Cart!", {
+                        description: `${product.name} (₦${product.price.toLocaleString()}) added to your cart.`,
+                        action: {
+                          label: "View Cart",
+                          onClick: () => setIsCartOpen(true),
+                        },
+                        duration: 3500,
+                      });
                     }}
                     className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-[10px] font-extrabold uppercase tracking-wider transition-all shadow-xs active:scale-95 cursor-pointer"
                   >

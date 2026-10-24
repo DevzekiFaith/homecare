@@ -14,7 +14,7 @@ import {
   ShoppingBag,
   ArrowRight,
   PackageOpen,
-  Sparkles,
+  CheckCircle2,
   Truck,
   Tag
 } from "lucide-react";
@@ -56,6 +56,22 @@ export default function CartDrawer() {
     } else {
       toast.error(res.message);
     }
+  };
+
+  const handleRemoveCoupon = () => {
+    removeCoupon();
+    toast.info("Voucher Removed", {
+      description: "Voucher discount was removed from your cart.",
+      duration: 2500,
+    });
+  };
+
+  const handleRemoveItem = (productId: string, productName: string) => {
+    removeFromCart(productId);
+    toast.info("Removed from Cart", {
+      description: `${productName} was removed.`,
+      duration: 2500,
+    });
   };
 
   return (
@@ -108,7 +124,7 @@ export default function CartDrawer() {
                     <Truck size={14} className="text-sky-600" />
                     {isFreeDelivery ? (
                       <strong className="text-emerald-700 font-extrabold flex items-center gap-1">
-                        <Sparkles size={13} className="text-emerald-600" /> You unlocked Free Nigerian Delivery!
+                        <CheckCircle2 size={13} className="text-emerald-600 shrink-0" /> You unlocked Free Nigerian Delivery!
                       </strong>
                     ) : (
                       <span>
@@ -201,7 +217,7 @@ export default function CartDrawer() {
                         {/* Controls */}
                         <div className="flex flex-col items-end justify-between shrink-0 pl-1">
                           <button
-                            onClick={() => removeFromCart(item.product.id)}
+                            onClick={() => handleRemoveItem(item.product.id, item.product.name)}
                             className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-all cursor-pointer"
                             title="Remove"
                           >
@@ -212,7 +228,7 @@ export default function CartDrawer() {
                             <button
                               onClick={() =>
                                 item.quantity === 1
-                                  ? removeFromCart(item.product.id)
+                                  ? handleRemoveItem(item.product.id, item.product.name)
                                   : updateQuantity(
                                       item.product.id,
                                       item.quantity - 1
@@ -267,7 +283,7 @@ export default function CartDrawer() {
                       </div>
                       <button
                         type="button"
-                        onClick={removeCoupon}
+                        onClick={handleRemoveCoupon}
                         className="text-[10px] font-extrabold uppercase text-rose-600 hover:underline cursor-pointer"
                       >
                         Remove

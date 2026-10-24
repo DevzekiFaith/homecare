@@ -6,6 +6,7 @@ import { useState } from "react";
 import { ShoppingCart, Plus, Check, Minus, Star, ShoppingBag, Flame } from "lucide-react";
 import { Product } from "@/lib/products";
 import { useCart } from "@/lib/cart";
+import { toast } from "sonner";
 
 interface ProductCardProps {
   product: Product;
@@ -28,11 +29,48 @@ export default function ProductCard({
   const [imgError, setImgError] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     addToCart(product, 1);
     setJustAdded(true);
     setTimeout(() => setJustAdded(false), 1500);
-    setIsCartOpen(true);
+
+    toast.success("Added to Cart!", {
+      description: `${product.name} (₦${product.price.toLocaleString()}) added to your cart.`,
+      action: {
+        label: "View Cart",
+        onClick: () => setIsCartOpen(true),
+      },
+      duration: 3500,
+    });
+  };
+
+  const handleIncrease = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    const newQty = quantity + 1;
+    updateQuantity(product.id, newQty);
+    toast.success("Cart Updated", {
+      description: `${product.name} quantity is now ${newQty}`,
+      duration: 2000,
+    });
+  };
+
+  const handleDecrease = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (quantity === 1) {
+      removeFromCart(product.id);
+      toast.info("Removed from Cart", {
+        description: `${product.name} removed from your cart.`,
+        duration: 2500,
+      });
+    } else {
+      const newQty = quantity - 1;
+      updateQuantity(product.id, newQty);
+      toast.success("Cart Updated", {
+        description: `${product.name} quantity is now ${newQty}`,
+        duration: 2000,
+      });
+    }
   };
 
   return (
@@ -184,11 +222,7 @@ export default function ProductCard({
               <div className="flex items-center flex-1 w-full h-11">
                 <div className="flex items-center w-full h-full justify-between rounded-xl border border-sky-200 bg-sky-50/70 p-1 shadow-2xs">
                   <button
-                    onClick={() =>
-                      quantity === 1
-                        ? removeFromCart(product.id)
-                        : updateQuantity(product.id, quantity - 1)
-                    }
+                    onClick={handleDecrease}
                     className="flex h-full aspect-square items-center justify-center rounded-lg bg-white text-slate-700 hover:text-rose-600 transition-all shadow-xs active:scale-95 border border-slate-200 cursor-pointer"
                     aria-label="Decrease quantity"
                   >
@@ -198,7 +232,7 @@ export default function ProductCard({
                     {quantity}
                   </span>
                   <button
-                    onClick={() => updateQuantity(product.id, quantity + 1)}
+                    onClick={handleIncrease}
                     className="flex h-full aspect-square items-center justify-center rounded-lg bg-sky-600 text-white hover:bg-sky-700 transition-all shadow-xs active:scale-95 cursor-pointer"
                     aria-label="Increase quantity"
                   >

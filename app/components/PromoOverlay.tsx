@@ -6,7 +6,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   X, 
-  Sparkles, 
+  Gift, 
   Copy, 
   Check, 
   ShieldCheck, 
@@ -209,7 +209,7 @@ export default function PromoOverlay() {
                   
                   <div className="relative z-10 space-y-2">
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 text-sky-100 text-[10px] font-black uppercase tracking-widest border border-white/20">
-                      <Sparkles size={12} className="text-cyan-300" />
+                      <Gift size={12} className="text-cyan-300" />
                       Exclusive Welcome Voucher
                     </span>
                     <h3 className="text-2xl sm:text-3xl font-black text-white font-heading tracking-tight leading-snug">
@@ -267,7 +267,7 @@ export default function PromoOverlay() {
                       onClick={handleClaimVoucher}
                       className="w-full h-12 rounded-full bg-sky-600 hover:bg-sky-700 text-white text-xs font-black uppercase tracking-wider shadow-lg shadow-sky-600/25 flex items-center justify-center gap-2 transition-all cursor-pointer"
                     >
-                      <Sparkles size={15} />
+                      <Gift size={15} />
                       <span>Claim ₦2,500 Voucher & Shop Now</span>
                     </button>
 

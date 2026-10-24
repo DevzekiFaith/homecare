@@ -130,10 +130,14 @@ export default function ProductDetailPage({ params }: PageProps) {
     addToCart(variantProduct, quantity);
     setJustAdded(true);
     toast.success("Added to Cart!", {
-      description: `${quantity}x ${variantProduct.name} added to your shopping cart.`
+      description: `${quantity}x ${variantProduct.name} added to your shopping cart.`,
+      action: {
+        label: "View Cart",
+        onClick: () => setIsCartOpen(true),
+      },
+      duration: 4000,
     });
     setTimeout(() => setJustAdded(false), 2000);
-    setIsCartOpen(true);
   };
 
   const handleBuyNow = () => {

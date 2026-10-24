@@ -12,7 +12,7 @@ import {
   Building2,
   CreditCard,
   Clock,
-  Sparkles,
+  Truck,
   Tag
 } from "lucide-react";
 import { useCart } from "@/lib/cart";
@@ -518,7 +518,7 @@ function CheckoutContent() {
                 {/* Free Shipping Notice */}
                 {isFreeDelivery ? (
                   <div className="flex items-center gap-2 p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 font-bold">
-                    <Sparkles size={16} className="text-emerald-600 shrink-0" />
+                    <Truck size={16} className="text-emerald-600 shrink-0" />
                     <span>Free Shipping Applied (Orders over ₦100k)</span>
                   </div>
                 ) : (
