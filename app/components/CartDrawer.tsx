@@ -271,7 +271,7 @@ export default function CartDrawer() {
 
             {/* Footer / Summary */}
             {cartItems.length > 0 && (
-              <div className="border-t border-slate-200 p-4 sm:p-6 pb-8 sm:pb-6 space-y-4 bg-white shadow-lg">
+              <div className="border-t border-slate-200 p-4 sm:p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))] sm:pb-6 space-y-4 bg-white shadow-lg">
                 
                 {/* Voucher Code Box */}
                 <div className="bg-slate-50 p-2.5 rounded-2xl border border-slate-200/80">

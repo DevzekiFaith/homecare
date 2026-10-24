@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   X, 
@@ -86,11 +87,22 @@ const NIGERIAN_PURCHASES: SocialPurchase[] = [
 ];
 
 export default function PromoOverlay() {
-  const { applyCoupon } = useCart();
+  const pathname = usePathname();
+  const { applyCoupon, cartCount } = useCart();
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const [copied, setCopied] = useState(false);
   const [tickerIndex, setTickerIndex] = useState(0);
   const [showTicker, setShowTicker] = useState(false);
+
+  // Safety checks to prevent ticker from colliding with critical actions on mobile
+  const isCheckout = Boolean(pathname?.includes("/checkout"));
+  const isProductDetail = Boolean(
+    pathname?.startsWith("/store/") && 
+    pathname !== "/store" && 
+    pathname !== "/store/track"
+  );
+  const hasFloatingCart = cartCount > 0 && pathname === "/store";
+  const hideTickerOnMobile = isProductDetail || hasFloatingCart;
 
   // Trigger welcome modal after 6 seconds if user hasn't seen it recently
   useEffect(() => {
@@ -300,13 +312,15 @@ export default function PromoOverlay() {
 
       {/* ── 2. LIVE NIGERIAN SALES TICKER (Bottom-Left Non-Intrusive Social Proof) ── */}
       <AnimatePresence>
-        {showTicker && currentPurchase && !showWelcomeModal && (
+        {showTicker && currentPurchase && !showWelcomeModal && !isCheckout && (
           <motion.div
             initial={{ opacity: 0, x: -30, y: 10 }}
             animate={{ opacity: 1, x: 0, y: 0 }}
             exit={{ opacity: 0, x: -30, y: 10 }}
             transition={{ type: "spring", stiffness: 350, damping: 28 }}
-            className="fixed bottom-20 sm:bottom-6 left-3 sm:left-6 z-[60] max-w-sm w-[calc(100vw-1.5rem)] sm:w-auto"
+            className={`fixed bottom-[calc(5rem+env(safe-area-inset-bottom,0px))] sm:bottom-6 left-3 sm:left-6 z-[60] max-w-sm w-[calc(100vw-1.5rem)] sm:w-auto ${
+              hideTickerOnMobile ? "hidden sm:block" : "block"
+            }`}
           >
             <div className="bg-white/95 backdrop-blur-md rounded-2xl p-3.5 border border-slate-200/90 shadow-xl shadow-slate-900/10 flex items-center gap-3 relative overflow-hidden group">
               {/* Product Thumbnail */}
