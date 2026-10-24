@@ -22,6 +22,8 @@ interface HomeCareInstallationSectionProps {
   installationFee?: number;
   isSelected?: boolean;
   onToggleInstallation?: (selected: boolean) => void;
+  isProductInCart?: boolean;
+  productPrice?: number;
 }
 
 export default function HomeCareInstallationSection({
@@ -31,6 +33,8 @@ export default function HomeCareInstallationSection({
   installationFee = 7500,
   isSelected = false,
   onToggleInstallation,
+  isProductInCart = false,
+  productPrice = 0,
 }: HomeCareInstallationSectionProps) {
   const primaryService = serviceTypes[0] || "Electrician";
 
@@ -181,16 +185,27 @@ export default function HomeCareInstallationSection({
             <Wrench size={20} />
           </div>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs font-black uppercase tracking-wider text-white">
                 Include Pro Installation with Order
               </span>
               <span className="text-[10px] font-black text-cyan-300 bg-cyan-400/10 px-2 py-0.5 rounded-md border border-cyan-400/20">
                 +₦{installationFee.toLocaleString()}
               </span>
+              {isProductInCart ? (
+                <span className="text-[9px] font-black uppercase tracking-tight text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded-md border border-emerald-500/30 flex items-center gap-1">
+                  <CheckCircle2 size={10} /> {productName} in Cart
+                </span>
+              ) : (
+                <span className="text-[9px] font-black uppercase tracking-tight text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded-md border border-amber-500/30">
+                  Bundled Together with {productName}
+                </span>
+              )}
             </div>
             <p className="text-[11px] text-sky-200/70 font-medium mt-0.5">
-              A HomeCare verified technician will arrive to mount, wire, and test upon doorstep delivery.
+              {isProductInCart
+                ? `A HomeCare verified technician will arrive to mount, wire, and test your ${productName} upon doorstep delivery.`
+                : `Product must be selected with installation — clicking below adds ${productName} (₦${productPrice.toLocaleString()}) and Pro Installation (+₦${installationFee.toLocaleString()}) together.`}
             </p>
           </div>
         </div>
@@ -211,10 +226,15 @@ export default function HomeCareInstallationSection({
                   <Check size={15} strokeWidth={3} />
                   <span>✓ Pro Install in Cart (+₦{installationFee.toLocaleString()})</span>
                 </>
-              ) : (
+              ) : isProductInCart ? (
                 <>
                   <Wrench size={14} />
-                  <span>+ Add Pro Installation (₦{installationFee.toLocaleString()})</span>
+                  <span>+ Add Pro Installation (+₦{installationFee.toLocaleString()})</span>
+                </>
+              ) : (
+                <>
+                  <Zap size={14} className="fill-slate-950 text-slate-950" />
+                  <span>+ Add Both Together (₦{(productPrice + installationFee).toLocaleString()})</span>
                 </>
               )}
             </button>

@@ -521,26 +521,7 @@ export default function ProductDetailPage({ params }: PageProps) {
                 )}
               </div>
 
-              {/* Primary Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-1">
-                <button
-                  onClick={handleAddToCart}
-                  className="flex-1 h-13 rounded-full px-6 text-xs font-black uppercase tracking-wider bg-slate-900 hover:bg-slate-800 text-white shadow-md flex items-center justify-center gap-2 transition-all hover:scale-101 active:scale-98 cursor-pointer"
-                >
-                  <ShoppingCart size={16} />
-                  <span>{justAdded ? "Added to Cart!" : "Add to Cart"}</span>
-                </button>
-
-                <button
-                  onClick={handleBuyNow}
-                  className="flex-1 h-13 rounded-full px-6 text-xs font-black uppercase tracking-wider bg-sky-600 hover:bg-sky-700 text-white shadow-lg shadow-sky-600/30 flex items-center justify-center gap-2 transition-all hover:scale-101 active:scale-98 cursor-pointer"
-                >
-                  <Zap size={16} className="text-sky-200 fill-sky-200" />
-                  <span>Buy Now (Instant Checkout)</span>
-                </button>
-              </div>
-
-              {/* Interactive HomeCare Certified Installation Addon with Brand Logo */}
+              {/* Interactive HomeCare Certified Installation Addon with Brand Logo (Select with product) */}
               <div 
                 onClick={() => handleToggleInstallation()}
                 className={`rounded-2xl p-3.5 border transition-all cursor-pointer flex items-center justify-between gap-3 ${
@@ -567,6 +548,11 @@ export default function ProductDetailPage({ params }: PageProps) {
                       <span className="text-[9px] font-black uppercase text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                         +₦{installationFee.toLocaleString()}
                       </span>
+                      {includeInstallation && (
+                        <span className="text-[9px] font-black uppercase text-sky-800 bg-sky-100/80 px-1.5 py-0.2 rounded">
+                          Bundled
+                        </span>
+                      )}
                     </div>
                     <p className="text-[10px] text-slate-500 font-medium leading-tight mt-0.5 truncate">
                       Vetted Nigerian technician dispatch + NEPA 240V surge testing + 30-day warranty.
@@ -583,6 +569,35 @@ export default function ProductDetailPage({ params }: PageProps) {
                     {includeInstallation && <Check size={14} strokeWidth={3} />}
                   </div>
                 </div>
+              </div>
+
+              {/* Primary Action Buttons (Bundled Together) */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-1">
+                <button
+                  onClick={handleAddToCart}
+                  className="flex-1 h-13 rounded-full px-6 text-xs font-black uppercase tracking-wider bg-slate-900 hover:bg-slate-800 text-white shadow-md flex items-center justify-center gap-2 transition-all hover:scale-101 active:scale-98 cursor-pointer"
+                >
+                  <ShoppingCart size={16} />
+                  <span>
+                    {justAdded
+                      ? "Added to Cart!"
+                      : includeInstallation
+                      ? `Add Appliance + Pro Install (₦${((baseVariantPrice + installationFee) * quantity).toLocaleString()})`
+                      : `Add to Cart (₦${(baseVariantPrice * quantity).toLocaleString()})`}
+                  </span>
+                </button>
+
+                <button
+                  onClick={handleBuyNow}
+                  className="flex-1 h-13 rounded-full px-6 text-xs font-black uppercase tracking-wider bg-sky-600 hover:bg-sky-700 text-white shadow-lg shadow-sky-600/30 flex items-center justify-center gap-2 transition-all hover:scale-101 active:scale-98 cursor-pointer"
+                >
+                  <Zap size={16} className="text-sky-200 fill-sky-200" />
+                  <span>
+                    {includeInstallation
+                      ? `Buy Both Now (₦${((baseVariantPrice + installationFee) * quantity).toLocaleString()})`
+                      : `Buy Now (₦${(baseVariantPrice * quantity).toLocaleString()})`}
+                  </span>
+                </button>
               </div>
             </div>
 
@@ -683,6 +698,8 @@ export default function ProductDetailPage({ params }: PageProps) {
               installationFee={installationFee}
               isSelected={includeInstallation}
               onToggleInstallation={(selected) => handleToggleInstallation(selected)}
+              isProductInCart={!!cartItem}
+              productPrice={baseVariantPrice}
             />
 
           </div>

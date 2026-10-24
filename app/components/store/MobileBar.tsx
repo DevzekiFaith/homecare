@@ -96,7 +96,7 @@ export default function MobileBar({
           className="flex-1 h-10 sm:h-11 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-[10px] sm:text-[11px] font-black uppercase tracking-wider flex items-center justify-center gap-1 shadow-xs active:scale-95 transition-all"
         >
           <ShoppingCart size={13} className="shrink-0" />
-          <span className="truncate">{justAdded ? "Added!" : "Add Cart"}</span>
+          <span className="truncate">{justAdded ? "Added!" : includeInstallation ? "Add Both" : "Add Cart"}</span>
         </button>
 
         <button
@@ -104,7 +104,7 @@ export default function MobileBar({
           className="flex-1 h-10 sm:h-11 rounded-full bg-sky-600 hover:bg-sky-700 text-white text-[10px] sm:text-[11px] font-black uppercase tracking-wider flex items-center justify-center gap-1 shadow-md shadow-sky-600/30 active:scale-95 transition-all"
         >
           <Zap size={13} className="text-sky-200 fill-sky-200 shrink-0" />
-          <span className="truncate">Buy Now</span>
+          <span className="truncate">{includeInstallation ? "Buy Both" : "Buy Now"}</span>
         </button>
       </div>
     </div>
