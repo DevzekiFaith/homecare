@@ -529,7 +529,7 @@ export default function PromoOverlay() {
                   <div className="bg-sky-50/70 rounded-2xl p-4 border-2 border-dashed border-sky-300 flex flex-col sm:flex-row items-center justify-between gap-3">
                     <div>
                       <span className="text-[10px] font-black uppercase tracking-wider text-sky-800">
-                        Voucher Code (Orders from ₦25,000)
+                        Voucher Code (Save ₦2,500 on ₦15k+ · 15% off any order)
                       </span>
                       <div className="text-xl sm:text-2xl font-black text-slate-900 font-mono tracking-wider mt-0.5">
                         {WELCOME_CODE}

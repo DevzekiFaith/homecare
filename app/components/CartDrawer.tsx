@@ -384,37 +384,76 @@ export default function CartDrawer() {
               <div className="border-t border-slate-200 p-4 sm:p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))] sm:pb-6 space-y-4 bg-white shadow-lg">
                 
                 {/* Voucher Code Box */}
-                <div className="bg-slate-50 p-2.5 rounded-2xl border border-slate-200/80">
-                  {couponCode && discount > 0 ? (
-                    <div className="flex items-center justify-between text-xs">
-                      <div className="flex items-center gap-1.5 font-bold text-emerald-800">
-                        <Tag size={13} className="text-emerald-600" />
-                        <span>Voucher <strong>{couponCode}</strong> applied (-₦{discount.toLocaleString()})</span>
+                <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200/80">
+                  {couponCode ? (
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-1.5 font-bold text-emerald-800">
+                          <Tag size={13} className="text-emerald-600" />
+                          <span>
+                            Voucher <strong>{couponCode}</strong> applied {discount > 0 ? `(-₦${discount.toLocaleString()})` : ""}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleRemoveCoupon}
+                          className="text-[10px] font-extrabold uppercase text-rose-600 hover:underline cursor-pointer"
+                        >
+                          Remove
+                        </button>
                       </div>
-                      <button
-                        type="button"
-                        onClick={handleRemoveCoupon}
-                        className="text-[10px] font-extrabold uppercase text-rose-600 hover:underline cursor-pointer"
-                      >
-                        Remove
-                      </button>
+                      {["WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(couponCode) && cartTotal < 15000 && cartTotal > 0 && (
+                        <p className="text-[10px] text-emerald-700 font-medium">
+                          15% off applied (-₦{discount.toLocaleString()}) · Add ₦{(15000 - cartTotal).toLocaleString()} more for full ₦2,500 flat discount!
+                        </p>
+                      )}
+                      {["FREEINSTALL", "INSTALLFREE"].includes(couponCode) && installationTotal === 0 && (
+                        <p className="text-[10px] text-amber-700 font-medium">
+                          Toggle HomeCare™ Installation on any item to waive the ₦7,500 fee!
+                        </p>
+                      )}
                     </div>
                   ) : (
-                    <form onSubmit={handleApplyCoupon} className="flex gap-2">
-                      <input
-                        type="text"
-                        value={inputCoupon}
-                        onChange={(e) => setInputCoupon(e.target.value)}
-                        placeholder="Voucher code (e.g. WELCOME2500)"
-                        className="flex-1 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs uppercase font-mono placeholder:normal-case placeholder:font-sans outline-none focus:border-sky-500"
-                      />
-                      <button
-                        type="submit"
-                        className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold uppercase tracking-wider cursor-pointer"
-                      >
-                        Apply
-                      </button>
-                    </form>
+                    <div className="space-y-2">
+                      <form onSubmit={handleApplyCoupon} className="flex gap-2">
+                        <input
+                          type="text"
+                          value={inputCoupon}
+                          onChange={(e) => setInputCoupon(e.target.value)}
+                          placeholder="Voucher code (e.g. WELCOME2500)"
+                          className="flex-1 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs uppercase font-mono placeholder:normal-case placeholder:font-sans outline-none focus:border-sky-500"
+                        />
+                        <button
+                          type="submit"
+                          className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold uppercase tracking-wider cursor-pointer"
+                        >
+                          Apply
+                        </button>
+                      </form>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-[10px] text-slate-500 font-medium">Tap to apply:</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const res = applyCoupon("WELCOME2500");
+                            if (res.success) toast.success("Voucher Applied!", { description: res.message });
+                          }}
+                          className="px-2 py-0.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-[10px] font-bold cursor-pointer transition-colors"
+                        >
+                          🏷️ WELCOME2500 (-₦2,500)
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const res = applyCoupon("SAVE10");
+                            if (res.success) toast.success("Voucher Applied!", { description: res.message });
+                          }}
+                          className="px-2 py-0.5 rounded-full bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 text-[10px] font-bold cursor-pointer transition-colors"
+                        >
+                          🏷️ SAVE10 (-10%)
+                        </button>
+                      </div>
+                    </div>
                   )}
                 </div>
 

@@ -247,26 +247,80 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const discount = useMemo(() => {
     if (!couponCode) return 0;
     const clean = couponCode.toUpperCase().trim();
-    if (clean === "WELCOME2500" || clean === "WELCOME2K") {
-      return cartTotal >= 25000 ? 2500 : 0;
+
+    // Welcome vouchers: WELCOME2500, WELCOME2K, WELCOME, FIRSTORDER
+    if (["WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(clean)) {
+      if (cartTotal <= 0) return 0;
+      if (cartTotal >= 15000) {
+        return Math.min(2500, cartTotal);
+      }
+      // For orders under ₦15,000, provide an immediate 15% discount
+      return Math.min(2500, Math.round(cartTotal * 0.15));
     }
-    if (clean === "CAREPAY10") {
-      return cartTotal >= 50000 ? Math.min(10000, Math.round(cartTotal * 0.1)) : 0;
+
+    // CarePay % vouchers: CAREPAY10, SAVE10, DISCOUNT10, CAREPAY
+    if (["CAREPAY10", "SAVE10", "DISCOUNT10", "CAREPAY"].includes(clean)) {
+      if (cartTotal <= 0) return 0;
+      return Math.min(15000, Math.round(cartTotal * 0.1));
     }
+
+    // HomeCare VIP vouchers: HOMECARE, HC2026, CAREPAY2026
+    if (["HOMECARE", "HC2026", "CAREPAY2026"].includes(clean)) {
+      if (cartTotal <= 0) return 0;
+      if (cartTotal >= 20000) {
+        return Math.min(3000, cartTotal);
+      }
+      return Math.min(3000, Math.round(cartTotal * 0.1));
+    }
+
+    // Free installation voucher: FREEINSTALL, INSTALLFREE
+    if (["FREEINSTALL", "INSTALLFREE"].includes(clean)) {
+      if (installationTotal > 0) {
+        return Math.min(installationTotal, 7500);
+      }
+      if (cartTotal >= 35000) {
+        return 7500;
+      }
+      return 0;
+    }
+
     return 0;
-  }, [couponCode, cartTotal]);
+  }, [couponCode, cartTotal, installationTotal]);
 
   const applyCoupon = useCallback((code: string) => {
     const clean = code.toUpperCase().trim();
-    if (clean === "WELCOME2500" || clean === "WELCOME2K") {
+    if (["WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(clean)) {
       setCouponCode(clean);
-      return { success: true, message: "₦2,500 welcome voucher applied! (Min order ₦25,000)" };
+      return {
+        success: true,
+        message: "₦2,500 Welcome Voucher applied! Enjoy immediate savings on your order.",
+      };
     }
-    if (clean === "CAREPAY10") {
+    if (["CAREPAY10", "SAVE10", "DISCOUNT10", "CAREPAY"].includes(clean)) {
       setCouponCode(clean);
-      return { success: true, message: "10% discount applied! (Min order ₦50,000)" };
+      return {
+        success: true,
+        message: "10% Discount applied! Your total has been reduced.",
+      };
     }
-    return { success: false, message: "Invalid voucher code. Please check and try again." };
+    if (["HOMECARE", "HC2026", "CAREPAY2026"].includes(clean)) {
+      setCouponCode(clean);
+      return {
+        success: true,
+        message: "₦3,000 HomeCare VIP Voucher applied!",
+      };
+    }
+    if (["FREEINSTALL", "INSTALLFREE"].includes(clean)) {
+      setCouponCode(clean);
+      return {
+        success: true,
+        message: "Free Installation Voucher applied! ₦7,500 installation fee waived.",
+      };
+    }
+    return {
+      success: false,
+      message: `"${code.trim()}" is not valid. Try WELCOME2500 or SAVE10 for instant savings.`,
+    };
   }, []);
 
   const removeCoupon = useCallback(() => {

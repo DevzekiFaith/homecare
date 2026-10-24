@@ -542,22 +542,39 @@ function CheckoutContent() {
 
                 {/* Voucher Code Form */}
                 <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200/80">
-                  {couponCode && discount > 0 ? (
-                    <div className="flex items-center justify-between text-xs">
-                      <div className="flex items-center gap-1.5 font-bold text-emerald-800">
-                        <Tag size={13} className="text-emerald-600" />
-                        <span>Voucher <strong>{couponCode}</strong> applied (-₦{discount.toLocaleString()})</span>
+                  {couponCode ? (
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-1.5 font-bold text-emerald-800">
+                          <Tag size={13} className="text-emerald-600" />
+                          <span>
+                            Voucher <strong>{couponCode}</strong> applied {discount > 0 ? `(-₦${discount.toLocaleString()})` : ""}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            removeCoupon();
+                            toast.info("Voucher removed.");
+                          }}
+                          className="text-[10px] font-extrabold uppercase text-rose-600 hover:underline cursor-pointer"
+                        >
+                          Remove
+                        </button>
                       </div>
-                      <button
-                        type="button"
-                        onClick={removeCoupon}
-                        className="text-[10px] font-extrabold uppercase text-rose-600 hover:underline cursor-pointer"
-                      >
-                        Remove
-                      </button>
+                      {["WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(couponCode) && cartTotal < 15000 && cartTotal > 0 && (
+                        <p className="text-[10px] text-emerald-700 font-medium">
+                          15% discount applied (-₦{discount.toLocaleString()}) · Add ₦{(15000 - cartTotal).toLocaleString()} more to unlock full ₦2,500 off!
+                        </p>
+                      )}
+                      {["FREEINSTALL", "INSTALLFREE"].includes(couponCode) && installationTotal === 0 && (
+                        <p className="text-[10px] text-amber-700 font-medium">
+                          Select HomeCare™ Installation on your items to waive the ₦7,500 fee!
+                        </p>
+                      )}
                     </div>
                   ) : (
-                    <div className="space-y-1.5">
+                    <div className="space-y-2">
                       <div className="flex gap-2">
                         <input
                           type="text"
@@ -574,9 +591,29 @@ function CheckoutContent() {
                           Apply
                         </button>
                       </div>
-                      <p className="text-[10px] text-slate-400">
-                        Use voucher <strong>WELCOME2500</strong> for ₦2,500 off orders from ₦25,000.
-                      </p>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-[10px] text-slate-500 font-medium">Tap to apply:</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const res = applyCoupon("WELCOME2500");
+                            if (res.success) toast.success("Voucher Applied!", { description: res.message });
+                          }}
+                          className="px-2 py-0.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-[10px] font-bold cursor-pointer transition-colors"
+                        >
+                          🏷️ WELCOME2500 (-₦2,500)
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const res = applyCoupon("SAVE10");
+                            if (res.success) toast.success("Voucher Applied!", { description: res.message });
+                          }}
+                          className="px-2 py-0.5 rounded-full bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 text-[10px] font-bold cursor-pointer transition-colors"
+                        >
+                          🏷️ SAVE10 (-10%)
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
