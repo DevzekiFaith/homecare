@@ -179,52 +179,46 @@ export default function HomeCareInstallationSection({
       </div>
 
       {/* Interactive Toggle / Booking Strip */}
-      <div className="bg-gradient-to-r from-sky-950/80 to-blue-950/80 rounded-2xl p-4 sm:p-5 border border-sky-400/30 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
-        <div className="flex items-center gap-3">
+      <div className="bg-gradient-to-r from-sky-950/90 via-[#07152b] to-blue-950/90 rounded-2xl p-4 sm:p-5 border border-sky-400/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10 shadow-lg">
+        <div className="flex items-center gap-3 min-w-0">
           <div className="w-10 h-10 rounded-xl bg-sky-600/30 border border-sky-400/40 text-cyan-300 flex items-center justify-center shrink-0">
-            <Wrench size={20} />
+            <Wrench size={19} />
           </div>
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs font-black uppercase tracking-wider text-white">
-                Include Pro Installation with Order
+              <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-white">
+                Certified Pro Installation
               </span>
-              <span className="text-[10px] font-black text-cyan-300 bg-cyan-400/10 px-2 py-0.5 rounded-md border border-cyan-400/20">
+              <span className="text-[10px] font-black text-cyan-300 bg-cyan-400/10 px-2 py-0.5 rounded-md border border-cyan-400/25">
                 +₦{installationFee.toLocaleString()}
               </span>
-              {isProductInCart ? (
-                <span className="text-[9px] font-black uppercase tracking-tight text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded-md border border-emerald-500/30 flex items-center gap-1">
-                  <CheckCircle2 size={10} /> {productName} in Cart
-                </span>
-              ) : (
-                <span className="text-[9px] font-black uppercase tracking-tight text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded-md border border-amber-500/30">
-                  Bundled Together with {productName}
-                </span>
-              )}
+              <span className="text-[9px] font-bold text-sky-200/80 bg-white/5 px-2 py-0.5 rounded-md border border-white/10">
+                Doorstep Setup &amp; Surge Test
+              </span>
             </div>
-            <p className="text-[11px] text-sky-200/70 font-medium mt-0.5">
+            <p className="text-[11px] text-sky-200/70 font-medium mt-1">
               {isProductInCart
-                ? `A HomeCare verified technician will arrive to mount, wire, and test your ${productName} upon doorstep delivery.`
-                : `Product must be selected with installation — clicking below adds ${productName} (₦${productPrice.toLocaleString()}) and Pro Installation (+₦${installationFee.toLocaleString()}) together.`}
+                ? "Attaches verified technician dispatch to the appliance in your cart."
+                : "Bundles this appliance together with accredited technician setup."}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+        <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end shrink-0">
           {onToggleInstallation ? (
             <button
               type="button"
               onClick={() => onToggleInstallation(!isSelected)}
               className={`w-full sm:w-auto h-11 px-5 rounded-full text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md ${
                 isSelected
-                  ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-emerald-500/20 ring-2 ring-emerald-300"
-                  : "bg-sky-500 hover:bg-sky-400 text-slate-950 shadow-sky-500/20"
+                  ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-emerald-500/25 ring-2 ring-emerald-300"
+                  : "bg-gradient-to-r from-sky-400 to-cyan-300 hover:from-sky-300 hover:to-cyan-200 text-slate-950 shadow-sky-500/25 font-black"
               }`}
             >
               {isSelected ? (
                 <>
                   <Check size={15} strokeWidth={3} />
-                  <span>✓ Pro Install in Cart (+₦{installationFee.toLocaleString()})</span>
+                  <span>✓ Pro Install Added (+₦{installationFee.toLocaleString()})</span>
                 </>
               ) : isProductInCart ? (
                 <>
@@ -234,7 +228,7 @@ export default function HomeCareInstallationSection({
               ) : (
                 <>
                   <Zap size={14} className="fill-slate-950 text-slate-950" />
-                  <span>+ Add Both Together (₦{(productPrice + installationFee).toLocaleString()})</span>
+                  <span>+ Bundle &amp; Add (₦{(productPrice + installationFee).toLocaleString()})</span>
                 </>
               )}
             </button>
