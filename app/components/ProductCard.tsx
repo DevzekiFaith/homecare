@@ -198,10 +198,6 @@ export default function ProductCard({
               {product.price.toLocaleString()}
             </p>
 
-            <span className="text-[10px] font-black text-sky-800 bg-sky-50 px-2 py-0.5 rounded-md border border-sky-200">
-              +₦7,500 Pro Install
-            </span>
-
             {hasDiscount && (
               <span className="text-xs text-slate-400 line-through font-semibold">
                 ₦{originalPrice.toLocaleString()}
