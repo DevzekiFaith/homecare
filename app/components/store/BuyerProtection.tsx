@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Lock, CreditCard, RotateCcw, CheckCircle2, Award, Wrench, Factory } from "lucide-react";
+import { Lock, CreditCard, RotateCcw, CheckCircle2, Award, Wrench } from "lucide-react";
 
 export default function BuyerProtection() {
   return (
@@ -92,7 +92,7 @@ export default function BuyerProtection() {
           </div>
         </div>
 
-        <div className="flex items-start gap-3 bg-white/5 hover:bg-white/10 p-3.5 rounded-2xl border border-white/5 transition-all">
+        <div className="flex items-start gap-3 bg-white/5 hover:bg-white/10 p-3.5 rounded-2xl border border-white/5 transition-all sm:col-span-2">
           <div className="w-7 h-7 rounded-lg bg-cyan-400/20 text-cyan-300 flex items-center justify-center shrink-0 mt-0.5">
             <Wrench size={15} />
           </div>
@@ -100,18 +100,6 @@ export default function BuyerProtection() {
             <span className="font-extrabold text-white text-xs">HomeCare™ Accredited Installation</span>
             <p className="text-[11px] text-slate-300/80 mt-0.5 leading-relaxed">
               Pair any appliance with a verified HomeCare technician for safe 240V NEPA surge testing, professional mounting, and warranty.
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-start gap-3 bg-white/5 hover:bg-white/10 p-3.5 rounded-2xl border border-white/5 transition-all">
-          <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
-            <Factory size={15} />
-          </div>
-          <div>
-            <span className="font-extrabold text-white text-xs">Direct Factory-to-Customer (F2C)</span>
-            <p className="text-[11px] text-slate-300/80 mt-0.5 leading-relaxed">
-              Cut out retail middlemen markups. Direct OEM quality testing, authentic batch sourcing, and 25-45% lower prices than open markets.
             </p>
           </div>
         </div>
