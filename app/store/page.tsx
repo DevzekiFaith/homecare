@@ -1,35 +1,91 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { PRODUCTS } from "@/lib/products";
+import Image from "next/image";
+import Link from "next/link";
+import { PRODUCTS, Product } from "@/lib/products";
 import ProductCard from "@/app/components/ProductCard";
 import {
   Search,
   ShoppingCart,
   ArrowLeft,
   ArrowUpDown,
-  Package,
   ShieldCheck,
   Truck,
   Wrench,
   Zap,
-  SlidersHorizontal,
   Compass,
-  X
+  X,
+  Star,
+  CheckCircle2,
+  Gift,
+  BadgeCheck,
+  Flame,
+  Droplets,
+  Lock,
+  BatteryCharging,
+  Plus,
+  SlidersHorizontal
 } from "lucide-react";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { useCart } from "@/lib/cart";
+import { toast } from "sonner";
 
 type SortOption = "default" | "price-asc" | "price-desc" | "rating" | "newest";
 type PriceFilter = "all" | "under50k" | "50k-150k" | "above150k";
+
+interface SpotlightItem {
+  productId: string;
+  tabLabel: string;
+  tagline: string;
+  sweetNote: string;
+  badge: string;
+  strikePrice: number;
+}
+
+const SPOTLIGHT_DEVICES: SpotlightItem[] = [
+  {
+    productId: "sp-power-1",
+    tabLabel: "Surge Guard",
+    tagline: "Instant 0.01s Voltage Cutoff",
+    sweetNote: "Trips crazy NEPA voltage surges before they blow your fridge, TV, or inverter battery.",
+    badge: "Bestseller #1",
+    strikePrice: 13500,
+  },
+  {
+    productId: "sp-power-6",
+    tabLabel: "65W Laptop Bank",
+    tagline: "40,000mAh Power Reserve",
+    sweetNote: "Powers MacBooks & phones through prolonged blackout. Remote work essential in Nigeria.",
+    badge: "Work Anywhere",
+    strikePrice: 38000,
+  },
+  {
+    productId: "sp-sec-1",
+    tabLabel: "AI Smart Lock",
+    tagline: "Fingerprint & Card AI Entry",
+    sweetNote: "Keyless freedom for your family. No more locked doors, rusty padlocks, or lost key panic.",
+    badge: "Security Upgrade",
+    strikePrice: 95000,
+  },
+];
+
+const QUICK_TAGS = [
+  { label: "⚡ Surge Plugs", query: "surge" },
+  { label: "🔋 65W Laptop Bank", query: "power bank" },
+  { label: "💧 Tank Water Monitor", query: "water" },
+  { label: "🔐 Biometric Locks", query: "lock" },
+  { label: "❄️ Rechargeable Fans", query: "fan" },
+  { label: "💡 Touch Switches", query: "switch" },
+];
 
 export default function StorePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [priceFilter, setPriceFilter] = useState<PriceFilter>("all");
   const [sortBy, setSortBy] = useState<SortOption>("default");
-  const { cartCount, cartTotal, setIsCartOpen } = useCart();
+  const [spotlightIndex, setSpotlightIndex] = useState(0);
+  const { cartCount, cartTotal, setIsCartOpen, addToCart } = useCart();
 
   const categories = [
     "All",
@@ -90,35 +146,81 @@ export default function StorePage() {
     return results;
   }, [searchQuery, selectedCategory, priceFilter, sortBy]);
 
+  const activeSpotlightConfig = SPOTLIGHT_DEVICES[spotlightIndex];
+  const activeProduct = PRODUCTS.find((p) => p.id === activeSpotlightConfig.productId) || PRODUCTS[0];
+
+  const handleSpotlightAddToCart = (product: Product) => {
+    addToCart(product, 1);
+    toast.success("Added to Cart!", {
+      description: `${product.name} (₦${product.price.toLocaleString()}) added to your cart.`,
+      action: {
+        label: "View Cart",
+        onClick: () => setIsCartOpen(true),
+      },
+      duration: 3500,
+    });
+  };
+
   return (
     <div className="relative min-h-screen bg-slate-50 text-slate-900 antialiased overflow-hidden">
-      {/* Royal Blue Hero Banner */}
-      <section className="relative bg-gradient-to-br from-sky-600 via-blue-600 to-blue-800 text-white pt-10 pb-14 md:pb-16 px-4 sm:px-6 rounded-b-[36px] md:rounded-b-[48px] shadow-2xl shadow-blue-900/15 overflow-hidden">
-        <div className="absolute -top-24 -left-24 w-80 h-80 bg-sky-400/20 rounded-full blur-[90px] pointer-events-none" />
-        <div className="absolute top-1/2 -right-24 w-80 h-80 bg-cyan-300/15 rounded-full blur-[100px] pointer-events-none" />
+      {/* ── FUTURISTIC HIGH-CONVERTING HERO BANNER ── */}
+      <section className="relative bg-gradient-to-b from-[#030712] via-[#09152b] to-[#040d1a] text-white pt-6 sm:pt-8 pb-12 sm:pb-16 px-3.5 sm:px-6 rounded-b-[36px] md:rounded-b-[56px] shadow-2xl shadow-sky-950/40 border-b border-sky-900/30 overflow-hidden">
+        {/* Ambient Glowing Meshes */}
+        <div className="absolute -top-32 -left-32 w-96 h-96 bg-cyan-500/15 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/3 -right-32 w-96 h-96 bg-blue-600/20 rounded-full blur-[130px] pointer-events-none" />
+        <div className="absolute -bottom-24 left-1/3 w-80 h-80 bg-emerald-500/10 rounded-full blur-[110px] pointer-events-none" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#38bdf807_1px,transparent_1px),linear-gradient(to_bottom,#38bdf807_1px,transparent_1px)] bg-[size:3.5rem_3.5rem] pointer-events-none" />
 
         <div className="mx-auto max-w-7xl relative z-10">
-          <div className="flex items-center justify-between gap-4 mb-6">
+          
+          {/* 1. Top Live Logistics Status Ticker */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 py-2 px-3.5 sm:px-4 rounded-2xl bg-white/[0.06] backdrop-blur-md border border-white/10 text-[10px] sm:text-[11px] font-semibold text-sky-100/90 mb-5 shadow-xs">
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-2 w-2 shrink-0">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              <span className="font-extrabold uppercase tracking-widest text-emerald-300">Live Logistics:</span>
+              <span className="truncate">24-48h State Dispatch to Lagos, Abuja, Port Harcourt &amp; Ibadan</span>
+            </div>
+
+            <div className="flex items-center gap-2 text-sky-200">
+              <span className="hidden md:inline text-white/30">•</span>
+              <span className="inline-flex items-center gap-1 font-bold text-amber-300">
+                <Gift size={12} className="text-amber-300" />
+                Voucher <strong className="font-mono text-white">WELCOME2500</strong> for ₦2,500 OFF
+              </span>
+            </div>
+          </div>
+
+          {/* 2. Top Navigation & Cart Bar */}
+          <div className="flex items-center justify-between gap-4 mb-8">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-widest text-sky-200 hover:text-white transition-colors w-fit"
+              className="inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-widest text-sky-300 hover:text-white transition-colors w-fit group"
             >
-              <ArrowLeft size={14} /> Back to Home
+              <ArrowLeft size={14} className="transition-transform group-hover:-translate-x-1" />
+              <span>Back to Home</span>
             </Link>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-[10px] font-extrabold uppercase tracking-wider">
+                <BadgeCheck size={13} className="text-emerald-400" />
+                <span>Verified Nigerian Hardware Hub</span>
+              </div>
+
               <Link
                 href="/store/track"
-                className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-sky-100 text-[11px] font-bold transition-all border border-white/20"
+                className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-sky-100 text-[11px] font-bold transition-all border border-white/20 cursor-pointer"
               >
                 <Compass size={13} />
                 <span>Track Order</span>
               </Link>
 
-              {/* Cart Header Button */}
+              {/* Cart Header Trigger */}
               <button
                 onClick={() => setIsCartOpen(true)}
-                className="relative flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full bg-sky-400 hover:bg-sky-300 text-blue-950 text-[11px] font-extrabold uppercase tracking-widest transition-all shadow-lg shadow-sky-400/25 hover:scale-105 active:scale-95 cursor-pointer"
+                className="relative flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full bg-gradient-to-r from-sky-400 to-cyan-300 hover:from-sky-300 hover:to-cyan-200 text-slate-950 text-[11px] font-black uppercase tracking-widest transition-all shadow-lg shadow-sky-400/25 hover:scale-105 active:scale-95 cursor-pointer"
               >
                 <ShoppingCart size={15} />
                 {cartCount > 0 ? (
@@ -127,60 +229,262 @@ export default function StorePage() {
                   <span>Cart</span>
                 )}
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-slate-900 text-white text-[9px] font-extrabold ring-2 ring-white">
+                  <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-slate-950 text-white text-[9px] font-extrabold ring-2 ring-cyan-300 animate-in zoom-in">
                     {cartCount}
                   </span>
                 )}
               </button>
             </div>
           </div>
-          
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-            <div>
-              <div className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-sky-200 bg-white/10 px-3.5 py-1.5 rounded-full border border-white/20 mb-3">
-                <Zap size={12} className="text-cyan-300 fill-cyan-300" />
-                <span>Smart Living · Built for Nigerian Homes</span>
-              </div>
-              <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white uppercase font-heading">
-                HomeCare <span className="text-cyan-200">Smart Store</span>
-              </h1>
-              <p className="mt-2 text-sm sm:text-base text-sky-100/90 font-medium max-w-2xl leading-relaxed">
-                Essential surge protectors, rechargeable fans, automatic water tank monitors, biometric locks, smart switches, and kitchen gear with certified installation support.
-              </p>
-            </div>
 
-            <div className="flex items-center gap-3">
-              <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-2.5 flex items-center gap-3 text-white">
-                <Package size={18} className="text-cyan-300" />
-                <div>
-                  <p className="text-[10px] uppercase font-bold text-sky-200">Catalog</p>
-                  <p className="text-xs font-black tracking-wider text-white">
-                    {PRODUCTS.length} Smart Devices
-                  </p>
+          {/* 3. Main Hero Dual-Column Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+            
+            {/* Left Column (7 cols): Hero Copy & Integrated Search */}
+            <div className="lg:col-span-7 space-y-5">
+              <div className="inline-flex items-center gap-2 text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-cyan-300 bg-cyan-950/60 border border-cyan-500/30 px-3.5 py-1.5 rounded-full backdrop-blur-md shadow-xs">
+                <Zap size={12} className="text-cyan-400 fill-cyan-400 animate-pulse" />
+                <span>Smart Living Architecture · Built For Nigeria</span>
+              </div>
+
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase font-heading tracking-tight text-white leading-tight">
+                UPGRADE YOUR HOME. <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-200 to-emerald-300">
+                  ZERO NEPA HEADACHES.
+                </span>
+              </h1>
+
+              <p className="text-sm sm:text-base text-sky-100/85 font-medium leading-relaxed max-w-2xl">
+                Never worry about crazy high voltage blowing your freezer or running out of water unannounced. We curate genuine smart sockets, 65W laptop power banks, ultrasonic water tank monitors, and biometric locks calibrated for Nigerian 240V power swings — backed by CarePay Escrow and 1-click certified electrician installation.
+              </p>
+
+              {/* 4 Sweet Relief Metrics */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[11px] font-bold text-sky-100">
+                <div className="bg-white/[0.06] border border-white/10 rounded-2xl p-2.5 backdrop-blur-sm">
+                  <div className="flex items-center gap-1.5 text-cyan-300 text-xs font-black">
+                    <Zap size={13} /> 0.01s Trip
+                  </div>
+                  <span className="text-[10px] text-sky-200/70 font-medium leading-tight block mt-0.5">
+                    Instant NEPA surge cutoff
+                  </span>
+                </div>
+
+                <div className="bg-white/[0.06] border border-white/10 rounded-2xl p-2.5 backdrop-blur-sm">
+                  <div className="flex items-center gap-1.5 text-cyan-300 text-xs font-black">
+                    <Droplets size={13} /> Tank Alerts
+                  </div>
+                  <span className="text-[10px] text-sky-200/70 font-medium leading-tight block mt-0.5">
+                    Zero dry taps on phone
+                  </span>
+                </div>
+
+                <div className="bg-white/[0.06] border border-white/10 rounded-2xl p-2.5 backdrop-blur-sm">
+                  <div className="flex items-center gap-1.5 text-cyan-300 text-xs font-black">
+                    <Lock size={13} /> AI Biometric
+                  </div>
+                  <span className="text-[10px] text-sky-200/70 font-medium leading-tight block mt-0.5">
+                    Zero lost keys or anxiety
+                  </span>
+                </div>
+
+                <div className="bg-white/[0.06] border border-white/10 rounded-2xl p-2.5 backdrop-blur-sm">
+                  <div className="flex items-center gap-1.5 text-cyan-300 text-xs font-black">
+                    <BatteryCharging size={13} /> 65W Backup
+                  </div>
+                  <span className="text-[10px] text-sky-200/70 font-medium leading-tight block mt-0.5">
+                    MacBook &amp; phone reserve
+                  </span>
+                </div>
+              </div>
+
+              {/* Integrated Futuristic Search Bar */}
+              <div className="pt-2 space-y-2.5">
+                <div className="relative max-w-xl group/search">
+                  <Search
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-300/70 group-focus-within/search:text-cyan-300 transition-colors"
+                    size={18}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Search smart sockets, surge plugs, laptop power banks, locks..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full rounded-2xl border border-sky-400/30 bg-white/[0.09] backdrop-blur-xl pl-11 sm:pl-12 pr-10 py-3.5 sm:py-4 text-xs sm:text-sm text-white placeholder:text-sky-200/50 outline-none focus:border-cyan-300 focus:ring-4 focus:ring-cyan-500/20 shadow-xl transition-all"
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery("")}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-sky-300/60 hover:text-white p-1"
+                    >
+                      <X size={16} />
+                    </button>
+                  )}
+                </div>
+
+                {/* Quick Discovery Tags */}
+                <div className="flex flex-wrap items-center gap-1.5 text-[10px] font-bold text-sky-200">
+                  <span className="text-white/40 uppercase tracking-widest text-[9px] mr-1">Popular:</span>
+                  {QUICK_TAGS.map((tag) => (
+                    <button
+                      key={tag.label}
+                      onClick={() => {
+                        setSearchQuery(tag.query);
+                        const el = document.getElementById("store-catalog");
+                        el?.scrollIntoView({ behavior: "smooth" });
+                      }}
+                      className="px-2.5 py-1 rounded-lg bg-white/[0.08] hover:bg-cyan-400/20 hover:text-cyan-200 border border-white/10 hover:border-cyan-400/40 transition-all cursor-pointer"
+                    >
+                      {tag.label}
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
+
+            {/* Right Column (5 cols): Interactive Futuristic Showcase Card */}
+            <div className="lg:col-span-5">
+              <div className="relative rounded-3xl bg-gradient-to-b from-white/[0.12] to-white/[0.04] p-5 sm:p-6 backdrop-blur-2xl border border-white/20 shadow-2xl overflow-hidden">
+                <div className="absolute -top-16 -right-16 w-44 h-44 bg-cyan-400/20 rounded-full blur-3xl pointer-events-none" />
+
+                {/* Spotlight Switcher Tabs */}
+                <div className="flex items-center gap-1 bg-black/30 p-1 rounded-xl border border-white/10 mb-4">
+                  {SPOTLIGHT_DEVICES.map((dev, idx) => (
+                    <button
+                      key={dev.productId}
+                      onClick={() => setSpotlightIndex(idx)}
+                      className={`flex-1 py-1.5 px-2 rounded-lg text-[10px] font-extrabold uppercase tracking-wider transition-all cursor-pointer truncate ${
+                        spotlightIndex === idx
+                          ? "bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-md shadow-cyan-500/20"
+                          : "text-sky-200/70 hover:text-white hover:bg-white/5"
+                      }`}
+                    >
+                      {dev.tabLabel}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Selected Spotlight Device Presentation */}
+                <div className="space-y-4">
+                  <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden bg-slate-900/60 border border-white/15">
+                    <Image
+                      src={activeProduct.image}
+                      alt={activeProduct.name}
+                      fill
+                      className="object-cover"
+                      unoptimized
+                    />
+
+                    {/* Floating Badge */}
+                    <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-slate-950/80 backdrop-blur-md text-[9px] font-black uppercase tracking-widest text-cyan-300 border border-cyan-400/30 flex items-center gap-1">
+                      <Flame size={10} className="fill-amber-400 text-amber-400" />
+                      <span>{activeSpotlightConfig.badge}</span>
+                    </div>
+
+                    <div className="absolute bottom-3 right-3 px-2.5 py-1 rounded-full bg-slate-950/80 backdrop-blur-md text-[10px] font-black text-white border border-white/20 flex items-center gap-1">
+                      <Star size={11} className="fill-amber-400 text-amber-400" />
+                      <span>{activeProduct.rating || 4.9}</span>
+                      <span className="text-white/50 text-[9px]">({activeProduct.reviewCount || 100}+)</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-base sm:text-lg font-black text-white truncate font-heading">
+                      {activeProduct.name}
+                    </h3>
+                    <p className="text-xs text-sky-100/80 font-medium leading-relaxed mt-1 line-clamp-2">
+                      {activeSpotlightConfig.sweetNote}
+                    </p>
+                  </div>
+
+                  {/* Price & Action Row */}
+                  <div className="flex items-center justify-between pt-1 border-t border-white/10">
+                    <div>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-xl sm:text-2xl font-black text-cyan-300 font-heading">
+                          ₦{activeProduct.price.toLocaleString()}
+                        </span>
+                        <span className="text-xs text-sky-300/50 line-through">
+                          ₦{activeSpotlightConfig.strikePrice.toLocaleString()}
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-bold text-emerald-400 flex items-center gap-1">
+                        <CheckCircle2 size={10} /> In Stock · Ready to Dispatch
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleSpotlightAddToCart(activeProduct)}
+                      className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-cyan-400 hover:from-sky-400 hover:to-cyan-300 text-slate-950 text-xs font-black uppercase tracking-wider flex items-center gap-1.5 shadow-lg shadow-cyan-500/25 active:scale-95 transition-all cursor-pointer"
+                    >
+                      <Plus size={14} strokeWidth={3} />
+                      <span>Add to Cart</span>
+                    </button>
+                  </div>
+
+                  <Link
+                    href={`/store/${activeProduct.id}`}
+                    className="block text-center text-[11px] font-extrabold uppercase tracking-wider text-sky-300 hover:text-white transition-colors"
+                  >
+                    View Full Product Specs &amp; Details →
+                  </Link>
+                </div>
+              </div>
+            </div>
+
           </div>
 
-          {/* Value Props Bar */}
-          <div className="mt-8 pt-6 border-t border-white/15 grid grid-cols-2 md:grid-cols-4 gap-3 text-sky-100 text-xs font-semibold">
-            <div className="flex items-center gap-2">
-              <Truck size={16} className="text-cyan-300 shrink-0" />
-              <span>24-48h Delivery in Lagos</span>
+          {/* 4. Sweet Bottom Value Props Bar */}
+          <div className="mt-10 pt-6 border-t border-white/10 grid grid-cols-2 lg:grid-cols-4 gap-3 text-sky-100">
+            <div className="flex items-start gap-3 bg-white/[0.04] p-3 rounded-2xl border border-white/10">
+              <div className="p-2 rounded-xl bg-sky-500/20 text-cyan-300 shrink-0">
+                <Truck size={18} />
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-xs font-black text-white uppercase tracking-wider">24-48h State Dispatch</h4>
+                <p className="text-[10px] text-sky-200/70 font-medium leading-tight mt-0.5">
+                  Lagos, Abuja, PH &amp; 33 states delivery
+                </p>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <ShieldCheck size={16} className="text-cyan-300 shrink-0" />
-              <span>Up to 24m Warranty</span>
+
+            <div className="flex items-start gap-3 bg-white/[0.04] p-3 rounded-2xl border border-white/10">
+              <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-300 shrink-0">
+                <ShieldCheck size={18} />
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-xs font-black text-white uppercase tracking-wider">CarePay Escrow Safety</h4>
+                <p className="text-[10px] text-sky-200/70 font-medium leading-tight mt-0.5">
+                  Payment held until unboxed &amp; approved
+                </p>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Wrench size={16} className="text-cyan-300 shrink-0" />
-              <span>Pro Installation Available</span>
+
+            <div className="flex items-start gap-3 bg-white/[0.04] p-3 rounded-2xl border border-white/10">
+              <div className="p-2 rounded-xl bg-cyan-500/20 text-cyan-300 shrink-0">
+                <Wrench size={18} />
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-xs font-black text-white uppercase tracking-wider">1-Click Pro Electrician</h4>
+                <p className="text-[10px] text-sky-200/70 font-medium leading-tight mt-0.5">
+                  Pair with verified HomeCare technician
+                </p>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Zap size={16} className="text-cyan-300 shrink-0" />
-              <span>Escrow Protected Payment</span>
+
+            <div className="flex items-start gap-3 bg-white/[0.04] p-3 rounded-2xl border border-white/10">
+              <div className="p-2 rounded-xl bg-amber-500/20 text-amber-300 shrink-0">
+                <BadgeCheck size={18} />
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-xs font-black text-white uppercase tracking-wider">Up to 24m Warranty</h4>
+                <p className="text-[10px] text-sky-200/70 font-medium leading-tight mt-0.5">
+                  Real replacement &amp; WhatsApp support
+                </p>
+              </div>
             </div>
           </div>
+
         </div>
       </section>
 

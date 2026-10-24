@@ -161,19 +161,20 @@ export default function ProductDetailPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 antialiased overflow-hidden pb-32 sm:pb-28 lg:pb-14">
-      {/* Top Banner Navigation matching Store Home */}
-      <section className="relative bg-gradient-to-br from-sky-600 via-blue-600 to-blue-800 text-white pt-6 sm:pt-8 pb-10 sm:pb-14 px-3.5 sm:px-6 rounded-b-[28px] md:rounded-b-[48px] shadow-2xl shadow-blue-900/15 overflow-hidden">
-        <div className="absolute -top-24 -left-24 w-80 h-80 bg-sky-400/20 rounded-full blur-[90px] pointer-events-none" />
-        <div className="absolute top-1/2 -right-24 w-80 h-80 bg-cyan-300/15 rounded-full blur-[100px] pointer-events-none" />
+      {/* Futuristic Deep Obsidian & Azure Banner matching Store Home */}
+      <section className="relative bg-gradient-to-b from-[#030712] via-[#09152b] to-[#040d1a] text-white pt-6 sm:pt-8 pb-10 sm:pb-14 px-3.5 sm:px-6 rounded-b-[28px] md:rounded-b-[48px] shadow-2xl shadow-sky-950/40 border-b border-sky-900/30 overflow-hidden">
+        <div className="absolute -top-24 -left-24 w-80 h-80 bg-cyan-500/15 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute top-1/2 -right-24 w-80 h-80 bg-blue-600/20 rounded-full blur-[110px] pointer-events-none" />
 
         <div className="mx-auto max-w-7xl relative z-10">
           {/* Breadcrumb & Navigation */}
           <div className="flex items-center justify-between gap-3 sm:gap-4 mb-4">
             <Link
               href="/store"
-              className="flex items-center gap-1.5 sm:gap-2 text-[11px] font-extrabold uppercase tracking-widest text-sky-200 hover:text-white transition-colors w-fit"
+              className="flex items-center gap-1.5 sm:gap-2 text-[11px] font-extrabold uppercase tracking-widest text-sky-300 hover:text-white transition-colors w-fit group"
             >
-              <ArrowLeft size={14} /> Back to Store
+              <ArrowLeft size={14} className="transition-transform group-hover:-translate-x-1" />
+              <span>Back to Store</span>
             </Link>
 
             <div className="flex items-center gap-2 sm:gap-3">
@@ -196,12 +197,12 @@ export default function ProductDetailPage({ params }: PageProps) {
 
               <button
                 onClick={() => setIsCartOpen(true)}
-                className="relative flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-400 hover:bg-sky-300 text-blue-950 text-[11px] font-black uppercase tracking-widest transition-all shadow-md shadow-sky-400/25 cursor-pointer"
+                className="relative flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-sky-400 to-cyan-300 hover:from-sky-300 hover:to-cyan-200 text-slate-950 text-[11px] font-black uppercase tracking-widest transition-all shadow-md shadow-sky-400/25 cursor-pointer"
               >
                 <ShoppingCart size={14} />
                 <span>Cart</span>
                 {cartCount > 0 && (
-                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-slate-900 text-white text-[9px] font-extrabold ml-0.5">
+                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-slate-950 text-white text-[9px] font-extrabold ml-0.5">
                     {cartCount}
                   </span>
                 )}
@@ -210,31 +211,31 @@ export default function ProductDetailPage({ params }: PageProps) {
           </div>
 
           {/* Breadcrumb & Trust Strip */}
-          <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-semibold text-sky-100/90 pt-3 border-t border-sky-500/30">
+          <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-semibold text-sky-100/90 pt-3 border-t border-white/10">
             <div className="flex items-center gap-2 text-[11px]">
               <Link href="/" className="hover:text-white transition-colors">HOME</Link>
-              <span className="text-sky-300">/</span>
+              <span className="text-sky-500">/</span>
               <Link href="/store" className="hover:text-white transition-colors">STORE</Link>
-              <span className="text-sky-300">/</span>
-              <span className="text-cyan-200 uppercase font-black">{product.category}</span>
+              <span className="text-sky-500">/</span>
+              <span className="text-cyan-300 uppercase font-black">{product.category}</span>
             </div>
 
             <div className="flex flex-wrap items-center gap-3 text-[11px] font-bold text-sky-100">
-              <span className="flex items-center gap-1.5 bg-blue-950/60 px-2.5 py-1 rounded-full border border-sky-400/30 text-sky-200">
+              <span className="flex items-center gap-1.5 bg-white/[0.08] px-2.5 py-1 rounded-full border border-white/10 text-cyan-200">
                 <Truck size={13} className="text-cyan-300" />
-                <span>Express Nigerian Delivery</span>
+                <span>24-48h Nigerian Dispatch</span>
               </span>
 
-              <span className="hidden md:inline text-sky-300">•</span>
+              <span className="hidden md:inline text-white/30">•</span>
 
-              <span className="hidden md:flex items-center gap-1 text-sky-100">
-                <ShieldCheck size={13} className="text-cyan-300" />
-                <span>₦1,500 On-Time Guarantee</span>
+              <span className="hidden md:flex items-center gap-1 text-emerald-300 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+                <ShieldCheck size={13} className="text-emerald-400" />
+                <span>CarePay Escrow Protected</span>
               </span>
 
-              <span className="hidden md:inline text-sky-300">•</span>
+              <span className="hidden md:inline text-white/30">•</span>
 
-              <span className="hidden md:flex items-center gap-1 text-sky-100">
+              <span className="hidden md:flex items-center gap-1 text-sky-200 bg-white/[0.08] px-2.5 py-1 rounded-full border border-white/10">
                 <RotateCcw size={13} className="text-cyan-300" />
                 <span>30-Day Defect Shield</span>
               </span>
