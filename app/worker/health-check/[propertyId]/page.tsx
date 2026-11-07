@@ -372,11 +372,10 @@ export default function WorkerHealthCheckPage() {
               <button
                 key={sys.id}
                 onClick={() => setActiveCategoryIndex(idx)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 transition-all cursor-pointer ${
-                  isCurrent
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 transition-all cursor-pointer ${isCurrent
                     ? "bg-sky-600 text-white shadow-md shadow-sky-600/30"
                     : "bg-slate-800/60 text-slate-400 hover:text-white"
-                }`}
+                  }`}
               >
                 <span>{sys.label.split(" ")[0]}</span>
                 {hasCritical ? (
@@ -431,9 +430,8 @@ export default function WorkerHealthCheckPage() {
                       key={cond.id}
                       type="button"
                       onClick={() => setItemCondition(item.category, item.item_name, cond.id as any)}
-                      className={`h-10 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center ${
-                        isSelected ? `${cond.color} shadow-md` : cond.inactive
-                      }`}
+                      className={`h-10 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center ${isSelected ? `${cond.color} shadow-md` : cond.inactive
+                        }`}
                     >
                       {cond.label}
                     </button>

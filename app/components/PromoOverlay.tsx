@@ -487,105 +487,119 @@ export default function PromoOverlay() {
               className="fixed inset-0 z-[90] bg-slate-950/75 backdrop-blur-xs"
             />
 
-            {/* Modal Body */}
+            {/* Modal Body - Modern Compact E-Commerce Coupon Ticket */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.92, y: 25 }}
+              initial={{ opacity: 0, scale: 0.9, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.92, y: 20 }}
-              transition={{ type: "spring", damping: 25, stiffness: 320 }}
+              exit={{ opacity: 0, scale: 0.9, y: 15 }}
+              transition={{ type: "spring", damping: 28, stiffness: 350 }}
               className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-none"
             >
-              <div className="relative w-full max-w-lg bg-white rounded-3xl border border-sky-100 shadow-2xl overflow-hidden pointer-events-auto text-slate-900">
-                {/* Close Button */}
+              <div className="relative w-full max-w-[390px] bg-white rounded-3xl shadow-2xl overflow-hidden pointer-events-auto text-slate-900 border border-slate-100">
+                {/* Floating Close Button */}
                 <button
                   onClick={handleDismissWelcome}
-                  className="absolute top-4 right-4 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:text-slate-900 hover:bg-slate-200 transition-all cursor-pointer"
+                  className="absolute top-3 right-3 z-30 flex h-7 w-7 items-center justify-center rounded-full bg-black/20 hover:bg-black/35 text-white transition-all cursor-pointer backdrop-blur-xs"
                   aria-label="Close voucher modal"
                 >
-                  <X size={16} />
+                  <X size={14} />
                 </button>
 
-                {/* Top Festive Header Banner */}
-                <div className="bg-gradient-to-r from-sky-600 via-blue-600 to-blue-800 text-white p-6 sm:p-7 relative overflow-hidden">
-                  <div className="absolute -top-12 -right-12 w-44 h-44 bg-cyan-300/20 rounded-full blur-2xl pointer-events-none" />
-                  
-                  <div className="relative z-10 space-y-2">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 text-sky-100 text-[10px] font-black uppercase tracking-widest border border-white/20">
-                      <Gift size={12} className="text-cyan-300" />
-                      Exclusive Welcome Voucher
-                    </span>
-                    <h3 className="text-2xl sm:text-3xl font-black text-white font-heading tracking-tight leading-snug">
-                      Claim ₦2,500 OFF <br />Your First Appliance
-                    </h3>
-                    <p className="text-xs sm:text-sm text-sky-100/90 font-medium leading-relaxed">
-                      Enjoy ₦2,500 instant discount on smart surge plugs, water heaters, power banks, and locks across Nigeria.
-                    </p>
-                  </div>
+                {/* Upper Coupon Header (Brand Blue Gradient) */}
+                <div className="relative bg-gradient-to-br from-sky-600 to-blue-700 text-white p-5 pt-6 text-center overflow-hidden">
+                  <div className="absolute -top-10 -right-10 w-32 h-32 bg-cyan-300/20 rounded-full blur-xl pointer-events-none" />
+                  <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none" />
+
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/15 text-cyan-200 text-[9px] font-black uppercase tracking-wider border border-white/20 mb-2">
+                    <Gift size={11} /> Exclusive Welcome Voucher
+                  </span>
+
+                  <h3 className="text-2xl sm:text-[28px] font-black text-white font-heading tracking-tight leading-tight">
+                    Claim ₦2,500 OFF
+                  </h3>
+                  <p className="text-xs font-bold text-sky-100 mt-0.5">
+                    Your First Appliance
+                  </p>
+                  <p className="text-[11px] text-sky-100/80 mt-1 max-w-[280px] mx-auto leading-relaxed">
+                    Enjoy ₦2,500 instant discount on smart surge plugs, water heaters, power banks, and locks across Nigeria.
+                  </p>
                 </div>
 
-                {/* Voucher Content & Highlights */}
-                <div className="p-6 sm:p-7 space-y-5">
-                  {/* Voucher Box with Dash Border */}
-                  <div className="bg-sky-50/70 rounded-2xl p-4 border-2 border-dashed border-sky-300 flex flex-col sm:flex-row items-center justify-between gap-3">
-                    <div>
-                      <span className="text-[10px] font-black uppercase tracking-wider text-sky-800">
-                        Voucher Code (Save ₦2,500 on ₦15k+ · 15% off any order)
-                      </span>
-                      <div className="text-xl sm:text-2xl font-black text-slate-900 font-mono tracking-wider mt-0.5">
+                {/* Ticket Notch & Perforated Tear Line */}
+                <div className="relative bg-white py-1 flex items-center justify-center">
+                  {/* Left Ticket Notch */}
+                  <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-slate-950/75" />
+                  {/* Dashed Cut Line */}
+                  <div className="w-[85%] border-b-2 border-dashed border-slate-200" />
+                  {/* Right Ticket Notch */}
+                  <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-slate-950/75" />
+                </div>
+
+                {/* Lower Ticket Body */}
+                <div className="p-5 pt-3 space-y-4 bg-white">
+                  {/* Voucher Code Box */}
+                  <div className="bg-sky-50/80 rounded-2xl p-3 border border-sky-200/80 flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="text-[9px] font-black uppercase tracking-wider text-sky-800 truncate">
+                        Code (Save ₦2,500 on ₦15k+)
+                      </p>
+                      <p className="text-lg font-black text-slate-900 font-mono tracking-wider">
                         {WELCOME_CODE}
-                      </div>
+                      </p>
                     </div>
 
                     <button
                       type="button"
                       onClick={handleClaimVoucher}
-                      className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md shadow-sky-600/20 transition-all cursor-pointer shrink-0"
+                      className="px-3 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-[11px] font-black uppercase tracking-wider flex items-center gap-1.5 shadow-sm transition-all cursor-pointer shrink-0"
                     >
-                      {copied ? <Check size={14} /> : <Copy size={14} />}
+                      {copied ? <Check size={13} /> : <Copy size={13} />}
                       <span>{copied ? "Applied!" : "Apply & Copy"}</span>
                     </button>
                   </div>
 
-                  {/* Trust Highlights */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-[11px] text-slate-600">
-                    <div className="flex items-start gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                      <Zap size={14} className="text-sky-600 shrink-0 mt-0.5" />
-                      <span className="leading-tight"><strong>NEPA Safe:</strong> Built for 240V voltage swings</span>
+                  {/* Compact Trust Badges (Horizontal Row) */}
+                  <div className="flex items-center justify-between gap-1 text-[10px] text-slate-600 bg-slate-50 p-2 rounded-xl border border-slate-100">
+                    <div className="flex items-center gap-1">
+                      <Zap size={12} className="text-sky-600 shrink-0" />
+                      <span className="font-medium">240V Safe</span>
                     </div>
-                    <div className="flex items-start gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                      <Truck size={14} className="text-sky-600 shrink-0 mt-0.5" />
-                      <span className="leading-tight"><strong>Fast Dispatch:</strong> 24-48h in Lagos, Abuja & PH</span>
+                    <span className="text-slate-300">•</span>
+                    <div className="flex items-center gap-1">
+                      <Truck size={12} className="text-sky-600 shrink-0" />
+                      <span className="font-medium">24-48h Dispatch</span>
                     </div>
-                    <div className="flex items-start gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                      <ShieldCheck size={14} className="text-sky-600 shrink-0 mt-0.5" />
-                      <span className="leading-tight"><strong>CarePay Escrow:</strong> 100% money-back guarantee</span>
+                    <span className="text-slate-300">•</span>
+                    <div className="flex items-center gap-1">
+                      <ShieldCheck size={12} className="text-sky-600 shrink-0" />
+                      <span className="font-medium">CarePay Escrow</span>
                     </div>
                   </div>
 
-                  {/* Actions */}
-                  <div className="space-y-2.5 pt-1">
+                  {/* Primary & Secondary Action Buttons */}
+                  <div className="space-y-2 pt-1">
                     <button
                       type="button"
                       onClick={handleClaimVoucher}
-                      className="w-full h-12 rounded-full bg-sky-600 hover:bg-sky-700 text-white text-xs font-black uppercase tracking-wider shadow-lg shadow-sky-600/25 flex items-center justify-center gap-2 transition-all cursor-pointer"
+                      className="w-full h-11 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-black uppercase tracking-wider shadow-md shadow-sky-600/25 flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-98"
                     >
-                      <Gift size={15} />
+                      <Gift size={14} />
                       <span>Claim ₦2,500 Voucher &amp; Shop Now</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={handleOrderWhatsApp}
-                      className="w-full h-11 rounded-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer"
+                      className="w-full py-1.5 text-center text-xs font-bold text-emerald-700 hover:text-emerald-800 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                     >
-                      <MessageCircle size={15} className="text-emerald-600" />
+                      <MessageCircle size={13} className="text-emerald-600" />
                       <span>Prefer to Order via WhatsApp?</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={handleDismissWelcome}
-                      className="w-full text-center text-[11px] font-semibold text-slate-400 hover:text-slate-600 transition-colors py-1 cursor-pointer"
+                      className="w-full text-center text-[11px] font-medium text-slate-400 hover:text-slate-600 transition-colors pt-0.5 cursor-pointer block"
                     >
                       No thanks, I will pay full price
                     </button>
