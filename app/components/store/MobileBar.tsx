@@ -91,9 +91,9 @@ export default function MobileBar({
         {product.stock !== undefined && product.stock <= 0 ? (
           <button
             onClick={onOpenWaitlist}
-            className="w-full h-10 sm:h-11 rounded-full bg-amber-600 hover:bg-amber-500 text-white text-[11px] font-black uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md shadow-amber-600/30 active:scale-95 transition-all cursor-pointer"
+            className="w-full h-10 sm:h-11 rounded-full bg-sky-600 hover:bg-sky-500 text-white text-[11px] font-black uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md shadow-sky-600/30 active:scale-95 transition-all cursor-pointer"
           >
-            <Bell size={14} className="shrink-0" />
+            <Bell size={14} className="shrink-0 text-white fill-white/20" />
             <span>Join Restock Waitlist</span>
           </button>
         ) : (

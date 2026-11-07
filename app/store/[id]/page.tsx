@@ -440,7 +440,7 @@ export default function ProductDetailPage({ params }: PageProps) {
                 </span>
 
                 {isOutOfStock ? (
-                  <span className="text-[10px] font-black uppercase tracking-wider bg-rose-50 text-rose-700 px-3 py-1 rounded-md border border-rose-200 flex items-center gap-1.5 shadow-2xs">
+                  <span className="text-[10px] font-black uppercase tracking-wider bg-rose-50 text-rose-800 px-3 py-1 rounded-md border border-rose-300 flex items-center gap-1.5 shadow-2xs">
                     <Clock size={12} className="text-rose-600" />
                     Temporarily Sold Out · Restock Batch In Transit
                   </span>
@@ -488,18 +488,18 @@ export default function ProductDetailPage({ params }: PageProps) {
 
             {/* Quantity Selector & Action Buttons / In-Page Restock Waitlist Card */}
             {isOutOfStock ? (
-              <div id="waitlist" className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-xl shadow-slate-100 space-y-5 text-slate-900">
-                <div className="flex flex-wrap items-center justify-between gap-2.5 pb-2 border-b border-slate-100">
+              <div id="waitlist" className="bg-white rounded-3xl p-6 sm:p-7 border-2 border-sky-100 shadow-xl shadow-slate-200/50 space-y-5 text-slate-950">
+                <div className="flex flex-wrap items-center justify-between gap-2.5 pb-2.5 border-b border-slate-100">
                   <div className="flex items-center gap-2">
                     <span className="relative flex h-3 w-3">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
                       <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-600"></span>
                     </span>
-                    <span className="text-xs font-black uppercase tracking-wider text-slate-900">
+                    <span className="text-xs font-black uppercase tracking-wider text-slate-950">
                       Next Cargo Batch In Transit
                     </span>
                   </div>
-                  <span className="text-[11px] font-bold text-sky-800 bg-sky-50 border border-sky-200 px-3 py-1 rounded-full flex items-center gap-1.5">
+                  <span className="text-[11px] font-black text-sky-950 bg-sky-50 border border-sky-200 px-3 py-1 rounded-full flex items-center gap-1.5 shadow-2xs">
                     <Truck size={13} className="text-sky-600" />
                     Lagos Air Cargo · Priority Restock
                   </span>
@@ -508,18 +508,18 @@ export default function ProductDetailPage({ params }: PageProps) {
                 {!waitlistSubmitted ? (
                   <form onSubmit={handleWaitlistSubmit} className="space-y-4">
                     <div className="space-y-1">
-                      <h3 className="text-lg sm:text-2xl font-black text-slate-900 tracking-tight leading-snug">
+                      <h3 className="text-lg sm:text-2xl font-black text-slate-950 tracking-tight leading-snug">
                         Stock Sold Out · Lock In Your Next Batch Priority Slot
                       </h3>
-                      <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
+                      <p className="text-xs sm:text-sm text-slate-700 font-semibold leading-relaxed">
                         Enter your details below to get an instant WhatsApp alert and secure your allocation the minute cargo lands in Lagos.
                       </p>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
                       <div className="space-y-1.5">
-                        <label className="block text-xs font-black uppercase tracking-wider text-slate-800">
-                          Your Full Name <span className="text-rose-500">*</span>
+                        <label className="block text-xs font-black uppercase tracking-wider text-slate-900">
+                          Your Full Name <span className="text-rose-600">*</span>
                         </label>
                         <input
                           required
@@ -527,16 +527,16 @@ export default function ProductDetailPage({ params }: PageProps) {
                           placeholder="e.g. Kenneth Adeleke"
                           value={waitlistName}
                           onChange={(e) => setWaitlistName(e.target.value)}
-                          className="w-full h-12 rounded-xl border border-slate-300 bg-slate-50/70 hover:bg-white focus:bg-white px-4 text-sm font-semibold text-slate-950 placeholder:text-slate-400 outline-none focus:border-sky-600 focus:ring-4 focus:ring-sky-500/10 transition-all"
+                          className="w-full h-12 rounded-xl border border-slate-300 bg-slate-50/70 hover:bg-white focus:bg-white px-4 text-sm font-bold text-slate-950 placeholder:text-slate-400 outline-none focus:border-sky-600 focus:ring-4 focus:ring-sky-500/10 transition-all shadow-xs"
                         />
                       </div>
 
                       <div className="space-y-1.5">
                         <div className="flex items-center justify-between">
-                          <label className="block text-xs font-black uppercase tracking-wider text-slate-800">
-                            WhatsApp Phone Number <span className="text-rose-500">*</span>
+                          <label className="block text-xs font-black uppercase tracking-wider text-slate-900">
+                            WhatsApp Phone Number <span className="text-rose-600">*</span>
                           </label>
-                          <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
+                          <span className="text-[10px] font-black uppercase tracking-wider text-emerald-950 bg-emerald-50 border border-emerald-300 px-2.5 py-0.5 rounded-md shadow-2xs">
                             Instant Alert
                           </span>
                         </div>
@@ -546,17 +546,17 @@ export default function ProductDetailPage({ params }: PageProps) {
                           placeholder="e.g. 0803 123 4567"
                           value={waitlistPhone}
                           onChange={(e) => setWaitlistPhone(e.target.value)}
-                          className="w-full h-12 rounded-xl border border-slate-300 bg-slate-50/70 hover:bg-white focus:bg-white px-4 text-sm font-bold text-slate-950 placeholder:text-slate-400 outline-none focus:border-sky-600 focus:ring-4 focus:ring-sky-500/10 transition-all font-mono"
+                          className="w-full h-12 rounded-xl border border-slate-300 bg-slate-50/70 hover:bg-white focus:bg-white px-4 text-sm font-black text-slate-950 placeholder:text-slate-400 outline-none focus:border-sky-600 focus:ring-4 focus:ring-sky-500/10 transition-all font-mono shadow-xs"
                         />
                       </div>
                     </div>
 
                     <div className="flex items-center justify-between p-3.5 bg-slate-50 border border-slate-200 rounded-2xl">
                       <div>
-                        <span className="block text-xs font-black uppercase tracking-wider text-slate-800">
+                        <span className="block text-xs font-black uppercase tracking-wider text-slate-900">
                           Quantity Needed
                         </span>
-                        <span className="text-[11px] text-slate-500 font-medium">
+                        <span className="text-xs text-slate-600 font-semibold">
                           Units you wish to reserve for this order
                         </span>
                       </div>
@@ -564,7 +564,7 @@ export default function ProductDetailPage({ params }: PageProps) {
                         <button
                           type="button"
                           onClick={() => setWaitlistQty((q) => Math.max(1, q - 1))}
-                          className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-100 hover:bg-slate-200 text-sm font-black text-slate-800 transition-colors cursor-pointer"
+                          className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-100 hover:bg-slate-200 text-sm font-black text-slate-950 transition-colors cursor-pointer"
                           aria-label="Decrease quantity"
                         >
                           -
@@ -573,7 +573,7 @@ export default function ProductDetailPage({ params }: PageProps) {
                         <button
                           type="button"
                           onClick={() => setWaitlistQty((q) => q + 1)}
-                          className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-100 hover:bg-slate-200 text-sm font-black text-slate-800 transition-colors cursor-pointer"
+                          className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-100 hover:bg-slate-200 text-sm font-black text-slate-950 transition-colors cursor-pointer"
                           aria-label="Increase quantity"
                         >
                           +
@@ -611,11 +611,11 @@ export default function ProductDetailPage({ params }: PageProps) {
                     </div>
 
                     <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-100">
-                      <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
+                      <div className="flex items-center gap-2 text-xs font-black text-slate-900">
                         <ShieldCheck size={16} className="text-emerald-600 shrink-0" />
                         <span>₦0 Upfront Payment</span>
                       </div>
-                      <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
+                      <div className="flex items-center gap-2 text-xs font-black text-slate-900">
                         <Truck size={16} className="text-sky-600 shrink-0" />
                         <span>Priority Lagos Dispatch</span>
                       </div>
@@ -624,17 +624,17 @@ export default function ProductDetailPage({ params }: PageProps) {
                 ) : (
                   <div className="p-6 rounded-2xl bg-emerald-50 border-2 border-emerald-300 text-left space-y-3 shadow-xs">
                     <div className="flex items-center gap-2.5">
-                      <CheckCircle2 size={22} className="text-emerald-600 shrink-0" />
+                      <CheckCircle2 size={22} className="text-emerald-700 shrink-0" />
                       <div>
-                        <span className="block text-xs font-black uppercase tracking-wider text-emerald-900">
+                        <span className="block text-xs font-black uppercase tracking-wider text-emerald-950">
                           Priority Spot Locked · Ref #{waitlistRef}
                         </span>
-                        <span className="text-[11px] font-semibold text-emerald-700">
+                        <span className="text-[11px] font-bold text-emerald-800">
                           Allocation successfully saved in priority restock queue
                         </span>
                       </div>
                     </div>
-                    <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-medium">
+                    <p className="text-xs sm:text-sm text-slate-900 leading-relaxed font-semibold">
                       Thank you, <strong className="text-slate-950">{waitlistName}</strong>. We have allocated <strong className="text-slate-950">{waitlistQty} unit(s)</strong> of <strong className="text-slate-950">{product.name}</strong> for you. We will alert your WhatsApp at <strong className="text-slate-950 font-mono">{waitlistPhone}</strong> the minute the air cargo touches down in Lagos.
                     </p>
                   </div>
