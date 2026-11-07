@@ -3,10 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { ShoppingCart, Plus, Check, Minus, Star, ShoppingBag, Flame, Zap } from "lucide-react";
+import { ShoppingCart, Plus, Check, Minus, Star, ShoppingBag, Flame, Zap, Bell, Clock } from "lucide-react";
 import { Product } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { toast } from "sonner";
+import RestockWaitlistModal from "@/app/components/store/RestockWaitlistModal";
 
 interface ProductCardProps {
   product: Product;
@@ -29,6 +30,9 @@ export default function ProductCard({
 
   const [imgError, setImgError] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
+  const [showWaitlistModal, setShowWaitlistModal] = useState(false);
+
+  const isOutOfStock = product.stock !== undefined && product.stock <= 0;
 
   const handleAddToCart = (e?: React.MouseEvent) => {
     e?.stopPropagation();
@@ -168,7 +172,14 @@ export default function ProductCard({
             )}
 
             {/* Stock indicator */}
-            {product.stock !== undefined && product.stock <= 25 && (
+            {isOutOfStock ? (
+              <div className="flex items-center gap-1 px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200">
+                <Clock size={10} className="text-amber-600 animate-pulse" />
+                <p className="text-[9px] font-bold uppercase tracking-wider">
+                  Batch In Transit
+                </p>
+              </div>
+            ) : product.stock !== undefined && product.stock <= 25 && (
               <div className="flex items-center gap-1 px-2 py-0.5 rounded bg-sky-50 text-sky-700 border border-sky-200">
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
@@ -220,10 +231,21 @@ export default function ProductCard({
           </button>
         )}
 
-        {/* Cart Controls */}
+        {/* Cart Controls / Out of stock waitlist */}
         {!onAddStep && (
           <div className="flex flex-col gap-2">
-            {quantity > 0 ? (
+            {isOutOfStock ? (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowWaitlistModal(true);
+                }}
+                className="w-full flex items-center justify-center gap-2 h-11 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/30 text-[11px] font-black uppercase tracking-wider transition-all shadow-xs cursor-pointer active:scale-[0.98]"
+              >
+                <Bell size={14} className="text-amber-600 dark:text-amber-400" />
+                <span>Join Restock Waitlist</span>
+              </button>
+            ) : quantity > 0 ? (
               <div className="flex items-center flex-1 w-full h-11">
                 <div className="flex items-center w-full h-full justify-between rounded-xl border border-sky-200 bg-sky-50/70 p-1 shadow-2xs">
                   <button
@@ -276,6 +298,12 @@ export default function ProductCard({
           </div>
         )}
       </div>
+
+      <RestockWaitlistModal
+        product={product}
+        isOpen={showWaitlistModal}
+        onClose={() => setShowWaitlistModal(false)}
+      />
     </div>
   );
 }

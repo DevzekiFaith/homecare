@@ -387,7 +387,7 @@ export const PRODUCTS: Product[] = [
     rating: 4.9,
     reviewCount: 195,
     badge: "Best Seller",
-    stock: 35,
+    stock: 0,
     sourceOrigin: "Ningbo Flow Automation Park",
     warrantyMonths: 24,
   },

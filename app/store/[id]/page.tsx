@@ -21,7 +21,10 @@ import {
   Cpu, 
   PackageCheck,
   CheckCircle2,
-  Compass
+  Compass,
+  Bell,
+  Clock,
+  MessageCircle
 } from "lucide-react";
 import { PRODUCTS, Product } from "@/lib/products";
 import { useCart } from "@/lib/cart";
@@ -35,6 +38,7 @@ import BuyerProtection from "@/app/components/store/BuyerProtection";
 import CustomerReviews from "@/app/components/store/CustomerReviews";
 import MobileBar from "@/app/components/store/MobileBar";
 import HomeCareInstallationSection from "@/app/components/store/HomeCareInstallationSection";
+import RestockWaitlistModal from "@/app/components/store/RestockWaitlistModal";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -51,12 +55,15 @@ export default function ProductDetailPage({ params }: PageProps) {
   const [imgError, setImgError] = useState(false);
   const [deliveryState, setDeliveryState] = useState("Lagos");
   const [includeInstallation, setIncludeInstallation] = useState(false);
+  const [showWaitlistModal, setShowWaitlistModal] = useState(false);
   const installationFee = 7500;
 
   // Find product by id
   const product = useMemo(() => {
     return PRODUCTS.find((p) => p.id === resolvedParams.id) || null;
   }, [resolvedParams.id]);
+
+  const isOutOfStock = Boolean(product && product.stock !== undefined && product.stock <= 0);
 
   // Dynamic price based on product and installation option
   const effectivePrice = useMemo(() => {
@@ -375,10 +382,17 @@ export default function ProductDetailPage({ params }: PageProps) {
                   {product.sourceOrigin || "Official HomeCare Certified"}
                 </span>
 
-                <span className="text-[10px] font-black uppercase tracking-wider bg-sky-50 text-sky-800 px-2.5 py-1 rounded-md border border-sky-200 flex items-center gap-1">
-                  <CheckCircle2 size={11} className="text-sky-600" />
-                  In Stock ({product.stock || 25} units at Lagos Hub)
-                </span>
+                {isOutOfStock ? (
+                  <span className="text-[10px] font-black uppercase tracking-wider bg-amber-500/10 text-amber-700 dark:text-amber-400 px-2.5 py-1 rounded-md border border-amber-500/30 flex items-center gap-1">
+                    <Clock size={11} className="text-amber-600 animate-pulse" />
+                    Sold Out · Next Cargo Batch In Transit
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-black uppercase tracking-wider bg-sky-50 text-sky-800 px-2.5 py-1 rounded-md border border-sky-200 flex items-center gap-1">
+                    <CheckCircle2 size={11} className="text-sky-600" />
+                    In Stock ({product.stock || 25} units at Lagos Hub)
+                  </span>
+                )}
               </div>
 
               <h1 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight leading-snug">
@@ -415,114 +429,160 @@ export default function ProductDetailPage({ params }: PageProps) {
               {product.description}
             </p>
 
-            {/* Quantity Selector & Action Buttons */}
-            <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/90 shadow-sm space-y-4">
-              <div className="flex items-center justify-between flex-wrap gap-3">
-                <div className="flex items-center gap-3">
-                  <span className="text-xs font-black uppercase tracking-wider text-slate-700">Quantity</span>
-                  <div className="flex items-center rounded-2xl border border-slate-200 bg-slate-50 p-1">
-                    <button
-                      onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
-                      className="flex h-8 w-8 items-center justify-center rounded-xl bg-white text-slate-700 hover:bg-sky-50 hover:text-sky-700 shadow-2xs transition-colors cursor-pointer"
-                    >
-                      <Minus size={14} />
-                    </button>
-                    <span className="w-10 text-center text-sm font-black text-slate-900">{quantity}</span>
-                    <button
-                      onClick={() => setQuantity((prev) => prev + 1)}
-                      className="flex h-8 w-8 items-center justify-center rounded-xl bg-white text-slate-700 hover:bg-sky-50 hover:text-sky-700 shadow-2xs transition-colors cursor-pointer"
-                    >
-                      <Plus size={14} />
-                    </button>
-                  </div>
+            {/* Quantity Selector & Action Buttons / Restock Waitlist */}
+            {isOutOfStock ? (
+              <div className="bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent rounded-3xl p-5 sm:p-6 border-2 border-dashed border-amber-300 dark:border-amber-500/30 shadow-xs space-y-4">
+                <div className="flex items-center gap-2">
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+                  </span>
+                  <h3 className="text-xs font-black uppercase tracking-wider text-amber-800 dark:text-amber-300">
+                    Next Cargo Shipment In Transit (Lagos Airport Air Freight)
+                  </h3>
                 </div>
 
-                {inCartCount > 0 && (
-                  <span className="text-xs font-bold text-sky-800 bg-sky-50 px-3 py-1 rounded-full border border-sky-200">
-                    {inCartCount} already in your cart
-                  </span>
-                )}
-              </div>
+                <div className="space-y-1">
+                  <p className="text-base sm:text-lg font-heading font-black text-slate-900 dark:text-white">
+                    Stock Sold Out · Lock In Your Next Batch Priority Slot
+                  </p>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                    This item has sold out across our Lagos, Abuja, and Port Harcourt distribution centers. Enter the waitlist below to lock in priority allocation before the incoming shipment arrives.
+                  </p>
+                </div>
 
-              {/* Interactive HomeCare Certified Installation Addon with Brand Logo (Select with product) */}
-              <div 
-                onClick={() => handleToggleInstallation()}
-                className={`rounded-2xl p-3.5 border transition-all cursor-pointer flex items-center justify-between gap-3 ${
-                  includeInstallation
-                    ? "bg-sky-50/90 border-sky-500 ring-2 ring-sky-500/20 shadow-xs"
-                    : "bg-slate-50 border-slate-200/90 hover:border-sky-300"
-                }`}
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="relative w-9 h-9 rounded-xl bg-white p-1 border border-slate-200 shadow-2xs shrink-0 flex items-center justify-center">
-                    <Image
-                      src="/hclogo.png"
-                      alt="HomeCare Logo"
-                      width={28}
-                      height={28}
-                      className="object-contain rounded-lg"
-                    />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <p className="text-xs font-black text-slate-900 uppercase">
-                        Home<span className="text-sky-600">Care</span>™ Certified Installation
-                      </p>
-                      <span className="text-[9px] font-black uppercase text-sky-800 bg-sky-50 px-2 py-0.5 rounded-full border border-sky-200">
-                        +₦{installationFee.toLocaleString()}
-                      </span>
-                      {includeInstallation && (
-                        <span className="text-[9px] font-black uppercase text-sky-800 bg-sky-100/80 px-1.5 py-0.2 rounded">
-                          Bundled
-                        </span>
-                      )}
+                <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                  <button
+                    onClick={() => setShowWaitlistModal(true)}
+                    className="flex-1 h-13 rounded-full px-6 text-xs font-black uppercase tracking-wider bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-600/25 flex items-center justify-center gap-2 transition-all hover:scale-101 active:scale-98 cursor-pointer"
+                  >
+                    <Bell size={16} />
+                    <span>Join Priority Restock Waitlist</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      const text = encodeURIComponent(
+                        `Hello HomeCare! I want to reserve a unit of "${product.name}" in your next incoming shipment.`
+                      );
+                      window.open(`https://wa.me/2349119059859?text=${text}`, "_blank");
+                    }}
+                    className="flex-1 sm:flex-initial h-13 rounded-full px-6 text-xs font-black uppercase tracking-wider bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 transition-all hover:scale-101 active:scale-98 cursor-pointer"
+                  >
+                    <MessageCircle size={16} />
+                    <span>Reserve via WhatsApp</span>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/90 shadow-sm space-y-4">
+                <div className="flex items-center justify-between flex-wrap gap-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs font-black uppercase tracking-wider text-slate-700">Quantity</span>
+                    <div className="flex items-center rounded-2xl border border-slate-200 bg-slate-50 p-1">
+                      <button
+                        onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                        className="flex h-8 w-8 items-center justify-center rounded-xl bg-white text-slate-700 hover:bg-sky-50 hover:text-sky-700 shadow-2xs transition-colors cursor-pointer"
+                      >
+                        <Minus size={14} />
+                      </button>
+                      <span className="w-10 text-center text-sm font-black text-slate-900">{quantity}</span>
+                      <button
+                        onClick={() => setQuantity((prev) => prev + 1)}
+                        className="flex h-8 w-8 items-center justify-center rounded-xl bg-white text-slate-700 hover:bg-sky-50 hover:text-sky-700 shadow-2xs transition-colors cursor-pointer"
+                      >
+                        <Plus size={14} />
+                      </button>
                     </div>
-                    <p className="text-[10px] text-slate-500 font-medium leading-tight mt-0.5 truncate">
-                      Vetted Nigerian technician dispatch + NEPA 240V surge testing + 30-day warranty.
-                    </p>
                   </div>
+
+                  {inCartCount > 0 && (
+                    <span className="text-xs font-bold text-sky-800 bg-sky-50 px-3 py-1 rounded-full border border-sky-200">
+                      {inCartCount} already in your cart
+                    </span>
+                  )}
                 </div>
 
-                <div className="flex items-center gap-2 shrink-0">
-                  <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${
+                {/* Interactive HomeCare Certified Installation Addon with Brand Logo (Select with product) */}
+                <div 
+                  onClick={() => handleToggleInstallation()}
+                  className={`rounded-2xl p-3.5 border transition-all cursor-pointer flex items-center justify-between gap-3 ${
                     includeInstallation
-                      ? "bg-sky-600 border-sky-600 text-white"
-                      : "border-slate-300 bg-white"
-                  }`}>
-                    {includeInstallation && <Check size={14} strokeWidth={3} />}
+                      ? "bg-sky-50/90 border-sky-500 ring-2 ring-sky-500/20 shadow-xs"
+                      : "bg-slate-50 border-slate-200/90 hover:border-sky-300"
+                  }`}
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="relative w-9 h-9 rounded-xl bg-white p-1 border border-slate-200 shadow-2xs shrink-0 flex items-center justify-center">
+                      <Image
+                        src="/hclogo.png"
+                        alt="HomeCare Logo"
+                        width={28}
+                        height={28}
+                        className="object-contain rounded-lg"
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="text-xs font-black text-slate-900 uppercase">
+                          Home<span className="text-sky-600">Care</span>™ Certified Installation
+                        </p>
+                        <span className="text-[9px] font-black uppercase text-sky-800 bg-sky-50 px-2 py-0.5 rounded-full border border-sky-200">
+                          +₦{installationFee.toLocaleString()}
+                        </span>
+                        {includeInstallation && (
+                          <span className="text-[9px] font-black uppercase text-sky-800 bg-sky-100/80 px-1.5 py-0.2 rounded">
+                            Bundled
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[10px] text-slate-500 font-medium leading-tight mt-0.5 truncate">
+                        Vetted Nigerian technician dispatch + NEPA 240V surge testing + 30-day warranty.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${
+                      includeInstallation
+                        ? "bg-sky-600 border-sky-600 text-white"
+                        : "border-slate-300 bg-white"
+                    }`}>
+                      {includeInstallation && <Check size={14} strokeWidth={3} />}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Primary Action Buttons (Bundled Together) */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-1">
-                <button
-                  onClick={handleAddToCart}
-                  className="flex-1 h-13 rounded-full px-6 text-xs font-black uppercase tracking-wider bg-slate-900 hover:bg-slate-800 text-white shadow-md flex items-center justify-center gap-2 transition-all hover:scale-101 active:scale-98 cursor-pointer"
-                >
-                  <ShoppingCart size={16} />
-                  <span>
-                    {justAdded
-                      ? "Added to Cart!"
-                      : includeInstallation
-                      ? `Add Appliance + Pro Install (₦${((basePrice + installationFee) * quantity).toLocaleString()})`
-                      : `Add to Cart (₦${(basePrice * quantity).toLocaleString()})`}
-                  </span>
-                </button>
+                {/* Primary Action Buttons (Bundled Together) */}
+                <div className="flex flex-col sm:flex-row gap-3 pt-1">
+                  <button
+                    onClick={handleAddToCart}
+                    className="flex-1 h-13 rounded-full px-6 text-xs font-black uppercase tracking-wider bg-slate-900 hover:bg-slate-800 text-white shadow-md flex items-center justify-center gap-2 transition-all hover:scale-101 active:scale-98 cursor-pointer"
+                  >
+                    <ShoppingCart size={16} />
+                    <span>
+                      {justAdded
+                        ? "Added to Cart!"
+                        : includeInstallation
+                        ? `Add Appliance + Pro Install (₦${((basePrice + installationFee) * quantity).toLocaleString()})`
+                        : `Add to Cart (₦${(basePrice * quantity).toLocaleString()})`}
+                    </span>
+                  </button>
 
-                <button
-                  onClick={handleBuyNow}
-                  className="flex-1 h-13 rounded-full px-6 text-xs font-black uppercase tracking-wider bg-sky-600 hover:bg-sky-700 text-white shadow-lg shadow-sky-600/30 flex items-center justify-center gap-2 transition-all hover:scale-101 active:scale-98 cursor-pointer"
-                >
-                  <Zap size={16} className="text-sky-200 fill-sky-200" />
-                  <span>
-                    {includeInstallation
-                      ? `Buy Both Now (₦${((basePrice + installationFee) * quantity).toLocaleString()})`
-                      : `Buy Now (₦${(basePrice * quantity).toLocaleString()})`}
-                  </span>
-                </button>
+                  <button
+                    onClick={handleBuyNow}
+                    className="flex-1 h-13 rounded-full px-6 text-xs font-black uppercase tracking-wider bg-sky-600 hover:bg-sky-700 text-white shadow-lg shadow-sky-600/30 flex items-center justify-center gap-2 transition-all hover:scale-101 active:scale-98 cursor-pointer"
+                  >
+                    <Zap size={16} className="text-sky-200 fill-sky-200" />
+                    <span>
+                      {includeInstallation
+                        ? `Buy Both Now (₦${((basePrice + installationFee) * quantity).toLocaleString()})`
+                        : `Buy Now (₦${(basePrice * quantity).toLocaleString()})`}
+                    </span>
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Nigerian Delivery Section */}
             <DeliverySection
@@ -674,8 +734,16 @@ export default function ProductDetailPage({ params }: PageProps) {
         justAdded={justAdded}
         cartCount={cartCount}
         onOpenCart={() => setIsCartOpen(true)}
+        onOpenWaitlist={() => setShowWaitlistModal(true)}
         includeInstallation={includeInstallation}
         installationFee={installationFee}
+      />
+
+      {/* Restock Waitlist Modal */}
+      <RestockWaitlistModal
+        product={product}
+        isOpen={showWaitlistModal}
+        onClose={() => setShowWaitlistModal(false)}
       />
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { ShoppingCart, Store, Zap, MessageSquare } from "lucide-react";
+import { ShoppingCart, Store, Zap, MessageSquare, Bell } from "lucide-react";
 import Link from "next/link";
 import { Product } from "@/lib/products";
 
@@ -11,6 +11,7 @@ interface MobileBarProps {
   justAdded: boolean;
   cartCount: number;
   onOpenCart?: () => void;
+  onOpenWaitlist?: () => void;
   includeInstallation?: boolean;
   installationFee?: number;
 }
@@ -22,6 +23,7 @@ export default function MobileBar({
   justAdded,
   cartCount,
   onOpenCart,
+  onOpenWaitlist,
   includeInstallation = false,
   installationFee = 7500,
 }: MobileBarProps) {
@@ -86,21 +88,33 @@ export default function MobileBar({
 
       {/* Action Buttons */}
       <div className="flex-1 flex items-center gap-1.5 sm:gap-2 max-w-xs ml-auto">
-        <button
-          onClick={onAddToCart}
-          className="flex-1 h-10 sm:h-11 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-[10px] sm:text-[11px] font-black uppercase tracking-wider flex items-center justify-center gap-1 shadow-xs active:scale-95 transition-all"
-        >
-          <ShoppingCart size={13} className="shrink-0" />
-          <span className="truncate">{justAdded ? "Added!" : includeInstallation ? "Add Both" : "Add Cart"}</span>
-        </button>
+        {product.stock !== undefined && product.stock <= 0 ? (
+          <button
+            onClick={onOpenWaitlist}
+            className="w-full h-10 sm:h-11 rounded-full bg-amber-600 hover:bg-amber-500 text-white text-[11px] font-black uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md shadow-amber-600/30 active:scale-95 transition-all cursor-pointer"
+          >
+            <Bell size={14} className="shrink-0" />
+            <span>Join Restock Waitlist</span>
+          </button>
+        ) : (
+          <>
+            <button
+              onClick={onAddToCart}
+              className="flex-1 h-10 sm:h-11 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-[10px] sm:text-[11px] font-black uppercase tracking-wider flex items-center justify-center gap-1 shadow-xs active:scale-95 transition-all"
+            >
+              <ShoppingCart size={13} className="shrink-0" />
+              <span className="truncate">{justAdded ? "Added!" : includeInstallation ? "Add Both" : "Add Cart"}</span>
+            </button>
 
-        <button
-          onClick={onBuyNow}
-          className="flex-1 h-10 sm:h-11 rounded-full bg-sky-600 hover:bg-sky-700 text-white text-[10px] sm:text-[11px] font-black uppercase tracking-wider flex items-center justify-center gap-1 shadow-md shadow-sky-600/30 active:scale-95 transition-all"
-        >
-          <Zap size={13} className="text-sky-200 fill-sky-200 shrink-0" />
-          <span className="truncate">{includeInstallation ? "Buy Both" : "Buy Now"}</span>
-        </button>
+            <button
+              onClick={onBuyNow}
+              className="flex-1 h-10 sm:h-11 rounded-full bg-sky-600 hover:bg-sky-700 text-white text-[10px] sm:text-[11px] font-black uppercase tracking-wider flex items-center justify-center gap-1 shadow-md shadow-sky-600/30 active:scale-95 transition-all"
+            >
+              <Zap size={13} className="text-sky-200 fill-sky-200 shrink-0" />
+              <span className="truncate">{includeInstallation ? "Buy Both" : "Buy Now"}</span>
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
