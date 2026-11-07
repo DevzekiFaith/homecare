@@ -440,9 +440,9 @@ export default function ProductDetailPage({ params }: PageProps) {
                 </span>
 
                 {isOutOfStock ? (
-                  <span className="text-[10px] font-black uppercase tracking-wider bg-amber-500/10 text-amber-700 dark:text-amber-400 px-2.5 py-1 rounded-md border border-amber-500/30 flex items-center gap-1">
-                    <Clock size={11} className="text-amber-600 animate-pulse" />
-                    Sold Out · Next Cargo Batch In Transit
+                  <span className="text-[10px] font-black uppercase tracking-wider bg-rose-50 text-rose-700 px-3 py-1 rounded-md border border-rose-200 flex items-center gap-1.5 shadow-2xs">
+                    <Clock size={12} className="text-rose-600" />
+                    Temporarily Sold Out · Restock Batch In Transit
                   </span>
                 ) : (
                   <span className="text-[10px] font-black uppercase tracking-wider bg-sky-50 text-sky-800 px-2.5 py-1 rounded-md border border-sky-200 flex items-center gap-1">
@@ -488,73 +488,93 @@ export default function ProductDetailPage({ params }: PageProps) {
 
             {/* Quantity Selector & Action Buttons / In-Page Restock Waitlist Card */}
             {isOutOfStock ? (
-              <div id="waitlist" className="bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent rounded-3xl p-5 sm:p-6 border-2 border-dashed border-amber-300 dark:border-amber-500/30 shadow-xs space-y-4">
-                <div className="flex items-center gap-2">
-                  <span className="relative flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+              <div id="waitlist" className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-xl shadow-slate-100 space-y-5 text-slate-900">
+                <div className="flex flex-wrap items-center justify-between gap-2.5 pb-2 border-b border-slate-100">
+                  <div className="flex items-center gap-2">
+                    <span className="relative flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-600"></span>
+                    </span>
+                    <span className="text-xs font-black uppercase tracking-wider text-slate-900">
+                      Next Cargo Batch In Transit
+                    </span>
+                  </div>
+                  <span className="text-[11px] font-bold text-sky-800 bg-sky-50 border border-sky-200 px-3 py-1 rounded-full flex items-center gap-1.5">
+                    <Truck size={13} className="text-sky-600" />
+                    Lagos Air Cargo · Priority Restock
                   </span>
-                  <h3 className="text-xs font-black uppercase tracking-wider text-amber-800 dark:text-amber-300">
-                    Next Cargo Batch In Transit · Lagos Air Cargo
-                  </h3>
                 </div>
 
                 {!waitlistSubmitted ? (
-                  <form onSubmit={handleWaitlistSubmit} className="space-y-3.5">
+                  <form onSubmit={handleWaitlistSubmit} className="space-y-4">
                     <div className="space-y-1">
-                      <p className="text-base sm:text-lg font-heading font-black text-slate-900 dark:text-white">
+                      <h3 className="text-lg sm:text-2xl font-black text-slate-900 tracking-tight leading-snug">
                         Stock Sold Out · Lock In Your Next Batch Priority Slot
-                      </p>
-                      <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                      </h3>
+                      <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
                         Enter your details below to get an instant WhatsApp alert and secure your allocation the minute cargo lands in Lagos.
                       </p>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
-                          Your Full Name
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+                      <div className="space-y-1.5">
+                        <label className="block text-xs font-black uppercase tracking-wider text-slate-800">
+                          Your Full Name <span className="text-rose-500">*</span>
                         </label>
                         <input
                           required
+                          type="text"
                           placeholder="e.g. Kenneth Adeleke"
                           value={waitlistName}
                           onChange={(e) => setWaitlistName(e.target.value)}
-                          className="w-full h-11 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 px-3.5 text-xs text-slate-900 dark:text-white outline-none focus:border-amber-500 transition-all"
+                          className="w-full h-12 rounded-xl border border-slate-300 bg-slate-50/70 hover:bg-white focus:bg-white px-4 text-sm font-semibold text-slate-950 placeholder:text-slate-400 outline-none focus:border-sky-600 focus:ring-4 focus:ring-sky-500/10 transition-all"
                         />
                       </div>
 
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 flex items-center justify-between">
-                          <span>WhatsApp Phone Number</span>
-                          <span className="text-[9px] text-emerald-600 font-bold">Instant Alert</span>
-                        </label>
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <label className="block text-xs font-black uppercase tracking-wider text-slate-800">
+                            WhatsApp Phone Number <span className="text-rose-500">*</span>
+                          </label>
+                          <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
+                            Instant Alert
+                          </span>
+                        </div>
                         <input
                           required
                           type="tel"
                           placeholder="e.g. 0803 123 4567"
                           value={waitlistPhone}
                           onChange={(e) => setWaitlistPhone(e.target.value)}
-                          className="w-full h-11 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 px-3.5 text-xs text-slate-900 dark:text-white outline-none focus:border-amber-500 transition-all font-mono"
+                          className="w-full h-12 rounded-xl border border-slate-300 bg-slate-50/70 hover:bg-white focus:bg-white px-4 text-sm font-bold text-slate-950 placeholder:text-slate-400 outline-none focus:border-sky-600 focus:ring-4 focus:ring-sky-500/10 transition-all font-mono"
                         />
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between pt-1">
-                      <span className="text-xs font-bold text-slate-700 dark:text-slate-300">Quantity Needed:</span>
-                      <div className="flex items-center gap-2 bg-white dark:bg-slate-900 rounded-xl p-1 border border-slate-200 dark:border-white/10">
+                    <div className="flex items-center justify-between p-3.5 bg-slate-50 border border-slate-200 rounded-2xl">
+                      <div>
+                        <span className="block text-xs font-black uppercase tracking-wider text-slate-800">
+                          Quantity Needed
+                        </span>
+                        <span className="text-[11px] text-slate-500 font-medium">
+                          Units you wish to reserve for this order
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 bg-white rounded-xl p-1 border border-slate-200 shadow-2xs">
                         <button
                           type="button"
                           onClick={() => setWaitlistQty((q) => Math.max(1, q - 1))}
-                          className="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer"
+                          className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-100 hover:bg-slate-200 text-sm font-black text-slate-800 transition-colors cursor-pointer"
+                          aria-label="Decrease quantity"
                         >
                           -
                         </button>
-                        <span className="w-6 text-center text-xs font-black">{waitlistQty}</span>
+                        <span className="w-8 text-center text-sm font-black text-slate-950">{waitlistQty}</span>
                         <button
                           type="button"
                           onClick={() => setWaitlistQty((q) => q + 1)}
-                          className="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer"
+                          className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-100 hover:bg-slate-200 text-sm font-black text-slate-800 transition-colors cursor-pointer"
+                          aria-label="Increase quantity"
                         >
                           +
                         </button>
@@ -565,9 +585,13 @@ export default function ProductDetailPage({ params }: PageProps) {
                       <button
                         type="submit"
                         disabled={waitlistLoading}
-                        className="flex-1 h-12 rounded-full px-6 text-xs font-black uppercase tracking-wider bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-600/25 flex items-center justify-center gap-2 transition-all hover:scale-101 active:scale-98 cursor-pointer disabled:opacity-50"
+                        className="flex-1 h-13 rounded-2xl px-6 text-xs sm:text-sm font-black uppercase tracking-wider bg-sky-600 hover:bg-sky-500 text-white shadow-lg shadow-sky-600/25 flex items-center justify-center gap-2.5 transition-all hover:scale-101 active:scale-98 cursor-pointer disabled:opacity-50"
                       >
-                        {waitlistLoading ? <Loader2 size={15} className="animate-spin" /> : <Bell size={15} />}
+                        {waitlistLoading ? (
+                          <Loader2 size={17} className="animate-spin" />
+                        ) : (
+                          <Bell size={17} />
+                        )}
                         <span>Lock In My Restock Spot</span>
                       </button>
 
@@ -579,23 +603,39 @@ export default function ProductDetailPage({ params }: PageProps) {
                           );
                           window.open(`https://wa.me/2349119059859?text=${text}`, "_blank");
                         }}
-                        className="flex-1 sm:flex-initial h-12 rounded-full px-6 text-xs font-black uppercase tracking-wider bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 transition-all hover:scale-101 active:scale-98 cursor-pointer"
+                        className="h-13 rounded-2xl px-6 text-xs sm:text-sm font-black uppercase tracking-wider bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2.5 transition-all hover:scale-101 active:scale-98 cursor-pointer"
                       >
-                        <MessageCircle size={15} />
+                        <MessageCircle size={17} />
                         <span>Reserve via WhatsApp</span>
                       </button>
                     </div>
+
+                    <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-100">
+                      <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
+                        <ShieldCheck size={16} className="text-emerald-600 shrink-0" />
+                        <span>₦0 Upfront Payment</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
+                        <Truck size={16} className="text-sky-600 shrink-0" />
+                        <span>Priority Lagos Dispatch</span>
+                      </div>
+                    </div>
                   </form>
                 ) : (
-                  <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/40 text-left space-y-2">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 size={18} className="text-emerald-600" />
-                      <span className="text-xs font-black uppercase tracking-wider text-emerald-800 dark:text-emerald-300">
-                        Priority Spot Reserved (#{waitlistRef})
-                      </span>
+                  <div className="p-6 rounded-2xl bg-emerald-50 border-2 border-emerald-300 text-left space-y-3 shadow-xs">
+                    <div className="flex items-center gap-2.5">
+                      <CheckCircle2 size={22} className="text-emerald-600 shrink-0" />
+                      <div>
+                        <span className="block text-xs font-black uppercase tracking-wider text-emerald-900">
+                          Priority Spot Locked · Ref #{waitlistRef}
+                        </span>
+                        <span className="text-[11px] font-semibold text-emerald-700">
+                          Allocation successfully saved in priority restock queue
+                        </span>
+                      </div>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                      Thank you, <strong>{waitlistName}</strong>. We have saved your reservation for <strong>{waitlistQty} unit(s)</strong> of {product.name}. We will notify <strong>{waitlistPhone}</strong> the moment the cargo arrives at our Lagos depot.
+                    <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-medium">
+                      Thank you, <strong className="text-slate-950">{waitlistName}</strong>. We have allocated <strong className="text-slate-950">{waitlistQty} unit(s)</strong> of <strong className="text-slate-950">{product.name}</strong> for you. We will alert your WhatsApp at <strong className="text-slate-950 font-mono">{waitlistPhone}</strong> the minute the air cargo touches down in Lagos.
                     </p>
                   </div>
                 )}
