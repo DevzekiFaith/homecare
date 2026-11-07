@@ -5,15 +5,17 @@ import DashboardClient from "./DashboardClient";
 export default async function AdminDashboardPage() {
   const supabase = await createClient();
   
-  const [jobsRes, workersRes, ordersRes] = await Promise.all([
+  const [jobsRes, workersRes, ordersRes, waitlistRes] = await Promise.all([
     supabase.from("service_requests").select("id, status"),
     supabase.from("professionals").select("id, is_verified"),
     supabase.from("store_orders").select("id, status, total"),
+    supabase.from("stock_waitlist").select("id, quantity, status"),
   ]);
 
   const jobs = jobsRes.data ?? [];
   const workers = workersRes.data ?? [];
   const orders = ordersRes.data ?? [];
+  const waitlist = waitlistRes.data ?? [];
 
   const stats = {
     totalJobs: jobs.length,
@@ -23,6 +25,9 @@ export default async function AdminDashboardPage() {
     totalStoreOrders: orders.length,
     pendingStoreOrders: orders.filter((o) => o.status === "pending_payment").length,
     totalStoreRevenue: orders.reduce((sum: number, o) => sum + (Number(o.total) || 0), 0),
+    totalWaitlist: waitlist.length,
+    pendingWaitlist: waitlist.filter((w) => w.status === "pending").length,
+    totalWaitlistUnits: waitlist.reduce((sum: number, w) => sum + (Number(w.quantity) || 1), 0),
   };
 
   const activeCitiesCount = CITIES.filter((c) => c.active).length;

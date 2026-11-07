@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ClipboardList, MapPin, TrendingUp, ShoppingBag, Users, ShieldCheck, ArrowRight, CheckCircle2 } from "lucide-react";
+import { ClipboardList, MapPin, TrendingUp, ShoppingBag, Users, ShieldCheck, ArrowRight, CheckCircle2, Bell } from "lucide-react";
 import { CITIES } from "@/lib/cities";
 
 interface DashboardClientProps {
@@ -14,6 +14,9 @@ interface DashboardClientProps {
     totalStoreOrders: number;
     pendingStoreOrders: number;
     totalStoreRevenue: number;
+    totalWaitlist?: number;
+    pendingWaitlist?: number;
+    totalWaitlistUnits?: number;
   };
   activeCitiesCount: number;
   upcomingCitiesCount: number;
@@ -79,6 +82,13 @@ export default function DashboardClient({ stats, activeCitiesCount, upcomingCiti
       btnText: "Manage Orders",
     },
     {
+      title: "Restock Waitlist",
+      desc: `${stats.pendingWaitlist ?? 0} buyers waiting (${stats.totalWaitlistUnits ?? 0} units)`,
+      href: "/admin/restock-waitlist",
+      icon: Bell,
+      btnText: "View Waitlist",
+    },
+    {
       title: "Payment Verifications",
       desc: "Review customer bank transfers",
       href: "/admin/payments",
@@ -90,7 +100,7 @@ export default function DashboardClient({ stats, activeCitiesCount, upcomingCiti
   return (
     <div className="space-y-8">
       {/* Top Metrics Grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <StatCard 
           label="Total Jobs" 
           value={stats.totalJobs} 
@@ -119,6 +129,15 @@ export default function DashboardClient({ stats, activeCitiesCount, upcomingCiti
           bgAccent="bg-amber-50 text-amber-600 border-amber-200"
         />
         <StatCard 
+          label="Restock Waitlist" 
+          value={stats.totalWaitlist ?? 0} 
+          sub={`${stats.totalWaitlistUnits ?? 0} units demanded`} 
+          icon={Bell} 
+          delay={0.12}
+          accentColor="text-rose-600"
+          bgAccent="bg-rose-50 text-rose-600 border-rose-200"
+        />
+        <StatCard 
           label="Store Revenue" 
           value={`₦${stats.totalStoreRevenue.toLocaleString()}`} 
           sub="Platform item sales" 
@@ -132,7 +151,7 @@ export default function DashboardClient({ stats, activeCitiesCount, upcomingCiti
       {/* Quick Action Navigation Buttons */}
       <div className="space-y-3">
         <p className="text-xs font-black uppercase tracking-wider text-slate-500">Quick Controls</p>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {quickActions.map((action, i) => (
             <motion.div
               key={action.title}

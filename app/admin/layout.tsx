@@ -16,6 +16,7 @@ import {
   Home,
   Star,
   Building2,
+  Bell,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import AdminLockScreen from "@/app/components/admin/AdminLockScreen";
@@ -28,6 +29,7 @@ const NAV = [
   { href: "/admin/jobs", label: "Jobs", icon: ClipboardList },
   { href: "/admin/workers", label: "Workers", icon: Users },
   { href: "/admin/store-orders", label: "Store Orders", icon: ShoppingBag },
+  { href: "/admin/restock-waitlist", label: "Restock Waitlist", icon: Bell },
   { href: "/admin/payments", label: "Payments", icon: ShieldCheck },
   { href: "/admin/reviews", label: "Reviews", icon: Star },
   { href: "/admin/cities", label: "Cities", icon: MapPin },

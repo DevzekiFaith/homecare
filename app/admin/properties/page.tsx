@@ -30,11 +30,11 @@ export default function AdminPropertiesPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const loadProperties = useCallback(async () => {
+    let localProps: Property[] = [];
     try {
       setLoading(true);
       
       // Load any locally cached registered properties
-      let localProps: Property[] = [];
       if (typeof window !== "undefined") {
         try {
           const cached = localStorage.getItem("hc_properties_cache");
@@ -50,9 +50,7 @@ export default function AdminPropertiesPage() {
         .order("created_at", { ascending: false });
 
       if (error || !data || data.length === 0) {
-        // Merge local created properties with default baseline seed
-        const combined = [...localProps, ...DEFAULT_PROPERTIES];
-        const unique = Array.from(new Map(combined.map((p) => [p.property_id, p])).values());
+        const unique = Array.from(new Map(localProps.map((p) => [p.property_id, p])).values());
         setProperties(unique);
       } else {
         const combined = [...data, ...localProps];
@@ -60,8 +58,7 @@ export default function AdminPropertiesPage() {
         setProperties(unique as Property[]);
       }
     } catch {
-      // Graceful fallback to default seed properties without showing error banner
-      setProperties(DEFAULT_PROPERTIES);
+      setProperties(localProps);
     } finally {
       setLoading(false);
     }

@@ -65,18 +65,6 @@ export default function AdminReviewsPage() {
         </p>
       </div>
 
-      {isFallback && (
-        <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl flex gap-3 shadow-2xs">
-          <AlertTriangle className="text-amber-600 shrink-0 mt-0.5" size={18} />
-          <div>
-            <h4 className="text-xs font-bold text-amber-900 uppercase tracking-wide">Developer Fallback Active</h4>
-            <p className="text-[11px] text-amber-700 mt-1 leading-normal">
-              The remote Supabase `reviews` table was not detected. The dashboard is currently displaying cached mock review data stored in your local browser storage. Run the SQL migration `20260822_reviews.sql` in your Supabase SQL editor to enable persistent remote database storage.
-            </p>
-          </div>
-        </div>
-      )}
-
       {/* Analytics widgets */}
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between">

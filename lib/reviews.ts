@@ -15,7 +15,7 @@ export interface Review {
   service_type?: string;
 }
 
-const LOCAL_STORAGE_KEY = "homecare_mock_reviews";
+const LOCAL_STORAGE_KEY = "homecare_reviews_cache";
 
 // Helper to check if reviews table is missing
 function isTableMissingError(error: any): boolean {
@@ -27,7 +27,7 @@ function isTableMissingError(error: any): boolean {
   );
 }
 
-// Get reviews from localStorage
+// Get reviews from localStorage cache
 function getLocalReviews(): Review[] {
   if (typeof window === "undefined") return [];
   const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -39,7 +39,7 @@ function getLocalReviews(): Review[] {
   }
 }
 
-// Save reviews to localStorage
+// Save reviews to localStorage cache
 function saveLocalReviews(reviews: Review[]) {
   if (typeof window === "undefined") return;
   localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(reviews));
@@ -63,7 +63,6 @@ export async function fetchAllReviews(): Promise<{ data: Review[]; isFallback: b
 
     if (error) {
       if (isTableMissingError(error)) {
-        console.warn("[Reviews] Supabase reviews table missing. Falling back to localStorage mock.");
         return { data: getLocalReviews(), isFallback: true, error: null };
       }
       throw error;
