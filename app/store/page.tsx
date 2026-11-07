@@ -25,7 +25,9 @@ import {
   Lock,
   BatteryCharging,
   Plus,
-  SlidersHorizontal
+  SlidersHorizontal,
+  Building2,
+  ArrowRight
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useCart } from "@/lib/cart";
@@ -482,7 +484,39 @@ export default function StorePage() {
       </section>
 
       {/* Main Store Catalog Content */}
-      <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-12 py-8 sm:py-10 pb-36 relative z-10 space-y-6">
+      <div id="store-catalog" className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-12 py-8 sm:py-10 pb-36 relative z-10 space-y-6">
+        
+        {/* Bulk & Corporate Procurement Banner */}
+        <div className="rounded-3xl p-4 sm:p-6 bg-gradient-to-r from-slate-900 via-sky-950 to-slate-900 border border-sky-800/40 text-white shadow-xl shadow-slate-900/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="flex items-start gap-3 sm:gap-4">
+            <div className="p-3 rounded-2xl bg-sky-500/20 text-cyan-300 shrink-0 border border-sky-400/30">
+              <Building2 size={24} />
+            </div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[10px] font-black uppercase tracking-wider bg-cyan-400/20 text-cyan-200 border border-cyan-400/40 px-2.5 py-0.5 rounded-full">
+                  B2B &amp; Commercial Hub
+                </span>
+                <span className="text-[10px] text-sky-300 font-semibold">Estates · Shortlets · Hotels · Offices</span>
+              </div>
+              <h3 className="text-sm sm:text-base font-black tracking-tight text-white">
+                Equipping Multiple Units or Ordering in Bulk?
+              </h3>
+              <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">
+                Enjoy wholesale tiered volume pricing, official Tax Invoices (with RC/TIN), dedicated Lagos project dispatch, and certified technician installation pairing.
+              </p>
+            </div>
+          </div>
+          <a
+            href="https://wa.me/2349119059859?text=Hello%20HomeCare%20Bulk%20Desk!%20I%20am%20requesting%20a%20commercial%20wholesale%20quote%20for%20appliances."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full md:w-auto shrink-0 h-11 px-5 rounded-2xl bg-gradient-to-r from-sky-500 to-cyan-400 hover:from-sky-400 hover:to-cyan-300 text-slate-950 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/25 transition-all hover:scale-102 active:scale-98 cursor-pointer"
+          >
+            <span>Request Wholesale Quote</span>
+            <ArrowRight size={14} />
+          </a>
+        </div>
         
         {/* Search & Sort Row */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">

@@ -337,7 +337,7 @@ export default function ProductDetailPage({ params }: PageProps) {
       </section>
 
       {/* Main Product Showcase Section */}
-      <main className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-12 py-5 sm:py-8 relative z-10">
+      <main className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-12 py-5 sm:py-8 pb-28 sm:pb-16 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start">
           
           {/* Left Column (5 Cols): Product Media, Store Details, and Buyer Protection */}
@@ -569,7 +569,22 @@ export default function ProductDetailPage({ params }: PageProps) {
                         >
                           -
                         </button>
-                        <span className="w-8 text-center text-sm font-black text-slate-950">{waitlistQty}</span>
+                        <input
+                          type="number"
+                          min={1}
+                          max={9999}
+                          value={waitlistQty}
+                          onChange={(e) => {
+                            const val = parseInt(e.target.value, 10);
+                            if (!isNaN(val) && val >= 1) {
+                              setWaitlistQty(Math.min(9999, val));
+                            } else if (e.target.value === "") {
+                              setWaitlistQty(1);
+                            }
+                          }}
+                          className="w-12 text-center text-sm font-black text-slate-950 bg-transparent outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          aria-label="Quantity needed"
+                        />
                         <button
                           type="button"
                           onClick={() => setWaitlistQty((q) => q + 1)}
@@ -647,20 +662,45 @@ export default function ProductDetailPage({ params }: PageProps) {
                     <span className="text-xs font-black uppercase tracking-wider text-slate-700">Quantity</span>
                     <div className="flex items-center rounded-2xl border border-slate-200 bg-slate-50 p-1">
                       <button
+                        type="button"
                         onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
                         className="flex h-8 w-8 items-center justify-center rounded-xl bg-white text-slate-700 hover:bg-sky-50 hover:text-sky-700 shadow-2xs transition-colors cursor-pointer"
+                        aria-label="Decrease quantity"
                       >
                         <Minus size={14} />
                       </button>
-                      <span className="w-10 text-center text-sm font-black text-slate-900">{quantity}</span>
+                      <input
+                        type="number"
+                        min={1}
+                        max={9999}
+                        value={quantity}
+                        onChange={(e) => {
+                          const val = parseInt(e.target.value, 10);
+                          if (!isNaN(val) && val >= 1) {
+                            setQuantity(Math.min(9999, val));
+                          } else if (e.target.value === "") {
+                            setQuantity(1);
+                          }
+                        }}
+                        className="w-12 text-center text-sm font-black text-slate-900 bg-transparent outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        aria-label="Quantity"
+                      />
                       <button
+                        type="button"
                         onClick={() => setQuantity((prev) => prev + 1)}
                         className="flex h-8 w-8 items-center justify-center rounded-xl bg-white text-slate-700 hover:bg-sky-50 hover:text-sky-700 shadow-2xs transition-colors cursor-pointer"
+                        aria-label="Increase quantity"
                       >
                         <Plus size={14} />
                       </button>
                     </div>
                   </div>
+
+                  {quantity >= 3 && (
+                    <span className="text-[11px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-300">
+                      🏢 Commercial / Bulk Order
+                    </span>
+                  )}
 
                   {inCartCount > 0 && (
                     <span className="text-xs font-bold text-sky-800 bg-sky-50 px-3 py-1 rounded-full border border-sky-200">

@@ -308,9 +308,20 @@ export default function CartDrawer() {
                             >
                               <Minus size={10} strokeWidth={2.5} />
                             </button>
-                            <span className="w-4 text-center text-xs font-black text-slate-900 tabular-nums">
-                              {item.quantity}
-                            </span>
+                            <input
+                              type="number"
+                              min={1}
+                              max={9999}
+                              value={item.quantity}
+                              onChange={(e) => {
+                                const val = parseInt(e.target.value, 10);
+                                if (!isNaN(val) && val >= 1) {
+                                  updateQuantity(item.product.id, Math.min(9999, val));
+                                }
+                              }}
+                              className="w-7 text-center text-xs font-black text-slate-900 tabular-nums bg-transparent outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                              aria-label="Quantity"
+                            />
                             <button
                               onClick={() =>
                                 updateQuantity(

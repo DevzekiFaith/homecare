@@ -70,6 +70,7 @@ function CheckoutContent() {
   
   const [formData, setFormData] = useState({
     fullName: "",
+    companyName: "",
     email: "",
     phone: "",
     address: "",
@@ -155,15 +156,20 @@ function CheckoutContent() {
     const fullAddress = `${formData.address}${formData.cityOrArea ? `, ${formData.cityOrArea}` : ""}, ${selectedState}`;
     const voucherNote = couponCode && discount > 0 ? ` [Voucher: ${couponCode} (-₦${discount.toLocaleString()})]` : "";
 
+    const companyTag = formData.companyName.trim() ? `[Company: ${formData.companyName.trim()}] ` : "";
+    const customerDisplayName = formData.companyName.trim()
+      ? `${formData.fullName} (${formData.companyName.trim()})`
+      : formData.fullName;
+
     try {
       // 1. Insert order record into database with a 4s timeout
       const insertPromise = supabase.from("store_orders").insert({
         order_ref: orderRef,
-        customer_name: formData.fullName,
+        customer_name: customerDisplayName,
         customer_email: formData.email,
         customer_phone: formData.phone,
         delivery_address: fullAddress,
-        notes: formData.notes ? `[State: ${selectedState}]${voucherNote} ${formData.notes}` : `[State: ${selectedState}]${voucherNote}`,
+        notes: `${companyTag}[State: ${selectedState}]${voucherNote} ${formData.notes}`.trim(),
         items: cartItems.map((item) => ({
           id: item.product.id,
           name: item.product.name,
@@ -319,6 +325,20 @@ function CheckoutContent() {
                     />
                   </div>
 
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <label className="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 flex items-center justify-between">
+                      <span>Company / Estate / Business Name (Optional)</span>
+                      <span className="text-[10px] text-slate-400 font-semibold normal-case">For Tax Invoice & Waybill</span>
+                    </label>
+                    <input
+                      name="companyName"
+                      value={formData.companyName}
+                      onChange={handleInputChange}
+                      placeholder="e.g. Cedar Crest Estates Ltd / Zenith Workspace"
+                      className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3.5 text-sm font-semibold text-slate-900 placeholder:text-slate-400 outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all shadow-2xs"
+                    />
+                  </div>
+
                   <div className="space-y-1.5">
                     <label className="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700">
                       Email Address *
@@ -428,6 +448,20 @@ function CheckoutContent() {
                     🔒 Escrow Protected
                   </span>
                 </div>
+
+                {(grandTotal >= 150000 || cartCount >= 5) && (
+                  <div className="p-3.5 rounded-2xl bg-sky-50 border border-sky-200 flex items-start gap-3">
+                    <Building2 className="text-sky-600 shrink-0 mt-0.5" size={18} />
+                    <div className="space-y-0.5">
+                      <p className="text-xs font-black uppercase tracking-wider text-sky-950">
+                        High-Volume / Commercial Order (₦{grandTotal.toLocaleString()})
+                      </p>
+                      <p className="text-[11px] text-slate-700 leading-relaxed font-medium">
+                        Direct Bank Transfer is recommended for large orders to avoid banking daily card limits. Official Tax Invoice &amp; Waybill will be automatically generated upon order completion.
+                      </p>
+                    </div>
+                  </div>
+                )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                   {/* Flutterwave Card / USSD (Primary) */}
