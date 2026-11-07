@@ -24,8 +24,10 @@ import {
   Compass,
   Bell,
   Clock,
-  MessageCircle
+  MessageCircle,
+  Loader2
 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 import { PRODUCTS, Product } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import ProductCard from "@/app/components/ProductCard";
@@ -38,7 +40,6 @@ import BuyerProtection from "@/app/components/store/BuyerProtection";
 import CustomerReviews from "@/app/components/store/CustomerReviews";
 import MobileBar from "@/app/components/store/MobileBar";
 import HomeCareInstallationSection from "@/app/components/store/HomeCareInstallationSection";
-import RestockWaitlistModal from "@/app/components/store/RestockWaitlistModal";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -55,8 +56,16 @@ export default function ProductDetailPage({ params }: PageProps) {
   const [imgError, setImgError] = useState(false);
   const [deliveryState, setDeliveryState] = useState("Lagos");
   const [includeInstallation, setIncludeInstallation] = useState(false);
-  const [showWaitlistModal, setShowWaitlistModal] = useState(false);
   const installationFee = 7500;
+
+  // In-page Waitlist Form State (Glitch-free, no duplicate modals)
+  const [waitlistName, setWaitlistName] = useState("");
+  const [waitlistPhone, setWaitlistPhone] = useState("");
+  const [waitlistEmail, setWaitlistEmail] = useState("");
+  const [waitlistQty, setWaitlistQty] = useState(1);
+  const [waitlistLoading, setWaitlistLoading] = useState(false);
+  const [waitlistSubmitted, setWaitlistSubmitted] = useState(false);
+  const [waitlistRef, setWaitlistRef] = useState("");
 
   // Find product by id
   const product = useMemo(() => {
@@ -192,6 +201,54 @@ export default function ProductDetailPage({ params }: PageProps) {
         description: "Product link copied to your clipboard."
       });
     }
+  };
+
+  const handleWaitlistSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!waitlistName.trim() || !waitlistPhone.trim()) {
+      toast.error("Please provide your name and WhatsApp phone number.");
+      return;
+    }
+
+    setWaitlistLoading(true);
+    const ref = `WL-${Math.floor(10000 + Math.random() * 90000)}`;
+    setWaitlistRef(ref);
+
+    const supabase = createClient();
+    try {
+      await supabase.from("stock_waitlist").insert({
+        product_id: product?.id,
+        product_name: product?.name,
+        customer_name: waitlistName.trim(),
+        customer_email: waitlistEmail.trim() || "unspecified@waitlist.homecare.ng",
+        customer_phone: waitlistPhone.trim(),
+        quantity: waitlistQty,
+        status: "pending",
+      });
+    } catch (err) {
+      console.warn("Waitlist sync:", err);
+    }
+
+    try {
+      const existing = JSON.parse(localStorage.getItem("hc_stock_waitlist") || "[]");
+      existing.push({
+        ref,
+        productId: product?.id,
+        productName: product?.name,
+        name: waitlistName.trim(),
+        phone: waitlistPhone.trim(),
+        email: waitlistEmail.trim(),
+        quantity: waitlistQty,
+        date: new Date().toISOString(),
+      });
+      localStorage.setItem("hc_stock_waitlist", JSON.stringify(existing));
+    } catch {}
+
+    setWaitlistLoading(false);
+    setWaitlistSubmitted(true);
+    toast.success("Priority Spot Reserved!", {
+      description: `Reservation ${ref} locked. We will alert your WhatsApp the minute stock arrives.`,
+    });
   };
 
   return (
@@ -429,50 +486,119 @@ export default function ProductDetailPage({ params }: PageProps) {
               {product.description}
             </p>
 
-            {/* Quantity Selector & Action Buttons / Restock Waitlist */}
+            {/* Quantity Selector & Action Buttons / In-Page Restock Waitlist Card */}
             {isOutOfStock ? (
-              <div className="bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent rounded-3xl p-5 sm:p-6 border-2 border-dashed border-amber-300 dark:border-amber-500/30 shadow-xs space-y-4">
+              <div id="waitlist" className="bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent rounded-3xl p-5 sm:p-6 border-2 border-dashed border-amber-300 dark:border-amber-500/30 shadow-xs space-y-4">
                 <div className="flex items-center gap-2">
                   <span className="relative flex h-2.5 w-2.5">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
                   </span>
                   <h3 className="text-xs font-black uppercase tracking-wider text-amber-800 dark:text-amber-300">
-                    Next Cargo Shipment In Transit (Lagos Airport Air Freight)
+                    Next Cargo Batch In Transit · Lagos Air Cargo
                   </h3>
                 </div>
 
-                <div className="space-y-1">
-                  <p className="text-base sm:text-lg font-heading font-black text-slate-900 dark:text-white">
-                    Stock Sold Out · Lock In Your Next Batch Priority Slot
-                  </p>
-                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                    This item has sold out across our Lagos, Abuja, and Port Harcourt distribution centers. Enter the waitlist below to lock in priority allocation before the incoming shipment arrives.
-                  </p>
-                </div>
+                {!waitlistSubmitted ? (
+                  <form onSubmit={handleWaitlistSubmit} className="space-y-3.5">
+                    <div className="space-y-1">
+                      <p className="text-base sm:text-lg font-heading font-black text-slate-900 dark:text-white">
+                        Stock Sold Out · Lock In Your Next Batch Priority Slot
+                      </p>
+                      <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                        Enter your details below to get an instant WhatsApp alert and secure your allocation the minute cargo lands in Lagos.
+                      </p>
+                    </div>
 
-                <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                  <button
-                    onClick={() => setShowWaitlistModal(true)}
-                    className="flex-1 h-13 rounded-full px-6 text-xs font-black uppercase tracking-wider bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-600/25 flex items-center justify-center gap-2 transition-all hover:scale-101 active:scale-98 cursor-pointer"
-                  >
-                    <Bell size={16} />
-                    <span>Join Priority Restock Waitlist</span>
-                  </button>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+                          Your Full Name
+                        </label>
+                        <input
+                          required
+                          placeholder="e.g. Kenneth Adeleke"
+                          value={waitlistName}
+                          onChange={(e) => setWaitlistName(e.target.value)}
+                          className="w-full h-11 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 px-3.5 text-xs text-slate-900 dark:text-white outline-none focus:border-amber-500 transition-all"
+                        />
+                      </div>
 
-                  <button
-                    onClick={() => {
-                      const text = encodeURIComponent(
-                        `Hello HomeCare! I want to reserve a unit of "${product.name}" in your next incoming shipment.`
-                      );
-                      window.open(`https://wa.me/2349119059859?text=${text}`, "_blank");
-                    }}
-                    className="flex-1 sm:flex-initial h-13 rounded-full px-6 text-xs font-black uppercase tracking-wider bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 transition-all hover:scale-101 active:scale-98 cursor-pointer"
-                  >
-                    <MessageCircle size={16} />
-                    <span>Reserve via WhatsApp</span>
-                  </button>
-                </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 flex items-center justify-between">
+                          <span>WhatsApp Phone Number</span>
+                          <span className="text-[9px] text-emerald-600 font-bold">Instant Alert</span>
+                        </label>
+                        <input
+                          required
+                          type="tel"
+                          placeholder="e.g. 0803 123 4567"
+                          value={waitlistPhone}
+                          onChange={(e) => setWaitlistPhone(e.target.value)}
+                          className="w-full h-11 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 px-3.5 text-xs text-slate-900 dark:text-white outline-none focus:border-amber-500 transition-all font-mono"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-1">
+                      <span className="text-xs font-bold text-slate-700 dark:text-slate-300">Quantity Needed:</span>
+                      <div className="flex items-center gap-2 bg-white dark:bg-slate-900 rounded-xl p-1 border border-slate-200 dark:border-white/10">
+                        <button
+                          type="button"
+                          onClick={() => setWaitlistQty((q) => Math.max(1, q - 1))}
+                          className="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer"
+                        >
+                          -
+                        </button>
+                        <span className="w-6 text-center text-xs font-black">{waitlistQty}</span>
+                        <button
+                          type="button"
+                          onClick={() => setWaitlistQty((q) => q + 1)}
+                          className="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                      <button
+                        type="submit"
+                        disabled={waitlistLoading}
+                        className="flex-1 h-12 rounded-full px-6 text-xs font-black uppercase tracking-wider bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-600/25 flex items-center justify-center gap-2 transition-all hover:scale-101 active:scale-98 cursor-pointer disabled:opacity-50"
+                      >
+                        {waitlistLoading ? <Loader2 size={15} className="animate-spin" /> : <Bell size={15} />}
+                        <span>Lock In My Restock Spot</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const text = encodeURIComponent(
+                            `Hello HomeCare! I want to reserve ${waitlistQty} unit(s) of "${product.name}" in your next incoming shipment.`
+                          );
+                          window.open(`https://wa.me/2349119059859?text=${text}`, "_blank");
+                        }}
+                        className="flex-1 sm:flex-initial h-12 rounded-full px-6 text-xs font-black uppercase tracking-wider bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 transition-all hover:scale-101 active:scale-98 cursor-pointer"
+                      >
+                        <MessageCircle size={15} />
+                        <span>Reserve via WhatsApp</span>
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/40 text-left space-y-2">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 size={18} className="text-emerald-600" />
+                      <span className="text-xs font-black uppercase tracking-wider text-emerald-800 dark:text-emerald-300">
+                        Priority Spot Reserved (#{waitlistRef})
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                      Thank you, <strong>{waitlistName}</strong>. We have saved your reservation for <strong>{waitlistQty} unit(s)</strong> of {product.name}. We will notify <strong>{waitlistPhone}</strong> the moment the cargo arrives at our Lagos depot.
+                    </p>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/90 shadow-sm space-y-4">
@@ -734,16 +860,12 @@ export default function ProductDetailPage({ params }: PageProps) {
         justAdded={justAdded}
         cartCount={cartCount}
         onOpenCart={() => setIsCartOpen(true)}
-        onOpenWaitlist={() => setShowWaitlistModal(true)}
+        onOpenWaitlist={() => {
+          const el = document.getElementById("waitlist");
+          if (el) el.scrollIntoView({ behavior: "smooth" });
+        }}
         includeInstallation={includeInstallation}
         installationFee={installationFee}
-      />
-
-      {/* Restock Waitlist Modal */}
-      <RestockWaitlistModal
-        product={product}
-        isOpen={showWaitlistModal}
-        onClose={() => setShowWaitlistModal(false)}
       />
     </div>
   );

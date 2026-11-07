@@ -7,7 +7,6 @@ import { ShoppingCart, Plus, Check, Minus, Star, ShoppingBag, Flame, Zap, Bell, 
 import { Product } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { toast } from "sonner";
-import RestockWaitlistModal from "@/app/components/store/RestockWaitlistModal";
 
 interface ProductCardProps {
   product: Product;
@@ -30,7 +29,6 @@ export default function ProductCard({
 
   const [imgError, setImgError] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
-  const [showWaitlistModal, setShowWaitlistModal] = useState(false);
 
   const isOutOfStock = product.stock !== undefined && product.stock <= 0;
 
@@ -235,16 +233,13 @@ export default function ProductCard({
         {!onAddStep && (
           <div className="flex flex-col gap-2">
             {isOutOfStock ? (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowWaitlistModal(true);
-                }}
+              <Link
+                href={`/store/${product.id}#waitlist`}
                 className="w-full flex items-center justify-center gap-2 h-11 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/30 text-[11px] font-black uppercase tracking-wider transition-all shadow-xs cursor-pointer active:scale-[0.98]"
               >
                 <Bell size={14} className="text-amber-600 dark:text-amber-400" />
                 <span>Join Restock Waitlist</span>
-              </button>
+              </Link>
             ) : quantity > 0 ? (
               <div className="flex items-center flex-1 w-full h-11">
                 <div className="flex items-center w-full h-full justify-between rounded-xl border border-sky-200 bg-sky-50/70 p-1 shadow-2xs">
@@ -298,12 +293,6 @@ export default function ProductCard({
           </div>
         )}
       </div>
-
-      <RestockWaitlistModal
-        product={product}
-        isOpen={showWaitlistModal}
-        onClose={() => setShowWaitlistModal(false)}
-      />
     </div>
   );
 }
