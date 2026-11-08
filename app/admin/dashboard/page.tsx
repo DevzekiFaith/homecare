@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { 
   LayoutDashboard, 
@@ -19,7 +20,8 @@ import {
   ShieldCheck, 
   DollarSign, 
   Wallet, 
-  Award 
+  Award,
+  Bell
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Logo from "@/app/components/Logo";
@@ -335,11 +337,17 @@ export default function AdminDashboard() {
             { id: 'monetization', icon: DollarSign, label: 'Profit & Revenue' },
             { id: 'workers', icon: Users, label: 'Worker Approvals' },
             { id: 'orders', icon: ShoppingBag, label: 'Store Orders' },
+            { id: 'waitlist', icon: Bell, label: 'Restock Waitlist', href: '/admin/restock-waitlist' },
             { id: 'requests', icon: Wrench, label: 'Service Requests' },
           ].map((item) => (
-            <button
+            <Link
               key={item.id}
-              onClick={() => setActiveTab(item.id as 'overview' | 'orders' | 'requests' | 'workers' | 'monetization')}
+              href={item.href || '#'}
+              onClick={(e) => {
+                if (item.href) return;
+                e.preventDefault();
+                setActiveTab(item.id as AdminTab);
+              }}
               className={`flex items-center justify-between px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
                 activeTab === item.id 
                   ? 'bg-sky-600 text-white shadow-md shadow-sky-600/25 font-black' 
@@ -355,7 +363,7 @@ export default function AdminDashboard() {
                   {stats.pendingWorkers}
                 </span>
               )}
-            </button>
+            </Link>
           ))}
         </nav>
 
