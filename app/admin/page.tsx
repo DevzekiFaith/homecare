@@ -3,6 +3,7 @@ import { CITIES } from "@/lib/cities";
 import DashboardClient from "./DashboardClient";
 import { DEMO_STORE_ORDER_FILTER } from "@/lib/store-data";
 import { DEMO_JOB_FILTER } from "@/lib/jobs";
+import { getWaitlistEntries } from "@/lib/waitlist";
 
 export default async function AdminDashboardPage() {
   const supabase = await createClient();
@@ -21,7 +22,14 @@ export default async function AdminDashboardPage() {
   const jobs = jobsRes.data ?? [];
   const workers = workersRes.data ?? [];
   const orders = ordersRes.data ?? [];
-  const waitlist = waitlistRes.data ?? [];
+  
+  // Combine server-side persisted waitlist entries with Supabase table entries
+  const localWaitlist = getWaitlistEntries();
+  const remoteWaitlist = waitlistRes.data ?? [];
+  const waitlistMap = new Map<string, any>();
+  localWaitlist.forEach((w) => waitlistMap.set(w.id, w));
+  remoteWaitlist.forEach((w) => waitlistMap.set(w.id, w));
+  const waitlist = Array.from(waitlistMap.values());
 
   const stats = {
     totalJobs: jobs.length,

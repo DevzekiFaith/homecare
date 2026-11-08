@@ -70,71 +70,65 @@ export default function AdminRestockWaitlistPage() {
 
   const supabase = useMemo(() => createClient(), []);
 
-  const loadData = useCallback(async () => {
-    setLoading(true);
+  const loadData = useCallback(async (showLoading = true) => {
+    if (showLoading) setLoading(true);
     let remoteEntries: WaitlistEntry[] = [];
 
+    // 1. Fetch from server-persisted REST API
     try {
-      const { data, error } = await supabase
-        .from("stock_waitlist")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (!error && data) {
-        remoteEntries = data as WaitlistEntry[];
+      const res = await fetch("/api/waitlist", { cache: "no-store" });
+      const json = await res.json();
+      if (json?.success && Array.isArray(json.entries)) {
+        remoteEntries = json.entries as WaitlistEntry[];
       }
     } catch (err) {
-      console.warn("Waitlist fetch warning:", err);
+      console.warn("Waitlist API fetch warning:", err);
     }
 
-    // Sanitize remote entries to exclude test/demo records
-    remoteEntries = remoteEntries.filter((r) => {
-      const name = (r.customer_name || "").toLowerCase();
-      const phone = (r.customer_phone || "").replace(/\D/g, "");
-      const isDemoName = name.includes("kenneth adeleke") || name.includes("test user") || name === "test";
-      const isDemoPhone = phone === "08031234567" || phone.startsWith("1234567");
-      return !isDemoName && !isDemoPhone;
-    });
+    // 2. Fetch directly from Supabase if table exists as additional fallback
+    if (remoteEntries.length === 0) {
+      try {
+        const { data, error } = await supabase
+          .from("stock_waitlist")
+          .select("*")
+          .order("created_at", { ascending: false });
 
-    // Merge any localStorage guest submissions for 100% data visibility
+        if (!error && data) {
+          remoteEntries = data as WaitlistEntry[];
+        }
+      } catch (err) {
+        console.warn("Waitlist Supabase fetch warning:", err);
+      }
+    }
+
+    // 3. Merge any localStorage guest submissions for client-side resilience
     let localEntries: WaitlistEntry[] = [];
     if (typeof window !== "undefined") {
       try {
         const stored = JSON.parse(localStorage.getItem("hc_stock_waitlist") || "[]");
-        // Filter out demo/test entries from browser local storage
-        const sanitized = stored.filter((item: any) => {
-          const name = (item.name || "").toLowerCase();
-          const phone = (item.phone || "").replace(/\D/g, "");
-          const isDemoName = name.includes("kenneth adeleke") || name.includes("test user") || name === "test";
-          const isDemoPhone = phone === "08031234567" || phone.startsWith("1234567");
-          return !isDemoName && !isDemoPhone;
-        });
-
-        // Persist clean storage
-        if (sanitized.length !== stored.length) {
-          localStorage.setItem("hc_stock_waitlist", JSON.stringify(sanitized));
-        }
-
-        localEntries = sanitized.map((item: any, idx: number) => ({
-          id: item.ref || `local-${idx}-${Date.now()}`,
+        localEntries = (stored || []).map((item: any, idx: number) => ({
+          id: item.id || item.ref || `local-${idx}-${Date.now()}`,
           ref: item.ref,
-          product_id: item.productId || "sp-water-5",
-          product_name: item.productName || "Smart Device",
-          customer_name: item.name || "Customer",
-          customer_phone: item.phone || "",
-          customer_email: item.email || "",
+          product_id: item.productId || item.product_id || "sp-water-5",
+          product_name: item.productName || item.product_name || "Smart Device",
+          customer_name: item.name || item.customer_name || "Customer",
+          customer_phone: item.phone || item.customer_phone || "",
+          customer_email: item.email || item.customer_email || "",
           quantity: item.quantity || 1,
           status: item.status || "pending",
-          created_at: item.date || new Date().toISOString(),
+          created_at: item.date || item.created_at || new Date().toISOString(),
         }));
       } catch {}
     }
 
-    // Merge without duplicates based on phone and product_id
+    // Merge without duplicates based on ref or id or (phone + product_id)
     const mergedMap = new Map<string, WaitlistEntry>();
-    remoteEntries.forEach((r) => mergedMap.set(`${r.customer_phone}-${r.product_id}`, r));
+    remoteEntries.forEach((r) => {
+      const key = r.id || r.ref || `${r.customer_phone}-${r.product_id}`;
+      mergedMap.set(key, r);
+    });
     localEntries.forEach((l) => {
-      const key = `${l.customer_phone}-${l.product_id}`;
+      const key = l.id || l.ref || `${l.customer_phone}-${l.product_id}`;
       if (!mergedMap.has(key)) {
         mergedMap.set(key, l);
       }
@@ -145,13 +139,21 @@ export default function AdminRestockWaitlistPage() {
     );
 
     setEntries(finalEntries);
-    setLoading(false);
+    if (showLoading) setLoading(false);
   }, [supabase]);
 
   useEffect(() => {
-    loadData();
+    loadData(true);
 
-    // Subscribe to live Postgres inserts & updates on stock_waitlist
+    // Live background polling every 4 seconds to guarantee live updates across devices
+    const pollInterval = setInterval(() => {
+      loadData(false);
+    }, 4000);
+
+    const onFocus = () => loadData(false);
+    window.addEventListener("focus", onFocus);
+
+    // Subscribe to live Postgres inserts & updates on stock_waitlist if realtime is available
     const channel = supabase
       .channel("admin-stock-waitlist-realtime")
       .on(
@@ -175,6 +177,8 @@ export default function AdminRestockWaitlistPage() {
       .subscribe();
 
     return () => {
+      clearInterval(pollInterval);
+      window.removeEventListener("focus", onFocus);
       supabase.removeChannel(channel);
     };
   }, [loadData, supabase]);
@@ -182,22 +186,27 @@ export default function AdminRestockWaitlistPage() {
   const handleStatusUpdate = async (id: string, newStatus: string) => {
     setUpdatingId(id);
     try {
-      // 1. Update in Supabase
-      const { error } = await supabase
-        .from("stock_waitlist")
-        .update({ status: newStatus })
-        .eq("id", id);
+      // 1. Update via server REST API
+      await fetch("/api/waitlist", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status: newStatus }),
+      });
 
-      if (error) {
-        console.warn("Remote update:", error.message);
-      }
+      // 2. Update in Supabase
+      try {
+        await supabase
+          .from("stock_waitlist")
+          .update({ status: newStatus })
+          .eq("id", id);
+      } catch {}
 
-      // 2. Update local state
+      // 3. Update local state
       setEntries((prev) =>
-        prev.map((e) => (e.id === id ? { ...e, status: newStatus } : e))
+        prev.map((e) => (e.id === id || e.ref === id ? { ...e, status: newStatus } : e))
       );
 
-      // 3. Update localStorage cache if present
+      // 4. Update localStorage cache if present
       if (typeof window !== "undefined") {
         try {
           const stored = JSON.parse(localStorage.getItem("hc_stock_waitlist") || "[]");
@@ -219,8 +228,20 @@ export default function AdminRestockWaitlistPage() {
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to remove this restock entry?")) return;
     try {
-      await supabase.from("stock_waitlist").delete().eq("id", id);
-      setEntries((prev) => prev.filter((e) => e.id !== id));
+      // 1. Delete via server REST API
+      await fetch(`/api/waitlist?id=${encodeURIComponent(id)}`, {
+        method: "DELETE",
+      });
+
+      // 2. Delete in Supabase if exists
+      try {
+        await supabase.from("stock_waitlist").delete().eq("id", id);
+      } catch {}
+
+      // 3. Update local state
+      setEntries((prev) => prev.filter((e) => e.id !== id && e.ref !== id));
+
+      // 4. Update localStorage cache
       if (typeof window !== "undefined") {
         try {
           const stored = JSON.parse(localStorage.getItem("hc_stock_waitlist") || "[]");
@@ -324,7 +345,7 @@ export default function AdminRestockWaitlistPage() {
 
         <div className="flex items-center gap-2.5">
           <button
-            onClick={loadData}
+            onClick={() => loadData(true)}
             className="h-10 px-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer"
             title="Refresh Data"
           >

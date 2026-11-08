@@ -214,19 +214,26 @@ export default function ProductDetailPage({ params }: PageProps) {
     const ref = `WL-${Math.floor(10000 + Math.random() * 90000)}`;
     setWaitlistRef(ref);
 
-    const supabase = createClient();
     try {
-      await supabase.from("stock_waitlist").insert({
-        product_id: product?.id,
-        product_name: product?.name,
-        customer_name: waitlistName.trim(),
-        customer_email: waitlistEmail.trim() || "unspecified@waitlist.homecare.ng",
-        customer_phone: waitlistPhone.trim(),
-        quantity: waitlistQty,
-        status: "pending",
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productId: product?.id,
+          productName: product?.name,
+          name: waitlistName.trim(),
+          phone: waitlistPhone.trim(),
+          email: waitlistEmail.trim(),
+          quantity: waitlistQty,
+          ref,
+        }),
       });
+      const data = await res.json();
+      if (data?.entry?.ref) {
+        setWaitlistRef(data.entry.ref);
+      }
     } catch (err) {
-      console.warn("Waitlist sync:", err);
+      console.warn("Waitlist API sync error:", err);
     }
 
     try {

@@ -3,6 +3,7 @@ import StoreOrdersTable from "./StoreOrdersTable";
 import Link from "next/link";
 import { ShoppingBag, Bell } from "lucide-react";
 import { DEMO_STORE_ORDER_FILTER } from "@/lib/store-data";
+import { getWaitlistEntries } from "@/lib/waitlist";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +24,12 @@ export default async function AdminStoreOrdersPage() {
   ]);
 
   const orders = ordersRes.data ?? [];
-  const waitlistCount = waitlistRes.data?.length ?? 0;
+  const localWaitlist = getWaitlistEntries();
+  const remoteWaitlist = waitlistRes.data ?? [];
+  const waitlistMap = new Map<string, any>();
+  localWaitlist.forEach((w) => waitlistMap.set(w.id, w));
+  remoteWaitlist.forEach((w) => waitlistMap.set(w.id, w));
+  const waitlistCount = waitlistMap.size;
 
   if (ordersRes.error) {
     return (
