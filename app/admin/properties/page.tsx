@@ -38,7 +38,15 @@ export default function AdminPropertiesPage() {
       if (typeof window !== "undefined") {
         try {
           const cached = localStorage.getItem("hc_properties_cache");
-          if (cached) localProps = JSON.parse(cached);
+          if (cached) {
+            const parsed = JSON.parse(cached) as Property[];
+            // Filter out old demo seed properties from browser cache
+            const demoIds = ["HC-PROP-004821", "HC-PROP-008912", "HC-PROP-001245"];
+            localProps = parsed.filter(
+              (p) => !demoIds.includes(p.property_id) && !p.name?.includes("Luxury Duplex") && !p.name?.includes("Maitama Executive")
+            );
+            localStorage.setItem("hc_properties_cache", JSON.stringify(localProps));
+          }
         } catch {
           // ignore storage parse error
         }
