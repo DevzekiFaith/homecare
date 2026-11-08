@@ -25,7 +25,10 @@ import {
   Bell,
   Clock,
   MessageCircle,
-  Loader2
+  Loader2,
+  Play,
+  Film,
+  Camera
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { PRODUCTS, Product } from "@/lib/products";
@@ -54,6 +57,7 @@ export default function ProductDetailPage({ params }: PageProps) {
   const [activeTab, setActiveTab] = useState<"features" | "specs" | "box">("features");
   const [justAdded, setJustAdded] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const [activeMedia, setActiveMedia] = useState<"photo" | "video">("photo");
   const [deliveryState, setDeliveryState] = useState("Lagos");
   const [includeInstallation, setIncludeInstallation] = useState(false);
   const installationFee = 7500;
@@ -349,7 +353,7 @@ export default function ProductDetailPage({ params }: PageProps) {
           
           {/* Left Column (5 Cols): Product Media, Store Details, and Buyer Protection */}
           <div className="lg:col-span-5 space-y-6">
-            {/* Product Image Gallery Box */}
+            {/* Product Media Box (Image / Video Player) */}
             <div className="relative aspect-square w-full rounded-3xl overflow-hidden bg-white border border-slate-200 shadow-md flex items-center justify-center group">
               {product.badge && (
                 <div
@@ -372,23 +376,99 @@ export default function ProductDetailPage({ params }: PageProps) {
                 {product.category}
               </div>
 
-              {!imgError ? (
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  fill
-                  priority
-                  unoptimized={product.image.startsWith("http")}
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  onError={() => setImgError(true)}
-                />
-              ) : (
-                <div className="flex flex-col items-center justify-center gap-3 text-slate-400">
-                  <Zap size={48} className="text-sky-600" />
-                  <span className="text-xs font-bold uppercase tracking-wider">HomeCare Smart Appliance</span>
+              {activeMedia === "video" && product.videoUrl ? (
+                <div className="relative w-full h-full bg-slate-950 flex items-center justify-center">
+                  {product.videoUrl.endsWith(".mp4") ? (
+                    <video
+                      src={product.videoUrl}
+                      controls
+                      autoPlay
+                      playsInline
+                      className="w-full h-full object-contain"
+                    />
+                  ) : (
+                    <iframe
+                      src={product.videoUrl}
+                      title={product.videoTitle || `${product.name} Video Demonstration`}
+                      className="w-full h-full border-0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    />
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setActiveMedia("photo")}
+                    className="absolute bottom-4 left-4 z-30 px-3.5 py-1.5 rounded-full bg-slate-900/90 hover:bg-slate-800 text-white text-[11px] font-black border border-white/20 transition-all flex items-center gap-1.5 shadow-lg cursor-pointer"
+                  >
+                    <ArrowLeft size={12} />
+                    <span>View Photos</span>
+                  </button>
                 </div>
+              ) : (
+                <>
+                  {!imgError ? (
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      fill
+                      priority
+                      unoptimized={product.image.startsWith("http")}
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      onError={() => setImgError(true)}
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center gap-3 text-slate-400">
+                      <Zap size={48} className="text-sky-600" />
+                      <span className="text-xs font-bold uppercase tracking-wider">HomeCare Smart Appliance</span>
+                    </div>
+                  )}
+
+                  {product.videoUrl && (
+                    <button
+                      type="button"
+                      onClick={() => setActiveMedia("video")}
+                      className="absolute bottom-4 left-4 z-20 flex items-center gap-2 px-3.5 py-2 rounded-full bg-slate-950/90 hover:bg-sky-600 text-white backdrop-blur-md border border-white/25 text-xs font-black transition-all shadow-xl hover:scale-105 cursor-pointer group"
+                    >
+                      <div className="w-5 h-5 rounded-full bg-sky-500 flex items-center justify-center text-white group-hover:bg-white group-hover:text-sky-600 transition-colors">
+                        <Play size={10} className="fill-current ml-0.5" />
+                      </div>
+                      <span>Watch Live Demo</span>
+                      <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded font-mono">30s</span>
+                    </button>
+                  )}
+                </>
               )}
             </div>
+
+            {/* Media Selector Tabs (If video demo is available) */}
+            {product.videoUrl && (
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setActiveMedia("photo")}
+                  className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                    activeMedia === "photo"
+                      ? "bg-slate-900 text-white shadow-sm"
+                      : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
+                  }`}
+                >
+                  <Camera size={14} />
+                  <span>Photo Gallery</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveMedia("video")}
+                  className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                    activeMedia === "video"
+                      ? "bg-sky-600 text-white shadow-sm shadow-sky-600/30"
+                      : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
+                  }`}
+                >
+                  <Film size={14} />
+                  <span>Watch Video Demo</span>
+                </button>
+              </div>
+            )}
 
             {/* Quick Guarantees Grid */}
             <div className="grid grid-cols-3 gap-2 sm:gap-3">

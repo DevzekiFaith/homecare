@@ -22,6 +22,8 @@ export interface Product {
   highlights?: string[];
   specs?: Record<string, string>;
   modelNumber?: string;
+  videoUrl?: string;
+  videoTitle?: string;
 }
 
 export const PRODUCTS: Product[] = [
@@ -474,6 +476,8 @@ export const PRODUCTS: Product[] = [
     stock: 65,
     sourceOrigin: "Shenzhen IoT Environmental Labs",
     warrantyMonths: 24,
+    videoUrl: "https://www.youtube-nocookie.com/embed/g2_0H4u8p0E",
+    videoTitle: "Tuya Smart WiFi IR Remote with Temperature & Humidity Sensor Demonstration",
   },
 ];
 
