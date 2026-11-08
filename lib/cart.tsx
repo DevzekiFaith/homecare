@@ -248,14 +248,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (!couponCode) return 0;
     const clean = couponCode.toUpperCase().trim();
 
-    // Welcome vouchers: WELCOME1500, WELCOME2500, WELCOME, FIRSTORDER
-    if (["WELCOME1500", "WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(clean)) {
+    // Welcome vouchers: WELCOME15, WELCOME10, WELCOME1500, WELCOME2500, WELCOME, FIRSTORDER
+    if (["WELCOME15", "WELCOME15%", "WELCOME1500", "WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(clean)) {
       if (cartTotal <= 0) return 0;
-      if (cartTotal >= 10000) {
-        return Math.min(1500, cartTotal);
-      }
-      // For orders under ₦10,000, provide an immediate 15% discount (up to ₦1,500)
-      return Math.min(1500, Math.round(cartTotal * 0.15));
+      // 15% welcome discount on all store appliances (capped generously at ₦15,000)
+      return Math.min(15000, Math.round(cartTotal * 0.15));
     }
 
     // CarePay % vouchers: CAREPAY10, SAVE10, DISCOUNT10, CAREPAY
@@ -289,11 +286,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const applyCoupon = useCallback((code: string) => {
     const clean = code.toUpperCase().trim();
-    if (["WELCOME1500", "WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(clean)) {
+    if (["WELCOME15", "WELCOME15%", "WELCOME1500", "WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(clean)) {
       setCouponCode(clean);
       return {
         success: true,
-        message: "₦1,500 Welcome Voucher applied! Enjoy immediate savings on your order.",
+        message: "15% Welcome Voucher applied! Enjoy 15% discount on your order.",
       };
     }
     if (["CAREPAY10", "SAVE10", "DISCOUNT10", "CAREPAY"].includes(clean)) {
@@ -319,7 +316,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
     return {
       success: false,
-      message: `"${code.trim()}" is not valid. Try WELCOME1500 or SAVE10 for instant savings.`,
+      message: `"${code.trim()}" is not valid. Try WELCOME15 or SAVE10 for instant savings.`,
     };
   }, []);
 

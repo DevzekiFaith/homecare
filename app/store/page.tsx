@@ -186,7 +186,7 @@ export default function StorePage() {
               <span className="hidden md:inline text-white/30">•</span>
               <span className="inline-flex items-center gap-1 font-bold text-amber-300">
                 <Gift size={12} className="text-amber-300" />
-                Voucher <strong className="font-mono text-white">WELCOME1500</strong> for ₦1,500 OFF
+                Voucher <strong className="font-mono text-white">WELCOME15</strong> for 15% OFF
               </span>
             </div>
           </div>
