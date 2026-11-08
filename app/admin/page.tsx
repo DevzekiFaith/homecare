@@ -1,14 +1,15 @@
 import { createClient } from "@/lib/supabase/server";
 import { CITIES } from "@/lib/cities";
 import DashboardClient from "./DashboardClient";
+import { DEMO_STORE_ORDER_FILTER } from "@/lib/store-data";
 
 export default async function AdminDashboardPage() {
   const supabase = await createClient();
-  
+
   const [jobsRes, workersRes, ordersRes, waitlistRes] = await Promise.all([
     supabase.from("service_requests").select("id, status").not("address", "ilike", "%Test Street%"),
     supabase.from("professionals").select("id, is_verified"),
-    supabase.from("store_orders").select("id, status, total"),
+    supabase.from("store_orders").select("id, status, total").not("order_ref", "in", DEMO_STORE_ORDER_FILTER),
     supabase.from("stock_waitlist").select("id, quantity, status"),
   ]);
 
@@ -41,10 +42,10 @@ export default async function AdminDashboardPage() {
         <p className="mt-1 text-sm text-zinc-500">Platform health across all active cities.</p>
       </div>
 
-      <DashboardClient 
-        stats={stats} 
-        activeCitiesCount={activeCitiesCount} 
-        upcomingCitiesCount={upcomingCitiesCount} 
+      <DashboardClient
+        stats={stats}
+        activeCitiesCount={activeCitiesCount}
+        upcomingCitiesCount={upcomingCitiesCount}
       />
     </div>
   );

@@ -26,6 +26,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import Logo from "@/app/components/Logo";
 import { toast } from "sonner";
+import { DEMO_STORE_ORDER_FILTER } from "@/lib/store-data";
 
 interface Order {
   id: string;
@@ -82,10 +83,11 @@ export default function AdminDashboard() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      // 1. Fetch Orders
+      // 1. Fetch Orders (excluding cleared test orders)
       const { data: orderData } = await supabase
         .from('store_orders')
         .select('*')
+        .not('order_ref', 'in', DEMO_STORE_ORDER_FILTER)
         .order('created_at', { ascending: false });
       
       // 2. Fetch Requests (filtering out demo/test entries)

@@ -389,3 +389,21 @@ export const SAMPLE_NIGERIAN_REVIEWS: NigerianReview[] = [
     tag: "Easy Setup",
   },
 ];
+
+/**
+ * Historical test / demo store orders purged from production admin views
+ */
+export const DEMO_STORE_ORDER_REFS = [
+  "HC-MV13OBMZ",
+  "HC-MUAVR2JR",
+  "HC-MU5KAD3W",
+  "INSP-MTJXUVGT",
+  "HC-MTH9SBFX",
+  "HC-MTH93LEB",
+  "HC-MT541WS6",
+  "HC-MT4VCSFO",
+  "HC-MT0TRKQP",
+] as const;
+
+export const DEMO_STORE_ORDER_FILTER = `("${DEMO_STORE_ORDER_REFS.join('","')}")`;
+

@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import StoreOrdersTable from "./StoreOrdersTable";
 import Link from "next/link";
 import { ShoppingBag, Bell } from "lucide-react";
+import { DEMO_STORE_ORDER_FILTER } from "@/lib/store-data";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +13,7 @@ export default async function AdminStoreOrdersPage() {
     supabase
       .from("store_orders")
       .select("*")
+      .not("order_ref", "in", DEMO_STORE_ORDER_FILTER)
       .order("created_at", { ascending: false })
       .limit(100),
     supabase

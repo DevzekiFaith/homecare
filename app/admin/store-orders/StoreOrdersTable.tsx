@@ -17,8 +17,10 @@ import {
   Clock, 
   MapPin,
   Calendar,
-  Layers
+  Layers,
+  Trash2
 } from "lucide-react";
+import { DEMO_STORE_ORDER_REFS } from "@/lib/store-data";
 
 export type StoreOrder = {
   id: string;
@@ -61,12 +63,63 @@ const STATUS_CONFIG: Record<string, { label: string; dot: string; badge: string 
 };
 
 export default function StoreOrdersTable({ initialOrders }: { initialOrders: StoreOrder[] }) {
-  const [orders, setOrders] = useState<StoreOrder[]>(initialOrders);
+  const [orders, setOrders] = useState<StoreOrder[]>(() => {
+    let list = initialOrders.filter(
+      (o) => !(DEMO_STORE_ORDER_REFS as readonly string[]).includes(o.order_ref)
+    );
+    if (typeof window !== "undefined") {
+      try {
+        const cleared = JSON.parse(localStorage.getItem("hc_cleared_store_orders") || "[]");
+        list = list.filter((o) => !cleared.includes(o.order_ref));
+      } catch {}
+    }
+    return list;
+  });
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const supabase = useMemo(() => createClient(), []);
+
+  const handleDeleteOrder = (orderId: string, orderRef: string) => {
+    toast(`Delete Order ${orderRef}?`, {
+      description: "Permanently remove this order from the admin dashboard.",
+      action: {
+        label: "Confirm Delete",
+        onClick: async () => {
+          setDeletingId(orderId);
+          try {
+            await fetch("/api/admin/delete-order", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ id: orderId, order_ref: orderRef }),
+            });
+            setOrders((prev) => prev.filter((o) => o.id !== orderId && o.order_ref !== orderRef));
+            if (typeof window !== "undefined") {
+              try {
+                const cleared = JSON.parse(localStorage.getItem("hc_cleared_store_orders") || "[]");
+                if (!cleared.includes(orderRef)) {
+                  cleared.push(orderRef);
+                  localStorage.setItem("hc_cleared_store_orders", JSON.stringify(cleared));
+                }
+              } catch {}
+            }
+            toast.error(`Order ${orderRef} removed from dashboard`);
+          } catch (err: any) {
+            toast.error("Failed to delete order: " + err.message);
+          } finally {
+            setDeletingId(null);
+          }
+        },
+      },
+      cancel: {
+        label: "Cancel",
+        onClick: () => {},
+      },
+      duration: 6000,
+    });
+  };
 
   const handleStatusUpdate = async (orderId: string, newStatus: string) => {
     setUpdatingId(orderId);
@@ -321,20 +374,30 @@ export default function StoreOrdersTable({ initialOrders }: { initialOrders: Sto
                           </span>
                         </td>
 
-                        {/* Update Status Dropdown */}
+                        {/* Update Status Dropdown & Delete Action */}
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <select
-                            disabled={isUpdating}
-                            value={order.status}
-                            onChange={(e) => handleStatusUpdate(order.id, e.target.value)}
-                            className="text-xs font-bold bg-white border border-slate-200 hover:border-sky-400 focus:border-sky-500 rounded-xl px-3 py-2 text-slate-800 outline-none cursor-pointer shadow-xs disabled:opacity-50 transition-colors"
-                          >
-                            <option value="pending_payment">Pending Payment</option>
-                            <option value="processing">Processing (Paid)</option>
-                            <option value="shipped">Shipped</option>
-                            <option value="delivered">Delivered</option>
-                            <option value="cancelled">Cancelled</option>
-                          </select>
+                          <div className="flex items-center gap-2">
+                            <select
+                              disabled={isUpdating}
+                              value={order.status}
+                              onChange={(e) => handleStatusUpdate(order.id, e.target.value)}
+                              className="text-xs font-bold bg-white border border-slate-200 hover:border-sky-400 focus:border-sky-500 rounded-xl px-3 py-2 text-slate-800 outline-none cursor-pointer shadow-xs disabled:opacity-50 transition-colors"
+                            >
+                              <option value="pending_payment">Pending Payment</option>
+                              <option value="processing">Processing (Paid)</option>
+                              <option value="shipped">Shipped</option>
+                              <option value="delivered">Delivered</option>
+                              <option value="cancelled">Cancelled</option>
+                            </select>
+                            <button
+                              onClick={() => handleDeleteOrder(order.id, order.order_ref)}
+                              disabled={deletingId === order.id}
+                              title="Delete Order"
+                              className="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-xl border border-transparent hover:border-rose-200 transition-colors cursor-pointer disabled:opacity-50"
+                            >
+                              <Trash2 size={15} />
+                            </button>
+                          </div>
                         </td>
 
                         {/* Date */}
