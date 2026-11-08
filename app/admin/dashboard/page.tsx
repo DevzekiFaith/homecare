@@ -88,10 +88,11 @@ export default function AdminDashboard() {
         .select('*')
         .order('created_at', { ascending: false });
       
-      // 2. Fetch Requests
+      // 2. Fetch Requests (filtering out demo/test entries)
       const { data: reqData } = await supabase
         .from('service_requests')
         .select('*')
+        .not('address', 'ilike', '%Test Street%')
         .order('created_at', { ascending: false });
 
       // 3. Fetch Professionals (Workers) with Tier details
@@ -286,7 +287,8 @@ export default function AdminDashboard() {
   }, [workers, workerFilter, workerTierFilter, searchTerm]);
 
   const stats = useMemo(() => {
-    const estEscrowGMV = requests.length * 25000;
+    // Only derive financial metrics from real completed transactions
+    const estEscrowGMV = 0;
     const platformCommission = Math.round(estEscrowGMV * 0.15);
     const proNetDisbursals = Math.round(estEscrowGMV * 0.85);
     const storeRevenue = orders.reduce((acc, curr) => acc + (Number(curr.total) || 0), 0);

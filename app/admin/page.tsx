@@ -6,7 +6,7 @@ export default async function AdminDashboardPage() {
   const supabase = await createClient();
   
   const [jobsRes, workersRes, ordersRes, waitlistRes] = await Promise.all([
-    supabase.from("service_requests").select("id, status"),
+    supabase.from("service_requests").select("id, status").not("address", "ilike", "%Test Street%"),
     supabase.from("professionals").select("id, is_verified"),
     supabase.from("store_orders").select("id, status, total"),
     supabase.from("stock_waitlist").select("id, quantity, status"),

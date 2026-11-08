@@ -7,6 +7,7 @@ export default async function AdminJobsPage() {
   const { data: jobs } = await supabase
     .from("service_requests")
     .select("id, service_type, description, address, status, preferred_time, created_at")
+    .not("address", "ilike", "%Test Street%")
     .order("created_at", { ascending: false })
     .limit(100);
 

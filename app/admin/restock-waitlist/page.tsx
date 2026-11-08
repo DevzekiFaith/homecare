@@ -87,12 +87,35 @@ export default function AdminRestockWaitlistPage() {
       console.warn("Waitlist fetch warning:", err);
     }
 
+    // Sanitize remote entries to exclude test/demo records
+    remoteEntries = remoteEntries.filter((r) => {
+      const name = (r.customer_name || "").toLowerCase();
+      const phone = (r.customer_phone || "").replace(/\D/g, "");
+      const isDemoName = name.includes("kenneth adeleke") || name.includes("test user") || name === "test";
+      const isDemoPhone = phone === "08031234567" || phone.startsWith("1234567");
+      return !isDemoName && !isDemoPhone;
+    });
+
     // Merge any localStorage guest submissions for 100% data visibility
     let localEntries: WaitlistEntry[] = [];
     if (typeof window !== "undefined") {
       try {
         const stored = JSON.parse(localStorage.getItem("hc_stock_waitlist") || "[]");
-        localEntries = stored.map((item: any, idx: number) => ({
+        // Filter out demo/test entries from browser local storage
+        const sanitized = stored.filter((item: any) => {
+          const name = (item.name || "").toLowerCase();
+          const phone = (item.phone || "").replace(/\D/g, "");
+          const isDemoName = name.includes("kenneth adeleke") || name.includes("test user") || name === "test";
+          const isDemoPhone = phone === "08031234567" || phone.startsWith("1234567");
+          return !isDemoName && !isDemoPhone;
+        });
+
+        // Persist clean storage
+        if (sanitized.length !== stored.length) {
+          localStorage.setItem("hc_stock_waitlist", JSON.stringify(sanitized));
+        }
+
+        localEntries = sanitized.map((item: any, idx: number) => ({
           id: item.ref || `local-${idx}-${Date.now()}`,
           ref: item.ref,
           product_id: item.productId || "sp-water-5",
