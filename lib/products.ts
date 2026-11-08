@@ -476,8 +476,8 @@ export const PRODUCTS: Product[] = [
     stock: 65,
     sourceOrigin: "Shenzhen IoT Environmental Labs",
     warrantyMonths: 24,
-    videoUrl: "https://www.youtube-nocookie.com/embed/g2_0H4u8p0E",
-    videoTitle: "Tuya Smart WiFi IR Remote with Temperature & Humidity Sensor Demonstration",
+    videoUrl: "https://www.youtube.com/embed/Bm0nO80eTlA",
+    videoTitle: "Tuya WiFi Smart IR Remote Control Live Demonstration & Review",
   },
 ];
 

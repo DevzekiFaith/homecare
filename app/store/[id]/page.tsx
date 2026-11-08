@@ -388,21 +388,37 @@ export default function ProductDetailPage({ params }: PageProps) {
                     />
                   ) : (
                     <iframe
-                      src={product.videoUrl}
+                      src={
+                        product.videoUrl.includes("?")
+                          ? `${product.videoUrl}&autoplay=1&rel=0&modestbranding=1`
+                          : `${product.videoUrl}?autoplay=1&rel=0&modestbranding=1`
+                      }
                       title={product.videoTitle || `${product.name} Video Demonstration`}
                       className="w-full h-full border-0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                       allowFullScreen
                     />
                   )}
-                  <button
-                    type="button"
-                    onClick={() => setActiveMedia("photo")}
-                    className="absolute bottom-4 left-4 z-30 px-3.5 py-1.5 rounded-full bg-slate-900/90 hover:bg-slate-800 text-white text-[11px] font-black border border-white/20 transition-all flex items-center gap-1.5 shadow-lg cursor-pointer"
-                  >
-                    <ArrowLeft size={12} />
-                    <span>View Photos</span>
-                  </button>
+                  <div className="absolute bottom-3.5 left-3.5 right-3.5 z-30 flex items-center justify-between pointer-events-none">
+                    <button
+                      type="button"
+                      onClick={() => setActiveMedia("photo")}
+                      className="pointer-events-auto px-3.5 py-1.5 rounded-full bg-slate-900/90 hover:bg-slate-800 text-white text-[11px] font-black border border-white/20 transition-all flex items-center gap-1.5 shadow-lg cursor-pointer"
+                    >
+                      <ArrowLeft size={12} />
+                      <span>Back to Photos</span>
+                    </button>
+
+                    <a
+                      href={product.videoUrl.replace("/embed/", "/watch?v=")}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="pointer-events-auto px-3 py-1.5 rounded-full bg-slate-900/90 hover:bg-slate-800 text-sky-300 hover:text-white text-[11px] font-bold border border-white/20 transition-all flex items-center gap-1 shadow-lg"
+                    >
+                      <span>Full Screen</span>
+                      <Share2 size={11} />
+                    </a>
+                  </div>
                 </div>
               ) : (
                 <>
