@@ -100,23 +100,17 @@ export function getSurgeResult(
   const isOffHours = hour >= 21 || hour <= 5;
 
   let multiplier = 1.0;
-  let reason = 'Regular availability';
+  let reason = 'Standard Base Rate';
 
-  if (isOffHours) {
-    multiplier = 1.4;
-    reason = 'After-hours emergency rate';
-  } else if (isMorningPeak && isWeekend) {
-    multiplier = 1.35;
+  if (isMorningPeak && isWeekend) {
+    multiplier = 1.15;
     reason = 'Weekend morning demand';
   } else if (isEveningPeak) {
-    multiplier = 1.25;
+    multiplier = 1.15;
     reason = 'Evening peak hours';
   } else if (isMorningPeak) {
-    multiplier = 1.15;
+    multiplier = 1.10;
     reason = 'Morning rush hours';
-  } else if (isWeekend) {
-    multiplier = 1.1;
-    reason = 'Weekend availability';
   }
 
   // High-demand services get a slight additional factor

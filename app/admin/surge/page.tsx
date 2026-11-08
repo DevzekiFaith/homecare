@@ -146,7 +146,7 @@ export default function AdminSurgePage() {
   // Determine current window
   const isNight = currentHour >= 21 || currentHour < 6;
   const isPeak = (currentHour >= 7 && currentHour <= 9) || (currentHour >= 17 && currentHour <= 20);
-  const windowStatus = isNight ? "Night Premium Active (40%)" : isPeak ? "Peak Rush Hour (15–25%)" : "Standard Operating Window";
+  const windowStatus = isPeak ? "Peak Rush Hour (15% Dynamic Surge)" : "Standard Operating Window (Base Rates)";
   const activeCount = Object.keys(overrides).length;
 
   return (
@@ -273,61 +273,40 @@ export default function AdminSurgePage() {
                       )}
                     </div>
 
-                    {/* Manual override input & quick presets */}
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <div className="flex items-center gap-1">
-                        <button
-                          type="button"
-                          onClick={() => applyPreset(service, 1.15)}
-                          className="px-2 py-1 text-[11px] font-bold rounded-lg border border-slate-200 bg-white hover:bg-sky-50 hover:border-sky-300 text-slate-700 transition-colors cursor-pointer"
-                          title="Set +15% surge"
-                        >
-                          1.15×
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => applyPreset(service, 1.25)}
-                          className="px-2 py-1 text-[11px] font-bold rounded-lg border border-slate-200 bg-white hover:bg-sky-50 hover:border-sky-300 text-slate-700 transition-colors cursor-pointer"
-                          title="Set +25% surge"
-                        >
-                          1.25×
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => applyPreset(service, 1.40)}
-                          className="px-2 py-1 text-[11px] font-bold rounded-lg border border-slate-200 bg-white hover:bg-sky-50 hover:border-sky-300 text-slate-700 transition-colors cursor-pointer"
-                          title="Set +40% surge"
-                        >
-                          1.40×
-                        </button>
-                      </div>
+                    {/* Multiplier Adjustment */}
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={overrides[service] ? String(overrides[service]) : "auto"}
+                        onChange={(e) => {
+                          if (e.target.value === "auto") {
+                            removeOverride(service);
+                          } else {
+                            applyPreset(service, parseFloat(e.target.value));
+                          }
+                        }}
+                        className={`rounded-xl border px-3 py-1.5 text-xs font-bold outline-none cursor-pointer transition-colors shadow-2xs ${
+                          hasOverride
+                            ? "border-sky-500 bg-sky-50 text-sky-900 font-black"
+                            : "border-slate-200 bg-white text-slate-800 hover:border-slate-300 focus:border-sky-500"
+                        }`}
+                      >
+                        <option value="auto">Auto (1.0× Standard Base)</option>
+                        <option value="1.15">1.15× (+15% Peak)</option>
+                        <option value="1.25">1.25× (+25% Surge)</option>
+                        <option value="1.40">1.40× (+40% High Demand)</option>
+                        <option value="1.50">1.50× (+50% Emergency)</option>
+                      </select>
 
-                      <div className="flex items-center gap-1.5">
-                        <input
-                          type="number"
-                          min={1}
-                          max={3}
-                          step={0.05}
-                          placeholder="Auto"
-                          value={overrides[service] ?? ""}
-                          onChange={(e) => handleOverride(service, e.target.value)}
-                          className={`w-16 rounded-xl px-2.5 py-1 text-xs font-bold outline-none border transition-colors shadow-2xs ${
-                            hasOverride
-                              ? "border-sky-500 bg-sky-50 text-sky-900 font-black"
-                              : "border-slate-200 bg-white text-slate-800 focus:border-sky-500"
-                          }`}
-                        />
-                        {hasOverride && (
-                          <button
-                            type="button"
-                            onClick={() => removeOverride(service)}
-                            className="text-xs text-rose-600 hover:text-rose-700 font-bold px-1 cursor-pointer"
-                            title="Reset to automatic rate"
-                          >
-                            ✕
-                          </button>
-                        )}
-                      </div>
+                      {hasOverride && (
+                        <button
+                          type="button"
+                          onClick={() => removeOverride(service)}
+                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg text-xs font-bold transition-colors cursor-pointer"
+                          title="Reset to 1.0x auto"
+                        >
+                          ✕
+                        </button>
+                      )}
                     </div>
                   </motion.div>
                 );
