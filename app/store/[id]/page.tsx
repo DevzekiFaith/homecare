@@ -37,7 +37,7 @@ import {
   X
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { PRODUCTS, Product } from "@/lib/products";
+import { PRODUCTS, Product, PRODUCT_BUNDLES } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import ProductCard from "@/app/components/ProductCard";
 import { toast } from "sonner";
@@ -123,6 +123,27 @@ export default function ProductDetailPage({ params }: PageProps) {
     if (!product) return 0;
     return includeInstallation ? product.price + installationFee : product.price;
   }, [product, includeInstallation]);
+
+  // Frequently Bought Together / Bundle Deals
+  const bundleDeal = useMemo(() => {
+    if (!product) return null;
+    return PRODUCT_BUNDLES[product.id] || null;
+  }, [product]);
+
+  const companionProduct = useMemo(() => {
+    if (!bundleDeal) return null;
+    return PRODUCTS.find((p) => p.id === bundleDeal.companionProductId) || null;
+  }, [bundleDeal]);
+
+  const handleAddBundleToCart = () => {
+    if (!product || !companionProduct || !bundleDeal) return;
+    addToCart(product, 1);
+    addToCart(companionProduct, bundleDeal.companionQuantity);
+    toast.success("Bundle Deal Added to Cart!", {
+      description: `Added ${product.name} + ${bundleDeal.companionQuantity}x ${companionProduct.name}.`,
+    });
+    setIsCartOpen(true);
+  };
 
 
 
@@ -1017,6 +1038,118 @@ export default function ProductDetailPage({ params }: PageProps) {
                         ? `Buy Both Now (₦${((basePrice + installationFee) * quantity).toLocaleString()})`
                         : `Buy Now (₦${(basePrice * quantity).toLocaleString()})`}
                     </span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Frequently Bought Together / Bundle Upsell */}
+            {bundleDeal && companionProduct && (
+              <div className="bg-gradient-to-br from-white via-sky-50/50 to-blue-50/30 rounded-3xl p-5 sm:p-6 border-2 border-sky-200/80 shadow-md shadow-sky-900/5 space-y-4">
+                <div className="flex items-center justify-between gap-2 flex-wrap pb-3 border-b border-sky-100">
+                  <div className="flex items-center gap-2">
+                    <span className="p-1.5 rounded-xl bg-sky-600 text-white shadow-2xs">
+                      <Zap size={14} className="fill-white" />
+                    </span>
+                    <div>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-sky-800 block">
+                        {bundleDeal.badge}
+                      </span>
+                      <h3 className="text-sm font-black text-slate-900 tracking-tight">
+                        {bundleDeal.title}
+                      </h3>
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300 px-2.5 py-0.5 rounded-full">
+                    Save ₦{bundleDeal.savingsNaira.toLocaleString()}
+                  </span>
+                </div>
+
+                <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                  {bundleDeal.pitch}
+                </p>
+
+                {/* Combined Product Preview Grid */}
+                <div className="flex items-center gap-2 sm:gap-3 bg-white p-3 sm:p-4 rounded-2xl border border-sky-100 shadow-2xs">
+                  {/* Primary Item */}
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                    <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-slate-50 border border-slate-200 p-1 shrink-0 overflow-hidden">
+                      <Image
+                        src={product.image}
+                        alt={product.name}
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[11px] font-bold text-slate-900 truncate">
+                        {product.name}
+                      </p>
+                      <p className="text-xs font-black text-sky-700 font-mono mt-0.5">
+                        ₦{product.price.toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Plus Sign */}
+                  <div className="w-6 h-6 rounded-full bg-sky-100 text-sky-700 flex items-center justify-center text-xs font-black shrink-0">
+                    +
+                  </div>
+
+                  {/* Companion Item */}
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                    <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-slate-50 border border-slate-200 p-1 shrink-0 overflow-hidden">
+                      <Image
+                        src={companionProduct.image}
+                        alt={companionProduct.name}
+                        fill
+                        className="object-contain"
+                      />
+                      {bundleDeal.companionQuantity > 1 && (
+                        <span className="absolute bottom-0 right-0 bg-slate-900 text-white text-[9px] font-black px-1 rounded-tl">
+                          x{bundleDeal.companionQuantity}
+                        </span>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[11px] font-bold text-slate-900 truncate">
+                        {companionProduct.name}
+                      </p>
+                      <p className="text-xs font-black text-sky-700 font-mono mt-0.5">
+                        ₦{(companionProduct.price * bundleDeal.companionQuantity).toLocaleString()}
+                        {bundleDeal.companionQuantity > 1 && (
+                          <span className="text-[9px] text-slate-400 font-normal ml-1">
+                            ({bundleDeal.companionQuantity} units)
+                          </span>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Price & Action Button */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+                  <div>
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block">
+                      Bundle Deal Price
+                    </span>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-lg sm:text-xl font-black text-slate-900 font-heading">
+                        ₦{bundleDeal.discountedTotal.toLocaleString()}
+                      </span>
+                      <span className="text-xs text-slate-400 line-through">
+                        ₦{(product.price + companionProduct.price * bundleDeal.companionQuantity).toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleAddBundleToCart}
+                    className="h-11 px-5 rounded-2xl bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-500 hover:to-blue-600 text-white text-xs font-black uppercase tracking-wider shadow-md shadow-sky-600/20 flex items-center justify-center gap-2 transition-all hover:scale-102 active:scale-98 cursor-pointer shrink-0"
+                  >
+                    <Plus size={14} />
+                    <span>Add Both to Cart (Save ₦{bundleDeal.savingsNaira.toLocaleString()})</span>
                   </button>
                 </div>
               </div>
