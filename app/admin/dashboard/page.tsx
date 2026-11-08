@@ -27,6 +27,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Logo from "@/app/components/Logo";
 import { toast } from "sonner";
 import { DEMO_STORE_ORDER_FILTER } from "@/lib/store-data";
+import { DEMO_JOB_FILTER } from "@/lib/jobs";
 
 interface Order {
   id: string;
@@ -94,6 +95,7 @@ export default function AdminDashboard() {
       const { data: reqData } = await supabase
         .from('service_requests')
         .select('*')
+        .not('id', 'in', DEMO_JOB_FILTER)
         .not('address', 'ilike', '%Test Street%')
         .order('created_at', { ascending: false });
 

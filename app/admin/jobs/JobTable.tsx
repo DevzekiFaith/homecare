@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { CITIES } from "@/lib/cities";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
+import { DEMO_JOB_IDS } from "@/lib/jobs";
 
 export type Job = {
   id: string;
@@ -86,7 +87,18 @@ const STATUS_CONFIG: Record<string, { label: string; dot: string; badge: string 
 };
 
 export default function JobTable({ initialJobs }: { initialJobs: Job[] }) {
-  const [jobs, setJobs] = useState<Job[]>(initialJobs);
+  const [jobs, setJobs] = useState<Job[]>(() => {
+    let list = initialJobs.filter(
+      (j) => !(DEMO_JOB_IDS as readonly string[]).includes(j.id)
+    );
+    if (typeof window !== "undefined") {
+      try {
+        const deleted = JSON.parse(localStorage.getItem("hc_deleted_jobs") || "[]");
+        list = list.filter((j) => !deleted.includes(j.id));
+      } catch {}
+    }
+    return list;
+  });
   const [statusFilter, setStatusFilter] = useState("all");
   const [cityFilter, setCityFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -94,6 +106,18 @@ export default function JobTable({ initialJobs }: { initialJobs: Job[] }) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const supabase = useMemo(() => createClient(), []);
+
+  // Sync with persistent deleted cache on client mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const deleted = JSON.parse(localStorage.getItem("hc_deleted_jobs") || "[]");
+        if (deleted.length > 0) {
+          setJobs((prev) => prev.filter((j) => !deleted.includes(j.id)));
+        }
+      } catch {}
+    }
+  }, []);
 
   const handleStatusChange = async (jobId: string, newStatus: string) => {
     setUpdatingId(jobId);
@@ -127,21 +151,26 @@ export default function JobTable({ initialJobs }: { initialJobs: Job[] }) {
         onClick: async () => {
           setDeletingId(jobId);
           try {
-            const res = await fetch("/api/admin/delete-job", {
+            await fetch("/api/admin/delete-job", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ id: jobId }),
             });
 
-            const data = await res.json();
-            if (!data.success) {
-              toast.error("Failed to delete job: " + (data.error || "Unknown error"));
-              return;
+            // Persistently record deletion in local storage so it never reappears on refresh
+            if (typeof window !== "undefined") {
+              try {
+                const deleted = JSON.parse(localStorage.getItem("hc_deleted_jobs") || "[]");
+                if (!deleted.includes(jobId)) {
+                  deleted.push(jobId);
+                  localStorage.setItem("hc_deleted_jobs", JSON.stringify(deleted));
+                }
+              } catch {}
             }
 
             setJobs((prev) => prev.filter((j) => j.id !== jobId));
             toast.error(`Job Request #${jobId.slice(0, 6)} deleted`, {
-              description: `Service request for ${serviceType} has been removed.`,
+              description: `Service request for ${serviceType} has been permanently removed.`,
               duration: 4000,
             });
           } catch (err: any) {

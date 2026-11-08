@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import JobTable from "./JobTable";
+import { DEMO_JOB_FILTER } from "@/lib/jobs";
 
 export default async function AdminJobsPage() {
   const supabase = await createClient();
@@ -7,6 +8,7 @@ export default async function AdminJobsPage() {
   const { data: jobs } = await supabase
     .from("service_requests")
     .select("id, service_type, description, address, status, preferred_time, created_at")
+    .not("id", "in", DEMO_JOB_FILTER)
     .not("address", "ilike", "%Test Street%")
     .order("created_at", { ascending: false })
     .limit(100);

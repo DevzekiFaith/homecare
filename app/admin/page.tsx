@@ -2,12 +2,17 @@ import { createClient } from "@/lib/supabase/server";
 import { CITIES } from "@/lib/cities";
 import DashboardClient from "./DashboardClient";
 import { DEMO_STORE_ORDER_FILTER } from "@/lib/store-data";
+import { DEMO_JOB_FILTER } from "@/lib/jobs";
 
 export default async function AdminDashboardPage() {
   const supabase = await createClient();
 
   const [jobsRes, workersRes, ordersRes, waitlistRes] = await Promise.all([
-    supabase.from("service_requests").select("id, status").not("address", "ilike", "%Test Street%"),
+    supabase
+      .from("service_requests")
+      .select("id, status")
+      .not("id", "in", DEMO_JOB_FILTER)
+      .not("address", "ilike", "%Test Street%"),
     supabase.from("professionals").select("id, is_verified"),
     supabase.from("store_orders").select("id, status, total").not("order_ref", "in", DEMO_STORE_ORDER_FILTER),
     supabase.from("stock_waitlist").select("id, quantity, status"),
