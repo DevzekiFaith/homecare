@@ -1019,34 +1019,6 @@ export default function ProductDetailPage({ params }: PageProps) {
                     </span>
                   </button>
                 </div>
-
-                {/* Live Video Demo & Doorstep Inspection Trust Card */}
-                <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-emerald-50/80 via-sky-50/80 to-blue-50/80 border border-emerald-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-[10px] font-black uppercase tracking-wider bg-emerald-600 text-white px-2 py-0.5 rounded-full">
-                        📹 Video Demo Ready
-                      </span>
-                      <span className="text-[11px] font-extrabold text-slate-800">
-                        Want to see this device unboxed or working live?
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-slate-600">
-                      Message our Lagos desk for a quick 60-second video demo or choose pay on inspection at your doorstep.
-                    </p>
-                  </div>
-                  <a
-                    href={`https://wa.me/2349119059859?text=${encodeURIComponent(
-                      `Hello HomeCare! I am on the product page for "${product.name}". Can you share a quick video demo / unboxing of this item?`
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="shrink-0 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-black uppercase tracking-wider flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
-                  >
-                    <MessageCircle size={14} />
-                    <span>Request Video Demo</span>
-                  </a>
-                </div>
               </div>
             )}
 
