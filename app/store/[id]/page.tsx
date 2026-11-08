@@ -28,7 +28,9 @@ import {
   Loader2,
   Play,
   Film,
-  Camera
+  Camera,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { PRODUCTS, Product } from "@/lib/products";
@@ -58,6 +60,7 @@ export default function ProductDetailPage({ params }: PageProps) {
   const [justAdded, setJustAdded] = useState(false);
   const [imgError, setImgError] = useState(false);
   const [activeMedia, setActiveMedia] = useState<"photo" | "video">("photo");
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [deliveryState, setDeliveryState] = useState("Lagos");
   const [includeInstallation, setIncludeInstallation] = useState(false);
   const installationFee = 7500;
@@ -77,6 +80,16 @@ export default function ProductDetailPage({ params }: PageProps) {
   }, [resolvedParams.id]);
 
   const isOutOfStock = Boolean(product && product.stock !== undefined && product.stock <= 0);
+
+  const galleryImages = useMemo(() => {
+    if (!product) return [];
+    if (product.images && product.images.length > 0) {
+      return product.images;
+    }
+    return [product.image];
+  }, [product]);
+
+  const currentImage = galleryImages[activeImageIndex] || product?.image || "/products/extension-board.jpg";
 
   // Dynamic price based on product and installation option
   const effectivePrice = useMemo(() => {
@@ -424,12 +437,12 @@ export default function ProductDetailPage({ params }: PageProps) {
                 <>
                   {!imgError ? (
                     <Image
-                      src={product.image}
-                      alt={product.name}
+                      src={currentImage}
+                      alt={`${product.name} slide ${activeImageIndex + 1}`}
                       fill
                       priority
-                      unoptimized={product.image.startsWith("http")}
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      unoptimized={currentImage.startsWith("http")}
+                      className="object-cover transition-all duration-500 group-hover:scale-105"
                       onError={() => setImgError(true)}
                     />
                   ) : (
@@ -437,6 +450,40 @@ export default function ProductDetailPage({ params }: PageProps) {
                       <Zap size={48} className="text-sky-600" />
                       <span className="text-xs font-bold uppercase tracking-wider">HomeCare Smart Appliance</span>
                     </div>
+                  )}
+
+                  {/* Left & Right Navigation Arrows (when multi-slide) */}
+                  {galleryImages.length > 1 && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveImageIndex((prev) => (prev > 0 ? prev - 1 : galleryImages.length - 1));
+                        }}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-slate-900/60 hover:bg-slate-900 text-white flex items-center justify-center backdrop-blur-sm border border-white/20 transition-all shadow-md cursor-pointer hover:scale-110"
+                        title="Previous Slide"
+                      >
+                        <ChevronLeft size={16} />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveImageIndex((prev) => (prev < galleryImages.length - 1 ? prev + 1 : 0));
+                        }}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-slate-900/60 hover:bg-slate-900 text-white flex items-center justify-center backdrop-blur-sm border border-white/20 transition-all shadow-md cursor-pointer hover:scale-110"
+                        title="Next Slide"
+                      >
+                        <ChevronRight size={16} />
+                      </button>
+
+                      {/* Slide Indicator Badge */}
+                      <div className="absolute bottom-4 right-4 z-20 px-2.5 py-1 rounded-full bg-slate-950/75 backdrop-blur-md text-white text-[10px] font-mono font-bold border border-white/15 shadow-sm">
+                        Slide {activeImageIndex + 1} / {galleryImages.length}
+                      </div>
+                    </>
                   )}
 
                   {product.videoUrl && (
@@ -455,6 +502,35 @@ export default function ProductDetailPage({ params }: PageProps) {
                 </>
               )}
             </div>
+
+            {/* Gallery Thumbnails Strip (When multiple slides exist) */}
+            {galleryImages.length > 1 && (
+              <div className="flex items-center gap-2.5 overflow-x-auto pb-1 pt-0.5 scrollbar-none">
+                {galleryImages.map((imgSrc, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => {
+                      setActiveImageIndex(idx);
+                      setActiveMedia("photo");
+                    }}
+                    className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden bg-white border-2 transition-all cursor-pointer flex-shrink-0 ${
+                      activeImageIndex === idx && activeMedia === "photo"
+                        ? "border-sky-600 ring-2 ring-sky-600/30 shadow-md scale-102"
+                        : "border-slate-200 hover:border-slate-300 opacity-60 hover:opacity-100"
+                    }`}
+                    title={`View slide ${idx + 1}`}
+                  >
+                    <Image
+                      src={imgSrc}
+                      alt={`${product.name} slide ${idx + 1}`}
+                      fill
+                      className="object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
 
             {/* Media Selector Tabs (If video demo is available) */}
             {product.videoUrl && (

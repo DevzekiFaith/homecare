@@ -5,6 +5,7 @@ export interface Product {
   price: number;
   originalPrice?: number;
   image: string;
+  images?: string[];
   category: "Power & Protection" | "Fans & Cooling" | "Water Automation" | "Security & Access" | "Smart Lighting" | "Kitchen Essentials";
   serviceLink: string[];
   rating?: number;
@@ -468,6 +469,11 @@ export const PRODUCTS: Product[] = [
     price: 19500,
     originalPrice: 29500,
     image: "/products/smart-ir-controller.jpg",
+    images: [
+      "/products/smart-ir-controller.jpg",
+      "/products/smart-ir-slide-ac.jpg",
+      "/products/smart-ir-slide-hub.jpg",
+    ],
     category: "Fans & Cooling",
     serviceLink: ["Electrician", "AC & Fridge Repair"],
     rating: 4.8,
