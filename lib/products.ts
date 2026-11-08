@@ -469,11 +469,6 @@ export const PRODUCTS: Product[] = [
     price: 19500,
     originalPrice: 29500,
     image: "/products/smart-ir-controller.jpg",
-    images: [
-      "/products/smart-ir-controller.jpg",
-      "/products/smart-ir-slide-ac.jpg",
-      "/products/smart-ir-slide-hub.jpg",
-    ],
     category: "Fans & Cooling",
     serviceLink: ["Electrician", "AC & Fridge Repair"],
     rating: 4.8,

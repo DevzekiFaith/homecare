@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState, useMemo } from "react";
+import { use, useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -30,7 +30,11 @@ import {
   Film,
   Camera,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  ZoomIn,
+  ZoomOut,
+  Maximize2,
+  X
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { PRODUCTS, Product } from "@/lib/products";
@@ -61,6 +65,29 @@ export default function ProductDetailPage({ params }: PageProps) {
   const [imgError, setImgError] = useState(false);
   const [activeMedia, setActiveMedia] = useState<"photo" | "video">("photo");
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  // High-Resolution Image Zoom & Inspection Lightbox
+  const [isHoverZoomed, setIsHoverZoomed] = useState(false);
+  const [zoomOrigin, setZoomOrigin] = useState({ x: 50, y: 50 });
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [lightboxScale, setLightboxScale] = useState(1);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+    const y = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
+    setZoomOrigin({ x, y });
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsLightboxOpen(false);
+    };
+    if (isLightboxOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isLightboxOpen]);
   const [deliveryState, setDeliveryState] = useState("Lagos");
   const [includeInstallation, setIncludeInstallation] = useState(false);
   const installationFee = 7500;
@@ -434,23 +461,46 @@ export default function ProductDetailPage({ params }: PageProps) {
                   </div>
                 </div>
               ) : (
-                <>
+                <div
+                  className="relative w-full h-full cursor-zoom-in overflow-hidden group/zoom"
+                  onMouseEnter={() => setIsHoverZoomed(true)}
+                  onMouseLeave={() => setIsHoverZoomed(false)}
+                  onMouseMove={handleMouseMove}
+                  onClick={() => {
+                    setLightboxScale(1);
+                    setIsLightboxOpen(true);
+                  }}
+                >
                   {!imgError ? (
-                    <Image
-                      src={currentImage}
-                      alt={`${product.name} slide ${activeImageIndex + 1}`}
-                      fill
-                      priority
-                      unoptimized={currentImage.startsWith("http")}
-                      className="object-cover transition-all duration-500 group-hover:scale-105"
-                      onError={() => setImgError(true)}
-                    />
+                    <div
+                      className="relative w-full h-full transition-transform duration-150 ease-out"
+                      style={{
+                        transformOrigin: `${zoomOrigin.x}% ${zoomOrigin.y}%`,
+                        transform: isHoverZoomed ? "scale(2.2)" : "scale(1)",
+                      }}
+                    >
+                      <Image
+                        src={currentImage}
+                        alt={product.name}
+                        fill
+                        priority
+                        unoptimized={currentImage.startsWith("http")}
+                        className="object-cover"
+                        onError={() => setImgError(true)}
+                      />
+                    </div>
                   ) : (
-                    <div className="flex flex-col items-center justify-center gap-3 text-slate-400">
+                    <div className="flex flex-col items-center justify-center gap-3 text-slate-400 h-full">
                       <Zap size={48} className="text-sky-600" />
                       <span className="text-xs font-bold uppercase tracking-wider">HomeCare Smart Appliance</span>
                     </div>
                   )}
+
+                  {/* Hover / Tap to Zoom Indicator Pill */}
+                  <div className="absolute bottom-3.5 right-3.5 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-950/80 hover:bg-slate-900 backdrop-blur-md text-white text-[10px] font-bold border border-white/20 shadow-md pointer-events-none transition-opacity">
+                    <ZoomIn size={12} className="text-cyan-400" />
+                    <span>Hover to zoom · Click to expand</span>
+                  </div>
 
                   {/* Left & Right Navigation Arrows (when multi-slide) */}
                   {galleryImages.length > 1 && (
@@ -480,7 +530,7 @@ export default function ProductDetailPage({ params }: PageProps) {
                       </button>
 
                       {/* Slide Indicator Badge */}
-                      <div className="absolute bottom-4 right-4 z-20 px-2.5 py-1 rounded-full bg-slate-950/75 backdrop-blur-md text-white text-[10px] font-mono font-bold border border-white/15 shadow-sm">
+                      <div className="absolute top-4 left-4 z-20 px-2.5 py-1 rounded-full bg-slate-950/75 backdrop-blur-md text-white text-[10px] font-mono font-bold border border-white/15 shadow-sm">
                         Slide {activeImageIndex + 1} / {galleryImages.length}
                       </div>
                     </>
@@ -489,7 +539,10 @@ export default function ProductDetailPage({ params }: PageProps) {
                   {product.videoUrl && (
                     <button
                       type="button"
-                      onClick={() => setActiveMedia("video")}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveMedia("video");
+                      }}
                       className="absolute bottom-4 left-4 z-20 flex items-center gap-2 px-3.5 py-2 rounded-full bg-slate-950/90 hover:bg-sky-600 text-white backdrop-blur-md border border-white/25 text-xs font-black transition-all shadow-xl hover:scale-105 cursor-pointer group"
                     >
                       <div className="w-5 h-5 rounded-full bg-sky-500 flex items-center justify-center text-white group-hover:bg-white group-hover:text-sky-600 transition-colors">
@@ -499,7 +552,7 @@ export default function ProductDetailPage({ params }: PageProps) {
                       <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded font-mono">30s</span>
                     </button>
                   )}
-                </>
+                </div>
               )}
             </div>
 
@@ -1126,6 +1179,81 @@ export default function ProductDetailPage({ params }: PageProps) {
         includeInstallation={includeInstallation}
         installationFee={installationFee}
       />
+
+      {/* Fullscreen High-Resolution Inspection Lightbox Modal */}
+      {isLightboxOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-xl flex flex-col items-center justify-center p-4 sm:p-8 animate-in fade-in duration-200"
+          onClick={() => setIsLightboxOpen(false)}
+        >
+          {/* Lightbox Top Control Bar */}
+          <div
+            className="absolute top-4 left-4 right-4 z-60 flex items-center justify-between text-white"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="space-y-0.5">
+              <span className="text-[10px] font-black uppercase tracking-widest text-cyan-400">
+                Detailed Inspection View
+              </span>
+              <h4 className="text-xs sm:text-sm font-bold text-white line-clamp-1 max-w-xl">
+                {product?.name}
+              </h4>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setLightboxScale((prev) => (prev >= 2.5 ? 1 : prev + 0.5))}
+                className="h-9 px-3.5 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/20 flex items-center gap-1.5 transition-colors cursor-pointer"
+                title="Toggle Zoom"
+              >
+                {lightboxScale > 1 ? <ZoomOut size={14} /> : <ZoomIn size={14} />}
+                <span>{lightboxScale}× Zoom</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsLightboxOpen(false)}
+                className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center border border-white/20 transition-colors cursor-pointer"
+                title="Close (Esc)"
+              >
+                <X size={18} />
+              </button>
+            </div>
+          </div>
+
+          {/* Lightbox Image Stage */}
+          <div
+            className="relative max-w-4xl max-h-[80vh] w-full h-full flex items-center justify-center overflow-auto cursor-zoom-out"
+            onClick={() => setIsLightboxOpen(false)}
+          >
+            <div
+              className="relative w-full h-full max-h-[75vh] aspect-square transition-transform duration-300"
+              style={{ transform: `scale(${lightboxScale})` }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setLightboxScale((prev) => (prev >= 2.5 ? 1 : prev + 0.75));
+              }}
+            >
+              <Image
+                src={currentImage}
+                alt={product?.name || "Product Preview"}
+                fill
+                priority
+                unoptimized={currentImage.startsWith("http")}
+                className="object-contain"
+              />
+            </div>
+          </div>
+
+          {/* Lightbox Footer Instruction */}
+          <div className="absolute bottom-4 z-60 text-center text-xs text-slate-400 pointer-events-none">
+            <span>Click image to zoom in • Click outside or press Esc to close</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
