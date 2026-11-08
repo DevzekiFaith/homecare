@@ -541,7 +541,7 @@ export default function PromoOverlay() {
                   <div className="bg-sky-50/80 rounded-2xl p-3 border border-sky-200/80 flex items-center justify-between gap-2">
                     <div className="min-w-0">
                       <p className="text-[9px] font-black uppercase tracking-wider text-sky-800 truncate">
-                        Code (15% OFF Entire Order)
+                        Code (15% OFF on ₦15k+ · 10% on Any Cart)
                       </p>
                       <p className="text-lg font-black text-slate-900 font-mono tracking-wider">
                         {WELCOME_CODE}

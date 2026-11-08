@@ -378,20 +378,33 @@ export default function CartDrawer() {
                 {/* Collapsible Voucher Bar */}
                 <div className="bg-slate-50 p-2 rounded-xl border border-slate-200/80">
                   {couponCode ? (
-                    <div className="flex items-center justify-between text-xs">
-                      <div className="flex items-center gap-1.5 font-bold text-emerald-800">
-                        <Tag size={12} className="text-emerald-600" />
-                        <span className="text-[11px]">
-                          Voucher <strong>{couponCode}</strong> applied {discount > 0 ? `(-₦${discount.toLocaleString()})` : ""}
-                        </span>
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-1.5 font-bold text-emerald-800">
+                          <Tag size={12} className="text-emerald-600" />
+                          <span className="text-[11px]">
+                            Voucher <strong>{couponCode}</strong> applied {discount > 0 ? `(-₦${discount.toLocaleString()})` : ""}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleRemoveCoupon}
+                          className="text-[10px] font-extrabold uppercase text-rose-600 hover:underline cursor-pointer"
+                        >
+                          Remove
+                        </button>
                       </div>
-                      <button
-                        type="button"
-                        onClick={handleRemoveCoupon}
-                        className="text-[10px] font-extrabold uppercase text-rose-600 hover:underline cursor-pointer"
-                      >
-                        Remove
-                      </button>
+                      {["WELCOME15", "WELCOME15%", "WELCOME10", "WELCOME1500", "WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(couponCode) && (
+                        cartTotal >= 15000 ? (
+                          <p className="text-[10px] text-emerald-700 font-semibold">
+                            🎉 Full 15% Welcome Discount unlocked!
+                          </p>
+                        ) : (
+                          <p className="text-[10px] text-amber-700 font-semibold">
+                            10% applied · Add <strong>₦{(15000 - cartTotal).toLocaleString()}</strong> more to get <strong>15% OFF</strong>!
+                          </p>
+                        )
+                      )}
                     </div>
                   ) : (
                     <div>

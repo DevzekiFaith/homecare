@@ -69,6 +69,7 @@ const SPOTLIGHT_DEVICES: SpotlightItem[] = [
 ];
 
 const QUICK_TAGS = [
+  { label: "🔥 Starter Bundles", query: "bundle" },
   { label: "⚡ Surge Plugs", query: "surge" },
   { label: "🔋 65W Laptop Bank", query: "power bank" },
   { label: "💧 Tank Water Monitor", query: "water" },
@@ -87,6 +88,7 @@ export default function StorePage() {
 
   const categories = [
     "All",
+    "Starter Bundles",
     "Power & Protection",
     "Fans & Cooling",
     "Water Automation",
@@ -186,7 +188,7 @@ export default function StorePage() {
               <span className="hidden md:inline text-white/30">•</span>
               <span className="inline-flex items-center gap-1 font-bold text-amber-300">
                 <Gift size={12} className="text-amber-300" />
-                Voucher <strong className="font-mono text-white">WELCOME15</strong> for 15% OFF
+                Voucher <strong className="font-mono text-white">WELCOME15</strong> for 15% OFF (Orders ₦15k+) • Instant 10% on Any Cart
               </span>
             </div>
           </div>
@@ -616,7 +618,7 @@ export default function StorePage() {
                     : "bg-white text-slate-600 border border-slate-200 hover:border-sky-300 hover:bg-sky-50 shadow-xs"
                 }`}
               >
-                <span>{category}</span>
+                <span>{category === "Starter Bundles" ? "🔥 Starter Bundles" : category}</span>
                 <span
                   className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold ${
                     isSelected ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"

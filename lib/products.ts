@@ -6,7 +6,7 @@ export interface Product {
   originalPrice?: number;
   image: string;
   images?: string[];
-  category: "Power & Protection" | "Fans & Cooling" | "Water Automation" | "Security & Access" | "Smart Lighting" | "Kitchen Essentials";
+  category: "Power & Protection" | "Fans & Cooling" | "Water Automation" | "Security & Access" | "Smart Lighting" | "Kitchen Essentials" | "Starter Bundles";
   serviceLink: string[];
   rating?: number;
   reviewCount?: number;
@@ -477,6 +477,56 @@ export const PRODUCTS: Product[] = [
     stock: 65,
     sourceOrigin: "Shenzhen IoT Environmental Labs",
     warrantyMonths: 24,
+  },
+
+  // ── Smart Starter Bundles (High Margin / High AOV) ───────────
+  {
+    id: "bundle-power-ac",
+    name: "Apartment Power & AC Smart Protection Bundle (2x Surge Plugs + 1x AC Hub)",
+    description: "Complete smart protection for Nigerian homes: Includes 2x Tuya 16A Smart Surge & Energy Monitor Plugs (protects deep freezer, fridge, or TV from dangerous NEPA high voltage) PLUS 1x Tuya WiFi AC Climate Hub & IR Remote (controls your AC from your phone, auto-cuts AC when generator kicks in to save fuel). Instant savings compared to buying separately, and qualifies for the full 15% welcome discount!",
+    price: 34500,
+    originalPrice: 48500,
+    image: "/products/smart-ir-controller.jpg",
+    images: ["/products/smart-ir-controller.jpg", "/products/extension-board.jpg"],
+    category: "Starter Bundles",
+    serviceLink: ["Electrician", "AC & Fridge Repair"],
+    rating: 5.0,
+    reviewCount: 94,
+    badge: "Best Seller",
+    stock: 45,
+    sourceOrigin: "HomeCare Certified Smart Home Hub",
+    warrantyMonths: 24,
+    highlights: [
+      "2x 16A Smart Surge Plugs with 0.01s High/Low Voltage Cutoff",
+      "1x Tuya WiFi AC Climate Hub with Real-Time Temp & Humidity LCD",
+      "Turn on bedroom AC 15 mins before arriving home in Lagos traffic",
+      "Auto-cut AC when generator starts to protect engine from overload",
+      "Qualifies for full 15% Welcome Discount (WELCOME15)",
+    ],
+  },
+  {
+    id: "bundle-inverter-solar",
+    name: "Inverter Battery-Saver & Cooling Bundle (15W BLDC Fan + Smart Energy Plug)",
+    description: "Engineered specifically for Nigerian solar and inverter systems: Includes the 15W Ultra-Low Power BLDC Inverter Standing Fan (runs 32+ hours continuously on inverter without draining your battery) PLUS 1x Tuya 16A WiFi Energy Monitor Plug (monitors inverter draw and trips surges). The ultimate blackout relief kit.",
+    price: 74500,
+    originalPrice: 105000,
+    image: "/products/smart-bldc-fan.jpg",
+    images: ["/products/smart-bldc-fan.jpg", "/products/extension-board.jpg"],
+    category: "Starter Bundles",
+    serviceLink: ["Electrician"],
+    rating: 5.0,
+    reviewCount: 68,
+    badge: "Hot Deal",
+    stock: 25,
+    sourceOrigin: "HomeCare Certified Solar & Inverter Labs",
+    warrantyMonths: 24,
+    highlights: [
+      "15W DC Brushless motor consumes 80% less power than standard AC fans",
+      "Runs 30+ hours on 12V 200Ah battery without tripping inverter low-battery alert",
+      "Includes 1x 16A WiFi Energy Monitor Plug to log battery load",
+      "Whisper-quiet 18dB sound level for peaceful sleep during outages",
+      "Qualifies for full 15% Welcome Discount (WELCOME15)",
+    ],
   },
 ];
 

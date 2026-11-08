@@ -46,7 +46,7 @@ function CheckoutContent() {
   const supabase = createClient();
   const [user, setUser] = useState<User | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<"flutterwave" | "transfer">("flutterwave");
+  const [paymentMethod, setPaymentMethod] = useState<"flutterwave" | "transfer" | "pod">("flutterwave");
   const [voucherInput, setVoucherInput] = useState("");
 
   // State selection from URL param or saved preference
@@ -195,7 +195,14 @@ function CheckoutContent() {
       orderPlacedRef.current = true;
       clearCart();
 
-      // 2. Handle Payment Method
+      // 2. Doorstep Inspection & Delivery (POD Commitment)
+      if (paymentMethod === "pod") {
+        toast.success("Doorstep Inspection order recorded! Please complete the ₦3,000 dispatch commitment.");
+        router.push(`/store/order-confirmation?ref=${orderRef}&total=3000&mode=pod&bal=${Math.max(0, grandTotal - 3000)}`);
+        return;
+      }
+
+      // 3. Handle Direct Bank Transfer
       if (paymentMethod === "transfer") {
         toast.success("Order confirmed! Please complete your transfer.");
         router.push(`/store/order-confirmation?ref=${orderRef}&total=${grandTotal}`);
@@ -511,6 +518,30 @@ function CheckoutContent() {
                       Manual bank transfer to Mindvest Global Resources Ltd (Globus Bank). Account details shown on the next screen.
                     </p>
                   </button>
+
+                  {/* Doorstep Inspection & Delivery (POD Commitment) */}
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod("pod")}
+                    className={`p-4 rounded-2xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between gap-2.5 sm:col-span-2 ${
+                      paymentMethod === "pod"
+                        ? "border-amber-500 bg-amber-50/70 shadow-md ring-2 ring-amber-500/20"
+                        : "border-slate-200 hover:border-slate-300 bg-white"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Truck size={18} className={paymentMethod === "pod" ? "text-amber-600" : "text-slate-400"} />
+                        <span className="font-extrabold text-xs text-slate-900">Doorstep Inspection &amp; Delivery</span>
+                      </div>
+                      <span className="text-[9px] font-black uppercase tracking-wider bg-amber-500 text-white px-2 py-0.5 rounded-full">
+                        Inspect Before Balance
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-600 leading-relaxed">
+                      Pay a <strong>₦3,000 dispatch commitment fee</strong> now. Inspect your package at your doorstep upon arrival and transfer the remaining balance of <strong>₦{Math.max(0, grandTotal - 3000).toLocaleString()}</strong> to the dispatch courier. Available in Lagos, Abuja, Port Harcourt &amp; Ibadan.
+                    </p>
+                  </button>
                 </div>
               </div>
 
@@ -597,10 +628,16 @@ function CheckoutContent() {
                           Remove
                         </button>
                       </div>
-                      {["WELCOME15", "WELCOME15%", "WELCOME1500", "WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(couponCode) && (
-                        <p className="text-[10px] text-emerald-700 font-medium">
-                          15% Welcome Discount applied (-₦{discount.toLocaleString()})
-                        </p>
+                      {["WELCOME15", "WELCOME15%", "WELCOME10", "WELCOME1500", "WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(couponCode) && (
+                        cartTotal >= 15000 ? (
+                          <p className="text-[10px] text-emerald-700 font-medium">
+                            🎉 Full 15% Welcome Discount applied (-₦{discount.toLocaleString()})
+                          </p>
+                        ) : (
+                          <p className="text-[10px] text-emerald-700 font-medium">
+                            10% discount applied (-₦{discount.toLocaleString()}) · Add <strong>₦{(15000 - cartTotal).toLocaleString()}</strong> more to unlock full <strong>15% OFF</strong>!
+                          </p>
+                        )
                       )}
                       {["FREEINSTALL", "INSTALLFREE"].includes(couponCode) && installationTotal === 0 && (
                         <p className="text-[10px] text-amber-700 font-medium">
@@ -708,7 +745,11 @@ function CheckoutContent() {
                   ) : (
                     <>
                       <Zap size={16} className="text-cyan-200 fill-cyan-200" />
-                      <span>Complete Checkout · ₦{grandTotal.toLocaleString()}</span>
+                      <span>
+                        {paymentMethod === "pod"
+                          ? `Book Inspection · ₦3,000 Deposit (₦${Math.max(0, grandTotal - 3000).toLocaleString()} on Delivery)`
+                          : `Complete Checkout · ₦${grandTotal.toLocaleString()}`}
+                      </span>
                     </>
                   )}
                 </button>

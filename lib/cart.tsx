@@ -249,10 +249,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const clean = couponCode.toUpperCase().trim();
 
     // Welcome vouchers: WELCOME15, WELCOME10, WELCOME1500, WELCOME2500, WELCOME, FIRSTORDER
-    if (["WELCOME15", "WELCOME15%", "WELCOME1500", "WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(clean)) {
+    if (["WELCOME15", "WELCOME15%", "WELCOME10", "WELCOME1500", "WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(clean)) {
       if (cartTotal <= 0) return 0;
-      // 15% welcome discount on all store appliances (capped generously at ₦15,000)
-      return Math.min(15000, Math.round(cartTotal * 0.15));
+      // High-AOV Margin Guard: 15% on orders ₦15k+; 10% on smaller single items under ₦15k
+      if (cartTotal >= 15000) {
+        return Math.min(15000, Math.round(cartTotal * 0.15));
+      }
+      return Math.round(cartTotal * 0.10);
     }
 
     // CarePay % vouchers: CAREPAY10, SAVE10, DISCOUNT10, CAREPAY
@@ -286,11 +289,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const applyCoupon = useCallback((code: string) => {
     const clean = code.toUpperCase().trim();
-    if (["WELCOME15", "WELCOME15%", "WELCOME1500", "WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(clean)) {
+    if (["WELCOME15", "WELCOME15%", "WELCOME10", "WELCOME1500", "WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(clean)) {
       setCouponCode(clean);
+      const isFullTier = cartTotal >= 15000;
       return {
         success: true,
-        message: "15% Welcome Voucher applied! Enjoy 15% discount on your order.",
+        message: isFullTier
+          ? "15% Welcome Voucher applied! Enjoy 15% discount on your order."
+          : "Welcome Voucher applied! 10% discount added (Add items up to ₦15,000 to unlock full 15% OFF).",
       };
     }
     if (["CAREPAY10", "SAVE10", "DISCOUNT10", "CAREPAY"].includes(clean)) {

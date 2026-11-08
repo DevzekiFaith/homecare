@@ -48,6 +48,9 @@ function OrderConfirmationContent() {
   const searchParams = useSearchParams();
   const orderRef = searchParams.get("ref") || "HC-UNKNOWN";
   const total = parseInt(searchParams.get("total") || "0");
+  const mode = searchParams.get("mode");
+  const bal = parseInt(searchParams.get("bal") || "0");
+  const isPod = mode === "pod";
   const [copied, setCopied] = useState(false);
   const [showReceipt, setShowReceipt] = useState(false);
   const [orderData, setOrderData] = useState<StoreOrder | null>(null);
@@ -94,7 +97,7 @@ function OrderConfirmationContent() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const displayTotal = orderData?.total ? Number(orderData.total) : total;
+  const displayTotal = isPod ? (total || 3000) : (orderData?.total ? Number(orderData.total) : total);
 
   const isPaid = orderData && orderData.status !== 'pending_payment' && orderData.status !== 'cancelled';
   const [payingWithFlw, setPayingWithFlw] = useState(false);
@@ -115,8 +118,8 @@ function OrderConfirmationContent() {
           amount: displayTotal,
           email: orderData?.customer_email || "customer@homecare.com.ng",
           name: orderData?.customer_name || "HomeCare Customer",
-          title: "HomeCare Smart Appliances Store",
-          description: `Payment for Order ${orderRef}`,
+          title: isPod ? "HomeCare Doorstep Dispatch Commitment" : "HomeCare Smart Appliances Store",
+          description: isPod ? `Commitment deposit for inspection order ${orderRef}` : `Payment for Order ${orderRef}`,
           type: "store_order",
         }),
         signal: controller.signal,
@@ -137,7 +140,9 @@ function OrderConfirmationContent() {
   };
 
   const whatsappMessage = encodeURIComponent(
-    `Hi, I just placed an order on HomeCare Store.\n\nOrder Ref: ${orderRef}\nTotal: ₦${displayTotal.toLocaleString()}\n\nI've made the payment. Please confirm.`
+    isPod
+      ? `Hi, I just placed a Doorstep Inspection order on HomeCare Store.\n\nOrder Ref: ${orderRef}\nDispatch Commitment: ₦${displayTotal.toLocaleString()}\nDoorstep Balance: ₦${bal.toLocaleString()}\n\nI've made the ₦3,000 dispatch transfer. Please verify and ship.`
+      : `Hi, I just placed an order on HomeCare Store.\n\nOrder Ref: ${orderRef}\nTotal: ₦${displayTotal.toLocaleString()}\n\nI've made the payment. Please confirm.`
   );
 
   return (
@@ -164,6 +169,23 @@ function OrderConfirmationContent() {
               : "Please complete your payment below with Flutterwave for instant confirmation."}
           </p>
         </motion.div>
+
+        {/* Doorstep Inspection Banner if mode === 'pod' */}
+        {isPod && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 p-5 rounded-3xl bg-amber-50 border border-amber-200/80 text-amber-950 shadow-sm"
+          >
+            <div className="flex items-center gap-2 font-black text-xs uppercase tracking-wider text-amber-800">
+              <Truck size={17} className="text-amber-600" />
+              <span>Doorstep Inspection Order Activated</span>
+            </div>
+            <p className="text-xs text-amber-900/90 mt-2 leading-relaxed">
+              Pay the <strong>₦{displayTotal.toLocaleString()} dispatch commitment deposit</strong> below to release your package for delivery. When our verified rider arrives at your doorstep, inspect your products, ensure everything matches your order, and transfer the remaining balance of <strong>₦{bal.toLocaleString()}</strong> to the rider.
+            </p>
+          </motion.div>
+        )}
 
         {/* Order Reference & Summary */}
         <motion.div
@@ -197,11 +219,16 @@ function OrderConfirmationContent() {
           <div className="p-6 sm:p-8 flex items-center justify-between bg-sky-50/40">
             <div>
               <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 block mb-1">
-                Amount to Pay
+                {isPod ? "Dispatch Commitment Deposit" : "Amount to Pay"}
               </span>
               <span className="text-3xl font-black text-sky-600">
                 ₦{displayTotal.toLocaleString()}
               </span>
+              {isPod && bal > 0 && (
+                <p className="text-[11px] font-semibold text-slate-500 mt-1">
+                  Balance due on inspection: <strong>₦{bal.toLocaleString()}</strong>
+                </p>
+              )}
             </div>
             <div className="text-right hidden sm:block">
                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Payment Status</p>
