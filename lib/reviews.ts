@@ -15,6 +15,12 @@ export interface Review {
   service_type?: string;
 }
 
+export const DEMO_REVIEW_IDS = [
+  "298f4f3f-83eb-4390-8903-2b0d654892c4",
+] as const;
+
+export const DEMO_REVIEW_FILTER = `("${DEMO_REVIEW_IDS.join('","')}")`;
+
 const LOCAL_STORAGE_KEY = "homecare_reviews_cache";
 
 // Helper to check if reviews table is missing
@@ -33,7 +39,12 @@ function getLocalReviews(): Review[] {
   const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
   if (!stored) return [];
   try {
-    return JSON.parse(stored);
+    const list: Review[] = JSON.parse(stored);
+    return list.filter(
+      (r) =>
+        !(DEMO_REVIEW_IDS as readonly string[]).includes(r.id) &&
+        !r.comment?.toLowerCase().includes("great job! ezekiel")
+    );
   } catch (e) {
     return [];
   }
@@ -59,6 +70,7 @@ export async function fetchAllReviews(): Promise<{ data: Review[]; isFallback: b
         customer:profiles!customer_id(full_name),
         service_requests(service_type)
       `)
+      .not("id", "in", DEMO_REVIEW_FILTER)
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -68,8 +80,16 @@ export async function fetchAllReviews(): Promise<{ data: Review[]; isFallback: b
       throw error;
     }
 
-    // Format the response fields
-    const formatted: Review[] = (data || []).map((item: any) => ({
+    // Format the response fields & exclude demo review records
+    const formatted: Review[] = (data || [])
+      .filter((item: any) => {
+        const comment = (item.comment || "").toLowerCase();
+        return (
+          !(DEMO_REVIEW_IDS as readonly string[]).includes(item.id) &&
+          !comment.includes("great job! ezekiel")
+        );
+      })
+      .map((item: any) => ({
       id: item.id,
       request_id: item.request_id,
       customer_id: item.customer_id,

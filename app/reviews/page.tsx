@@ -14,7 +14,7 @@ export default function PublicReviewsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [ratingFilter, setRatingFilter] = useState("all");
   const [origin, setOrigin] = useState("");
-  const [latestRequestId, setLatestRequestId] = useState("594ee002-7b66-4e81-8feb-dd4045365ed2");
+  const [latestRequestId, setLatestRequestId] = useState("");
 
   useEffect(() => {
     if (typeof window !== "undefined") {

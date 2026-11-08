@@ -2,8 +2,9 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { fetchAllReviews, Review } from "@/lib/reviews";
-import { Star, Search, Filter, MessageSquare, AlertTriangle, ShieldCheck, UserCheck, Calendar } from "lucide-react";
+import { Star, Search, Filter, MessageSquare, AlertTriangle, ShieldCheck, UserCheck, Calendar, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export default function AdminReviewsPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -11,6 +12,7 @@ export default function AdminReviewsPage() {
   const [isFallback, setIsFallback] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [ratingFilter, setRatingFilter] = useState("all");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadReviews() {
@@ -22,6 +24,36 @@ export default function AdminReviewsPage() {
     }
     loadReviews();
   }, []);
+
+  const handleDeleteReview = (id: string, reviewer: string) => {
+    toast(`Delete review by ${reviewer}?`, {
+      description: "Permanently remove this review from the platform.",
+      action: {
+        label: "Confirm Delete",
+        onClick: async () => {
+          setDeletingId(id);
+          try {
+            await fetch("/api/admin/delete-review", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ id }),
+            });
+            setReviews((prev) => prev.filter((r) => r.id !== id));
+            toast.error("Review removed from platform");
+          } catch (err: any) {
+            toast.error("Failed to delete review: " + err.message);
+          } finally {
+            setDeletingId(null);
+          }
+        },
+      },
+      cancel: {
+        label: "Cancel",
+        onClick: () => {},
+      },
+      duration: 5000,
+    });
+  };
 
   const stats = useMemo(() => {
     const total = reviews.length;
@@ -207,6 +239,18 @@ export default function AdminReviewsPage() {
                       <span>{new Date(review.created_at).toLocaleDateString()}</span>
                     </div>
                   </div>
+                </div>
+
+                {/* Delete Review Action */}
+                <div className="shrink-0 self-start">
+                  <button
+                    onClick={() => handleDeleteReview(review.id, review.customer_name || "Guest")}
+                    disabled={deletingId === review.id}
+                    title="Delete Review"
+                    className="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-xl border border-transparent hover:border-rose-200 transition-colors cursor-pointer disabled:opacity-50"
+                  >
+                    <Trash2 size={15} />
+                  </button>
                 </div>
               </div>
             ))}
