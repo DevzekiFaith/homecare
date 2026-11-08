@@ -171,8 +171,8 @@ export default function ProductCard({
 
             {/* Stock indicator */}
             {isOutOfStock ? (
-              <div className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-sky-50 text-sky-950 border border-sky-300 font-black shadow-2xs">
-                <Clock size={10} className="text-sky-600 animate-pulse" />
+              <div className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-950 border border-emerald-300 font-black shadow-2xs">
+                <Clock size={10} className="text-emerald-600 animate-pulse" />
                 <p className="text-[9px] font-black uppercase tracking-wider">
                   Batch In Transit
                 </p>
@@ -235,7 +235,7 @@ export default function ProductCard({
             {isOutOfStock ? (
               <Link
                 href={`/store/${product.id}#waitlist`}
-                className="w-full flex items-center justify-center gap-2 h-11 rounded-xl bg-sky-600 hover:bg-sky-500 text-white border border-sky-600 text-xs font-black uppercase tracking-wider transition-all shadow-md shadow-sky-600/25 cursor-pointer active:scale-[0.98]"
+                className="w-full flex items-center justify-center gap-2 h-11 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-600 text-xs font-black uppercase tracking-wider transition-all shadow-md shadow-emerald-600/25 cursor-pointer active:scale-[0.98]"
               >
                 <Bell size={15} className="text-white fill-white/20" />
                 <span>Join Restock Waitlist</span>

@@ -488,19 +488,19 @@ export default function ProductDetailPage({ params }: PageProps) {
 
             {/* Quantity Selector & Action Buttons / In-Page Restock Waitlist Card */}
             {isOutOfStock ? (
-              <div id="waitlist" className="bg-white rounded-3xl p-6 sm:p-7 border-2 border-sky-100 shadow-xl shadow-slate-200/50 space-y-5 text-slate-950">
+              <div id="waitlist" className="bg-white rounded-3xl p-6 sm:p-7 border-2 border-emerald-200/80 shadow-xl shadow-slate-200/50 space-y-5 text-slate-950">
                 <div className="flex flex-wrap items-center justify-between gap-2.5 pb-2.5 border-b border-slate-100">
                   <div className="flex items-center gap-2">
                     <span className="relative flex h-3 w-3">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-600"></span>
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-600"></span>
                     </span>
                     <span className="text-xs font-black uppercase tracking-wider text-slate-950">
                       Next Cargo Batch In Transit
                     </span>
                   </div>
-                  <span className="text-[11px] font-black text-sky-950 bg-sky-50 border border-sky-200 px-3 py-1 rounded-full flex items-center gap-1.5 shadow-2xs">
-                    <Truck size={13} className="text-sky-600" />
+                  <span className="text-[11px] font-black text-emerald-950 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full flex items-center gap-1.5 shadow-2xs">
+                    <Truck size={13} className="text-emerald-600" />
                     Lagos Air Cargo · Priority Restock
                   </span>
                 </div>
@@ -600,7 +600,7 @@ export default function ProductDetailPage({ params }: PageProps) {
                       <button
                         type="submit"
                         disabled={waitlistLoading}
-                        className="flex-1 h-13 rounded-2xl px-6 text-xs sm:text-sm font-black uppercase tracking-wider bg-sky-600 hover:bg-sky-500 text-white shadow-lg shadow-sky-600/25 flex items-center justify-center gap-2.5 transition-all hover:scale-101 active:scale-98 cursor-pointer disabled:opacity-50"
+                        className="flex-1 h-13 rounded-2xl px-6 text-xs sm:text-sm font-black uppercase tracking-wider bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2.5 transition-all hover:scale-101 active:scale-98 cursor-pointer disabled:opacity-50"
                       >
                         {waitlistLoading ? (
                           <Loader2 size={17} className="animate-spin" />
@@ -618,9 +618,9 @@ export default function ProductDetailPage({ params }: PageProps) {
                           );
                           window.open(`https://wa.me/2349119059859?text=${text}`, "_blank");
                         }}
-                        className="h-13 rounded-2xl px-6 text-xs sm:text-sm font-black uppercase tracking-wider bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2.5 transition-all hover:scale-101 active:scale-98 cursor-pointer"
+                        className="h-13 rounded-2xl px-6 text-xs sm:text-sm font-black uppercase tracking-wider bg-slate-900 hover:bg-slate-800 text-white shadow-md flex items-center justify-center gap-2.5 transition-all hover:scale-101 active:scale-98 cursor-pointer"
                       >
-                        <MessageCircle size={17} />
+                        <MessageCircle size={17} className="text-emerald-400" />
                         <span>Reserve via WhatsApp</span>
                       </button>
                     </div>
