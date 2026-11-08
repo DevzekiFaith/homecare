@@ -397,7 +397,7 @@ export default function CartDrawer() {
                       {["WELCOME15", "WELCOME15%", "WELCOME10", "WELCOME1500", "WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(couponCode) && (
                         cartTotal >= 15000 ? (
                           <p className="text-[10px] text-emerald-700 font-semibold">
-                            🎉 Full 15% Welcome Discount unlocked!
+                            🎉 15% Welcome Discount unlocked! (-₦{discount.toLocaleString()}{discount >= 5000 ? " · Max ₦5,000 cap" : ""})
                           </p>
                         ) : (
                           <p className="text-[10px] text-amber-700 font-semibold">

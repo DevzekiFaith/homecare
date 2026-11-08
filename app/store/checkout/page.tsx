@@ -631,7 +631,7 @@ function CheckoutContent() {
                       {["WELCOME15", "WELCOME15%", "WELCOME10", "WELCOME1500", "WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(couponCode) && (
                         cartTotal >= 15000 ? (
                           <p className="text-[10px] text-emerald-700 font-medium">
-                            🎉 Full 15% Welcome Discount applied (-₦{discount.toLocaleString()})
+                            🎉 15% Welcome Discount applied (-₦{discount.toLocaleString()}{discount >= 5000 ? " · Max ₦5,000 cap" : ""})
                           </p>
                         ) : (
                           <p className="text-[10px] text-emerald-700 font-medium">

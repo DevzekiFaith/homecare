@@ -251,17 +251,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
     // Welcome vouchers: WELCOME15, WELCOME10, WELCOME1500, WELCOME2500, WELCOME, FIRSTORDER
     if (["WELCOME15", "WELCOME15%", "WELCOME10", "WELCOME1500", "WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(clean)) {
       if (cartTotal <= 0) return 0;
-      // High-AOV Margin Guard: 15% on orders ₦15k+; 10% on smaller single items under ₦15k
+      // High-AOV Margin Guard: 15% on orders ₦15k+ (capped at ₦5,000 max savings); 10% on smaller single items under ₦15k
       if (cartTotal >= 15000) {
-        return Math.min(15000, Math.round(cartTotal * 0.15));
+        return Math.min(5000, Math.round(cartTotal * 0.15));
       }
-      return Math.round(cartTotal * 0.10);
+      return Math.min(5000, Math.round(cartTotal * 0.10));
     }
 
     // CarePay % vouchers: CAREPAY10, SAVE10, DISCOUNT10, CAREPAY
     if (["CAREPAY10", "SAVE10", "DISCOUNT10", "CAREPAY"].includes(clean)) {
       if (cartTotal <= 0) return 0;
-      return Math.min(15000, Math.round(cartTotal * 0.1));
+      return Math.min(5000, Math.round(cartTotal * 0.1));
     }
 
     // HomeCare VIP vouchers: HOMECARE, HC2026, CAREPAY2026
