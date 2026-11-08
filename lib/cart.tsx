@@ -248,13 +248,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (!couponCode) return 0;
     const clean = couponCode.toUpperCase().trim();
 
-    // Welcome vouchers: WELCOME15, WELCOME10, WELCOME1500, WELCOME2500, WELCOME, FIRSTORDER
-    if (["WELCOME15", "WELCOME15%", "WELCOME10", "WELCOME1500", "WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(clean)) {
+    // Welcome vouchers: WELCOME10, WELCOME15, WELCOME1500, WELCOME2500, WELCOME, FIRSTORDER
+    if (["WELCOME10", "WELCOME10%", "WELCOME15", "WELCOME15%", "WELCOME1500", "WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(clean)) {
       if (cartTotal <= 0) return 0;
-      // High-AOV Margin Guard: 15% on orders ₦15k+ (capped at ₦5,000 max savings); 10% on smaller single items under ₦15k
-      if (cartTotal >= 15000) {
-        return Math.min(5000, Math.round(cartTotal * 0.15));
-      }
+      // 10% welcome discount on all orders (capped at ₦5,000 max savings to protect product margins)
       return Math.min(5000, Math.round(cartTotal * 0.10));
     }
 
@@ -289,14 +286,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const applyCoupon = useCallback((code: string) => {
     const clean = code.toUpperCase().trim();
-    if (["WELCOME15", "WELCOME15%", "WELCOME10", "WELCOME1500", "WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(clean)) {
+    if (["WELCOME10", "WELCOME10%", "WELCOME15", "WELCOME15%", "WELCOME1500", "WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(clean)) {
       setCouponCode(clean);
-      const isFullTier = cartTotal >= 15000;
       return {
         success: true,
-        message: isFullTier
-          ? "15% Welcome Voucher applied! Enjoy 15% discount on your order."
-          : "Welcome Voucher applied! 10% discount added (Add items up to ₦15,000 to unlock full 15% OFF).",
+        message: "10% Welcome Voucher applied! Enjoy 10% discount on your order (up to ₦5,000).",
       };
     }
     if (["CAREPAY10", "SAVE10", "DISCOUNT10", "CAREPAY"].includes(clean)) {
@@ -322,7 +316,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
     return {
       success: false,
-      message: `"${code.trim()}" is not valid. Try WELCOME15 or SAVE10 for instant savings.`,
+      message: `"${code.trim()}" is not valid. Try WELCOME10 or SAVE10 for instant savings.`,
     };
   }, []);
 

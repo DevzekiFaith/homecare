@@ -628,16 +628,10 @@ function CheckoutContent() {
                           Remove
                         </button>
                       </div>
-                      {["WELCOME15", "WELCOME15%", "WELCOME10", "WELCOME1500", "WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(couponCode) && (
-                        cartTotal >= 15000 ? (
-                          <p className="text-[10px] text-emerald-700 font-medium">
-                            🎉 15% Welcome Discount applied (-₦{discount.toLocaleString()}{discount >= 5000 ? " · Max ₦5,000 cap" : ""})
-                          </p>
-                        ) : (
-                          <p className="text-[10px] text-emerald-700 font-medium">
-                            10% discount applied (-₦{discount.toLocaleString()}) · Add <strong>₦{(15000 - cartTotal).toLocaleString()}</strong> more to unlock full <strong>15% OFF</strong>!
-                          </p>
-                        )
+                      {["WELCOME10", "WELCOME10%", "WELCOME15", "WELCOME15%", "WELCOME1500", "WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(couponCode) && (
+                        <p className="text-[10px] text-emerald-700 font-medium">
+                          🎉 10% Welcome Discount applied (-₦{discount.toLocaleString()}{discount >= 5000 ? " · Max ₦5,000 cap" : ""})
+                        </p>
                       )}
                       {["FREEINSTALL", "INSTALLFREE"].includes(couponCode) && installationTotal === 0 && (
                         <p className="text-[10px] text-amber-700 font-medium">
@@ -652,7 +646,7 @@ function CheckoutContent() {
                           type="text"
                           value={voucherInput}
                           onChange={(e) => setVoucherInput(e.target.value)}
-                          placeholder="Have a voucher? (e.g. WELCOME15)"
+                          placeholder="Have a voucher? (e.g. WELCOME10)"
                           className="flex-1 px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs uppercase font-mono placeholder:normal-case placeholder:font-sans outline-none focus:border-sky-500"
                         />
                         <button
@@ -668,12 +662,12 @@ function CheckoutContent() {
                         <button
                           type="button"
                           onClick={() => {
-                            const res = applyCoupon("WELCOME15");
+                            const res = applyCoupon("WELCOME10");
                             if (res.success) toast.success("Voucher Applied!", { description: res.message });
                           }}
                           className="px-2 py-0.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-[10px] font-bold cursor-pointer transition-colors"
                         >
-                          🏷️ WELCOME15 (15% OFF)
+                          🏷️ WELCOME10 (10% OFF)
                         </button>
                         <button
                           type="button"
