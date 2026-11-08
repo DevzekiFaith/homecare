@@ -476,8 +476,6 @@ export const PRODUCTS: Product[] = [
     stock: 65,
     sourceOrigin: "Shenzhen IoT Environmental Labs",
     warrantyMonths: 24,
-    videoUrl: "https://www.youtube.com/embed/Bm0nO80eTlA",
-    videoTitle: "Tuya WiFi Smart IR Remote Control Live Demonstration & Review",
   },
 ];
 
