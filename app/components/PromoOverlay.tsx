@@ -22,7 +22,7 @@ import {
 import { useCart } from "@/lib/cart";
 import { toast } from "sonner";
 
-const WELCOME_CODE = "WELCOME2500";
+const WELCOME_CODE = "WELCOME1500";
 const VOUCHER_SEEN_KEY = "hc_welcome_voucher_seen_v1";
 
 interface SocialPurchase {
@@ -211,8 +211,8 @@ export default function PromoOverlay() {
       setTimeout(() => setCopied(false), 2500);
     } catch {}
 
-    toast.success("₦2,500 Voucher Applied!", {
-      description: "Code WELCOME2500 has been automatically added to your checkout.",
+    toast.success("₦1,500 Voucher Applied!", {
+      description: "Code WELCOME1500 has been automatically added to your checkout.",
     });
 
     handleDismissWelcome();
@@ -220,7 +220,7 @@ export default function PromoOverlay() {
 
   const handleOrderWhatsApp = useCallback(() => {
     const encoded = encodeURIComponent(
-      `Hello HomeCare! I want to claim the ₦2,500 welcome voucher (WELCOME2500) for my smart appliance order in Nigeria.`
+      `Hello HomeCare! I want to claim the ₦1,500 welcome voucher (WELCOME1500) for my smart appliance order in Nigeria.`
     );
     window.open(`https://wa.me/2349119059859?text=${encoded}`, "_blank");
     handleDismissWelcome();
@@ -333,13 +333,13 @@ export default function PromoOverlay() {
           </span>
         </button>
 
-        {/* Claim ₦2,500 Voucher Pill */}
+        {/* Claim ₦1,500 Voucher Pill */}
         <button
           onClick={() => setShowWelcomeModal(true)}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-500 hover:to-blue-600 text-white border border-sky-400/40 shadow-xl text-[10px] font-black uppercase tracking-wider transition-all hover:scale-105 active:scale-95 cursor-pointer"
         >
           <Gift size={12} className="text-cyan-300" />
-          <span>Claim ₦2,500 OFF</span>
+          <span>Claim ₦1,500 OFF</span>
         </button>
       </div>
 
@@ -515,13 +515,13 @@ export default function PromoOverlay() {
                   </span>
 
                   <h3 className="text-2xl sm:text-[28px] font-black text-white font-heading tracking-tight leading-tight">
-                    Claim ₦2,500 OFF
+                    Claim ₦1,500 OFF
                   </h3>
                   <p className="text-xs font-bold text-sky-100 mt-0.5">
                     Your First Appliance
                   </p>
                   <p className="text-[11px] text-sky-100/80 mt-1 max-w-[280px] mx-auto leading-relaxed">
-                    Enjoy ₦2,500 instant discount on smart surge plugs, water heaters, power banks, and locks across Nigeria.
+                    Enjoy ₦1,500 instant discount on smart surge plugs, water heaters, power banks, and locks across Nigeria.
                   </p>
                 </div>
 
@@ -541,7 +541,7 @@ export default function PromoOverlay() {
                   <div className="bg-sky-50/80 rounded-2xl p-3 border border-sky-200/80 flex items-center justify-between gap-2">
                     <div className="min-w-0">
                       <p className="text-[9px] font-black uppercase tracking-wider text-sky-800 truncate">
-                        Code (Save ₦2,500 on ₦15k+)
+                        Code (Save ₦1,500 on ₦10k+)
                       </p>
                       <p className="text-lg font-black text-slate-900 font-mono tracking-wider">
                         {WELCOME_CODE}
@@ -584,7 +584,7 @@ export default function PromoOverlay() {
                       className="w-full h-11 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-black uppercase tracking-wider shadow-md shadow-sky-600/25 flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-98"
                     >
                       <Gift size={14} />
-                      <span>Claim ₦2,500 Voucher &amp; Shop Now</span>
+                      <span>Claim ₦1,500 Voucher &amp; Shop Now</span>
                     </button>
 
                     <button

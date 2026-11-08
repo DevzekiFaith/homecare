@@ -413,7 +413,7 @@ export default function CartDrawer() {
                               type="text"
                               value={inputCoupon}
                               onChange={(e) => setInputCoupon(e.target.value)}
-                              placeholder="e.g. WELCOME2500"
+                              placeholder="e.g. WELCOME1500"
                               className="flex-1 px-2.5 py-1 rounded-lg border border-slate-200 bg-white text-[11px] uppercase font-mono placeholder:normal-case outline-none focus:border-sky-500"
                             />
                             <button
@@ -427,12 +427,12 @@ export default function CartDrawer() {
                             <button
                               type="button"
                               onClick={() => {
-                                const res = applyCoupon("WELCOME2500");
+                                const res = applyCoupon("WELCOME1500");
                                 if (res.success) toast.success("Voucher Applied!", { description: res.message });
                               }}
                               className="px-2 py-0.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-[9px] font-bold cursor-pointer"
                             >
-                              🏷️ WELCOME2500 (-₦2,500)
+                              🏷️ WELCOME1500 (-₦1,500)
                             </button>
                             <button
                               type="button"

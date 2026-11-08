@@ -597,9 +597,9 @@ function CheckoutContent() {
                           Remove
                         </button>
                       </div>
-                      {["WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(couponCode) && cartTotal < 15000 && cartTotal > 0 && (
+                      {["WELCOME1500", "WELCOME2500", "WELCOME2K", "WELCOME", "FIRSTORDER"].includes(couponCode) && cartTotal < 10000 && cartTotal > 0 && (
                         <p className="text-[10px] text-emerald-700 font-medium">
-                          15% discount applied (-₦{discount.toLocaleString()}) · Add ₦{(15000 - cartTotal).toLocaleString()} more to unlock full ₦2,500 off!
+                          15% discount applied (-₦{discount.toLocaleString()}) · Add ₦{(10000 - cartTotal).toLocaleString()} more to unlock full ₦1,500 off!
                         </p>
                       )}
                       {["FREEINSTALL", "INSTALLFREE"].includes(couponCode) && installationTotal === 0 && (
@@ -615,7 +615,7 @@ function CheckoutContent() {
                           type="text"
                           value={voucherInput}
                           onChange={(e) => setVoucherInput(e.target.value)}
-                          placeholder="Have a voucher? (e.g. WELCOME2500)"
+                          placeholder="Have a voucher? (e.g. WELCOME1500)"
                           className="flex-1 px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs uppercase font-mono placeholder:normal-case placeholder:font-sans outline-none focus:border-sky-500"
                         />
                         <button
@@ -631,12 +631,12 @@ function CheckoutContent() {
                         <button
                           type="button"
                           onClick={() => {
-                            const res = applyCoupon("WELCOME2500");
+                            const res = applyCoupon("WELCOME1500");
                             if (res.success) toast.success("Voucher Applied!", { description: res.message });
                           }}
                           className="px-2 py-0.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-[10px] font-bold cursor-pointer transition-colors"
                         >
-                          🏷️ WELCOME2500 (-₦2,500)
+                          🏷️ WELCOME1500 (-₦1,500)
                         </button>
                         <button
                           type="button"
