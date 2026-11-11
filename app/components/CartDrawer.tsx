@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useCart } from "@/lib/cart";
+import { useCart, getInstallationFee } from "@/lib/cart";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -273,12 +273,12 @@ export default function CartDrawer() {
                                 ₦
                               </span>
                               {(
-                                (item.product.price + (item.withInstallation ? (item.installationFee || 7500) : 0)) * item.quantity
+                                item.product.price * item.quantity + getInstallationFee(item)
                               ).toLocaleString()}
                             </p>
                             {item.quantity > 1 && (
                               <span className="text-[9px] text-slate-400 font-medium">
-                                ₦{(item.product.price + (item.withInstallation ? (item.installationFee || 7500) : 0)).toLocaleString()} ea
+                                ₦{(item.product.price + (item.withInstallation ? Math.round(getInstallationFee(item) / item.quantity) : 0)).toLocaleString()} ea
                               </span>
                             )}
                           </div>
@@ -355,7 +355,7 @@ export default function CartDrawer() {
                       >
                         <div className="flex items-center gap-1.5 min-w-0">
                           <Wrench size={12} className={item.withInstallation ? "text-sky-600 shrink-0" : "text-slate-400 shrink-0"} />
-                          <span className="truncate text-[10.5px]">HomeCare™ Installation (+₦{(item.installationFee || 7500).toLocaleString()})</span>
+                          <span className="truncate text-[10.5px]">HomeCare™ Installation (+₦{getInstallationFee({...item, withInstallation: true}).toLocaleString()})</span>
                         </div>
                         <span className={`text-[9.5px] font-black uppercase px-2 py-0.5 rounded-md shrink-0 ml-1.5 ${
                           item.withInstallation

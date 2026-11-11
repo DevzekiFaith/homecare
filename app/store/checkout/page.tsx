@@ -16,7 +16,7 @@ import {
   Tag,
   Wrench,
 } from "lucide-react";
-import { useCart } from "@/lib/cart";
+import { useCart, getInstallationFee } from "@/lib/cart";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { User } from "@supabase/supabase-js";
@@ -177,7 +177,7 @@ function CheckoutContent() {
           quantity: item.quantity,
           image: item.product.image,
           withInstallation: item.withInstallation ?? false,
-          installationFee: item.withInstallation ? (item.installationFee ?? 7500) : 0,
+          installationFee: getInstallationFee(item),
           trade: item.product.serviceLink?.[0] || "Electrician",
         })),
         subtotal: cartTotal,
@@ -582,13 +582,13 @@ function CheckoutContent() {
                           </span>
                           {item.withInstallation && (
                             <span className="text-[9px] font-black text-emerald-800 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
-                              + Pro Install (₦{((item.installationFee || 7500) * item.quantity).toLocaleString()})
+                              + Pro Install (₦{getInstallationFee(item).toLocaleString()})
                             </span>
                           )}
                         </div>
                       </div>
                       <p className="text-xs font-extrabold text-slate-900 shrink-0">
-                        ₦{((item.product.price + (item.withInstallation ? (item.installationFee || 7500) : 0)) * item.quantity).toLocaleString()}
+                        ₦{(item.product.price * item.quantity + getInstallationFee(item)).toLocaleString()}
                       </p>
                     </div>
                   ))}

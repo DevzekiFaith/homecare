@@ -11,6 +11,21 @@ export interface CartItem {
   packVariantId?: string;
 }
 
+/**
+ * Tiered installation fee per product (not per unit).
+ * Reflects the technician's time for a single visit covering all units of that product:
+ *   1–3 units  → ₦7,500  (standard visit)
+ *   4–6 units  → ₦10,000 (extended visit)
+ *   7+ units   → ₦15,000 (full-day visit)
+ */
+export function getInstallationFee(item: CartItem): number {
+  if (!item.withInstallation) return 0;
+  const qty = item.quantity;
+  if (qty >= 7) return 15000;
+  if (qty >= 4) return 10000;
+  return item.installationFee ?? 7500;
+}
+
 interface CartContextType {
   cartItems: CartItem[];
   addToCart: (
@@ -231,11 +246,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     );
   }, [cartItems]);
 
-  // Installation fee is a flat one-time fee per product (not per unit quantity)
+  // Installation fee is tiered by quantity per product:
+  //   1–3 units  → ₦7,500  (standard visit)
+  //   4–6 units  → ₦10,000 (extended visit)
+  //   7+ units   → ₦15,000 (full-day visit)
   const installationTotal = useMemo(() => {
-    return cartItems
-      .filter((item) => item.withInstallation)
-      .reduce((sum, item) => sum + (item.installationFee ?? 7500), 0);
+    return cartItems.reduce((sum, item) => sum + getInstallationFee(item), 0);
   }, [cartItems]);
 
   const cartTotal = itemsSubtotal + installationTotal;
