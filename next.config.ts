@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   turbopack: {
     // Prevent Next from inferring the wrong monorepo/workspace root on Windows
     root: __dirname,

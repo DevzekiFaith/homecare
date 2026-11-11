@@ -44,7 +44,7 @@ export default function HomeClient() {
         {/* Subtle orange glow overlay for layout integration */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-brand-primary/5 to-transparent pointer-events-none" />
         
-        <div className="container mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-16 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-12 lg:gap-16 relative z-10">
           <div className="space-y-16">
             <QuickRequestForm
               selectedService={selectedService}

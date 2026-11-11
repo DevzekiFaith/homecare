@@ -11,7 +11,7 @@ export default function Hero() {
 
     return (
         <header className="relative w-full min-h-[85vh] flex flex-col justify-center overflow-hidden bg-background pt-24 pb-16">
-            <div className="container mx-auto px-6 lg:px-12 flex flex-col items-center text-center z-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex flex-col items-center text-center z-10">
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
