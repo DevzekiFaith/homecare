@@ -231,12 +231,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     );
   }, [cartItems]);
 
+  // Installation fee is a flat one-time fee per product (not per unit quantity)
   const installationTotal = useMemo(() => {
-    return cartItems.reduce(
-      (sum, item) =>
-        sum + (item.withInstallation ? (item.installationFee ?? 7500) * item.quantity : 0),
-      0
-    );
+    return cartItems
+      .filter((item) => item.withInstallation)
+      .reduce((sum, item) => sum + (item.installationFee ?? 7500), 0);
   }, [cartItems]);
 
   const cartTotal = itemsSubtotal + installationTotal;
