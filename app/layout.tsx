@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Nav from "./components/Nav";
 import MobileBottomNav from "./components/MobileBottomNav";
 import RootWrapper from "./components/RootWrapper";
+import ScrollToTop from "./components/ScrollToTop";
 import { CartProvider } from "@/lib/cart";
 import "./globals.css";
 import { Toaster } from "sonner";
@@ -94,10 +95,10 @@ export const metadata: Metadata = {
   },
 };
 
-export const viewport = {
+export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 5,
+  maximumScale: 1,
 };
 
 const jsonLdSchema = {
@@ -167,6 +168,7 @@ export default function RootLayout({
           Skip to content
         </a>
         <CartProvider>
+          <ScrollToTop />
           <Nav />
           <RootWrapper>
             <div id="content" className="pt-16 sm:pt-20 pb-20 md:pb-0">{children}</div>
